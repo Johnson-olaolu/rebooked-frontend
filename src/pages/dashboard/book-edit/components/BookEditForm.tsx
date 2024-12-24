@@ -27,7 +27,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { CustomImageSelect } from "@/components/extra/CustomImageSelect";
 
 // const MAX_FILE_SIZE = 5000000; // 5MB
@@ -45,9 +45,11 @@ const bookFormSchema = z.object({
 
 type BookFormValues = z.infer<typeof bookFormSchema>;
 
-export default function BookUploadForm() {
+export default function BookEditForm() {
   const queryClient = useQueryClient();
   // const { user } = useUserStore();
+  const params = useSearchParams();
+  console.log(params);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -68,7 +70,7 @@ export default function BookUploadForm() {
 
   const mutation = useMutation({
     mutationFn: async (data: BookFormValues) => {
-      const res = await bookService.createBook({
+      const res = await bookService.updateBook("", {
         ...data,
         coverImageId: data.coverImage.id,
         imageIds: data.additionalImages?.map((image) => image.id),
@@ -80,7 +82,7 @@ export default function BookUploadForm() {
       setCreatedBook(data);
       setOpenDialog(true);
       queryClient.invalidateQueries({
-        queryKey: ["book"],
+        queryKey: ["books"],
       });
     },
     onError: () => {
@@ -249,10 +251,8 @@ export default function BookUploadForm() {
       <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{createdBook?.title} created successfully!</AlertDialogTitle>
-            <AlertDialogDescription>
-              Your book has been successfully uploaded. You can proced to view the book or upload another book.
-            </AlertDialogDescription>
+            <AlertDialogTitle>{createdBook?.title} updated successfully!</AlertDialogTitle>
+            <AlertDialogDescription>Your book has been successfully updated.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>

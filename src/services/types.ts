@@ -1,3 +1,5 @@
+import { BookStatus, TimeQuery } from "@/utils/constants";
+
 interface IDocument {
   id: string;
   createdAt: Date;
@@ -118,4 +120,58 @@ export interface IUpdateProfilePayload {
     formattedAddress?: string;
     location?: number[];
   };
+}
+
+export interface ICategory extends IDocument {
+  name: string;
+}
+
+export interface IBook extends IDocument {
+  title: string;
+  price: number;
+  description?: string;
+  images: IFile[];
+  author?: string;
+  coverImage?: IFile;
+  categories?: ICategory[];
+  status?: BookStatus;
+  soldDate?: Date;
+}
+
+export interface ICreateCategoryPayload {
+  name: string;
+}
+
+export interface ICreateBookPayload {
+  title: string;
+  author?: string;
+  price: number;
+  coverImageId?: string;
+  imageIds?: string[];
+  categoryIds?: string[];
+}
+
+export interface IUpdateBookPayload {
+  title?: string;
+  author?: string;
+  price?: number;
+  coverImageId?: string;
+  imageIds?: string[];
+  categoryIds?: string[];
+}
+
+export interface IUpdateBookStatusPayload {
+  status: BookStatus;
+}
+
+export interface IQueryBookParams {
+  userId?: string;
+  search?: string;
+  page?: number;
+  size?: number;
+}
+
+export interface IQuerySoldBooksParams {
+  userId?: string;
+  timeQuery: TimeQuery;
 }

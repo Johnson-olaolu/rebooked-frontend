@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { CustomAvatar } from "@/components/extra/customAvatar";
+import { CustomAvatar } from "@/components/extra/CustomAvatar";
 import { IFile, IUpdateProfilePayload } from "@/services/types";
 import { useUserStore } from "@/store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
