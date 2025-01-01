@@ -11,6 +11,27 @@ export interface IResponse<D = null> {
   message: string;
 }
 
+export interface IPageable<D> {
+  content: D[];
+  empty: boolean;
+  first: boolean;
+  last: boolean;
+  number: 1;
+  numberOfElements: number;
+  pageable: {
+    offset: number;
+    pageNumber: number;
+    pageSize: number;
+    paged: boolean;
+    sort: { empty: boolean; sorted: boolean; unsorted: boolean };
+    unpaged: boolean;
+  };
+  size: number;
+  sort: { empty: boolean; sorted: boolean; unsorted: boolean };
+  totalElements: number;
+  totalPages: number;
+}
+
 export interface LoginPayload {
   email: string;
   password: string;
@@ -168,7 +189,8 @@ export interface IQueryBookParams {
   userId?: string;
   search?: string;
   page?: number;
-  size?: number;
+  pageSize?: number;
+  categoryIds?: string[];
 }
 
 export interface IQuerySoldBooksParams {

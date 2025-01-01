@@ -18,6 +18,14 @@ export enum TimeQuery {
   LAST_YEAR = "LAST_YEAR",
 }
 
+export const timeQueryOptions = [
+  { label: "Last week", value: TimeQuery.LAST_WEEK },
+  { label: "Last two weeks", value: TimeQuery.LAST_TWO_WEEKS },
+  { label: "Last month", value: TimeQuery.LAST_MONTH },
+  { label: "Last six months", value: TimeQuery.LAST_SIX_MONTHS },
+  { label: "Last year", value: TimeQuery.LAST_YEAR },
+];
+
 export const statusColors = {
   ACTIVE: "bg-green-100 text-green-800",
   INACTIVE: "bg-gray-100 text-gray-800",

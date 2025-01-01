@@ -12,7 +12,6 @@ const AuthenticatedLayout: React.FC<{ children: React.ReactNode }> = ({ children
     queryKey: ["user"],
     queryFn: async () => {
       const res = await userService.getUserDetails();
-      console.log(res.data);
       if (res.data) setUser(res.data);
       return res.data;
     },
@@ -22,7 +21,6 @@ const AuthenticatedLayout: React.FC<{ children: React.ReactNode }> = ({ children
     queryKey: ["categories"],
     queryFn: async () => {
       const res = await categoryService.getCategories();
-      console.log(res.data);
       if (res.data) setCategories(res.data);
       return res.data;
     },

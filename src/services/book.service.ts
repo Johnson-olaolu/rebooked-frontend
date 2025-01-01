@@ -1,5 +1,5 @@
 import https from "@/utils/https";
-import { IResponse } from "./types";
+import { IPageable, IResponse } from "./types";
 import { IBook, ICreateBookPayload, IQueryBookParams, IQuerySoldBooksParams, IUpdateBookPayload, IUpdateBookStatusPayload } from "./types";
 class BookService {
   private baseurl = "/api/book";
@@ -24,7 +24,7 @@ class BookService {
     });
   }
 
-  async queryBooks(params: IQueryBookParams): Promise<IResponse<IBook[]>> {
+  async queryBooks(params: IQueryBookParams): Promise<IResponse<IPageable<IBook>>> {
     return https.get({
       url: `${this.baseurl}/query`,
       query: params,
