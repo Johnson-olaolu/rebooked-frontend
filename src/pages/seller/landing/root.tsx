@@ -1,15 +1,14 @@
 import React from "react";
 import { Navigate, Route, Routes } from "react-router";
+const Homepage = React.lazy(() => import("./home"));
 
-const HomePage = React.lazy(() => import("./home"));
-
-const LandingRoutes = () => {
+const SellerLandingRoutes = () => {
   return (
     <Routes>
-      <Route index element={<HomePage />} />
+      <Route path="/home" element={<Homepage />} />
       <Route path="/*" element={<Navigate to={"/404"} />} />
     </Routes>
   );
 };
 
-export default LandingRoutes;
+export default SellerLandingRoutes;

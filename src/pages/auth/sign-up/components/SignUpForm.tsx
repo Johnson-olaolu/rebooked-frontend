@@ -69,7 +69,7 @@ export default function SignUpForm() {
           title: "Success",
           description: "Account created successfully",
         });
-        navigate("/dashboard");
+        navigate("/auth/verify-email");
       }
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {

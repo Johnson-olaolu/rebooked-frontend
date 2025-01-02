@@ -58,9 +58,9 @@ export default function LoginForm() {
         if (!response.data.user.emailVerified) {
           navigate(`/auth/verify-email?email=${response.data.user.email}`);
         } else if (!response.data.user.onboarded) {
-          navigate("/onboarding");
+          navigate("/seller/onboarding");
         } else {
-          navigate("/dashboard");
+          navigate("/seller/dashboard");
         }
       }
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
