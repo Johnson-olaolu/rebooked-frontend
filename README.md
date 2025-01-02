@@ -48,3 +48,13 @@ export default tseslint.config({
   },
 })
 ```
+
+
+# Just my thoughts 
+create a seller page ,
+seller page home 
+seller page login and signup 
+add helemet for SEO 
+craete home page 
+add breadcrumbs for easy linking on all pages
+

@@ -6,6 +6,7 @@ import LandingRoutes from "@/pages/landing/root";
 import AuthRoutes from "@/pages/auth/root";
 import OnboardingRoutes from "@/pages/onboarding/root";
 import DashboardRoutes from "@/pages/dashboard/root";
+import ShopRoutes from "@/pages/shop/root";
 const NotFound = React.lazy(() => import("@/pages/404"));
 
 const IndexRoutes = () => {
@@ -15,6 +16,7 @@ const IndexRoutes = () => {
         <Route element={<PublicRoutes />}>
           <Route path="/*" element={<LandingRoutes />} />
           <Route path="auth/*" element={<AuthRoutes />} />
+          <Route path="shop/*" element={<ShopRoutes />} />
         </Route>
         <Route element={<PrivateRoutes />}>
           <Route path="onboarding/*" element={<OnboardingRoutes />} />
