@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { useAuthStore } from "@/store";
+import { useAuthStore, useUserStore } from "@/store";
 import AuthService from "@/services/auth.service";
 
 interface GoogleButtonProps {
@@ -31,6 +31,7 @@ export function GoogleButton({ isLoading, className }: GoogleButtonProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const setAuth = useAuthStore((state) => state.setAuth);
+  const setUser = useUserStore((state) => state.setUser);
 
   useEffect(() => {
     // Check if script is already loaded
@@ -83,6 +84,9 @@ export function GoogleButton({ isLoading, className }: GoogleButtonProps) {
 
         if (!authResponse.data.user.emailVerified) {
           navigate(`/auth/verify-email?email=${authResponse.data.user.email}`);
+        } else if (authResponse.data.user.role.name === "user") {
+          setUser(authResponse.data.user);
+          navigate("/");
         } else if (!authResponse.data.user.onboarded) {
           navigate("/seller/onboarding");
         } else {

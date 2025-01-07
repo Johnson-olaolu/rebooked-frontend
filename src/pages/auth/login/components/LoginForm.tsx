@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { useAuthStore } from "@/store";
+import { useAuthStore, useUserStore } from "@/store";
 import AuthService from "@/services/auth.service";
 import { GoogleButton } from "@/components/extra/oauth/GoogleButton";
 import { FacebookButton } from "@/components/extra/oauth/FacebookButton";
@@ -32,7 +32,7 @@ export default function LoginForm() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const setAuth = useAuthStore((state) => state.setAuth);
-  // const setUser = useUserStore((state) => state.setUser);
+  const setUser = useUserStore((state) => state.setUser);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -57,6 +57,9 @@ export default function LoginForm() {
         });
         if (!response.data.user.emailVerified) {
           navigate(`/auth/verify-email?email=${response.data.user.email}`);
+        } else if (response.data.user.role.name === "user") {
+          setUser(response.data.user);
+          navigate("/");
         } else if (!response.data.user.onboarded) {
           navigate("/seller/onboarding");
         } else {

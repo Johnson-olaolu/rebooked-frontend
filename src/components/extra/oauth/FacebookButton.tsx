@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Facebook } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { useAuthStore } from "@/store";
+import { useAuthStore, useUserStore } from "@/store";
 import AuthService from "@/services/auth.service";
 
 interface FacebookButtonProps {
@@ -28,6 +28,7 @@ export function FacebookButton({ isLoading, className }: FacebookButtonProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const setAuth = useAuthStore((state) => state.setAuth);
+  const setUser = useUserStore((state) => state.setUser);
 
   useEffect(() => {
     // Check if script is already loaded
@@ -102,6 +103,9 @@ export function FacebookButton({ isLoading, className }: FacebookButtonProps) {
 
         if (!authResponse.data.user.emailVerified) {
           navigate(`/auth/verify-email?email=${authResponse.data.user.email}`);
+        } else if (authResponse.data.user.role.name === "user") {
+          setUser(authResponse.data.user);
+          navigate("/");
         } else if (!authResponse.data.user.onboarded) {
           navigate("/seller/onboarding");
         } else {
