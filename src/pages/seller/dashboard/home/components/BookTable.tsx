@@ -26,8 +26,7 @@ export default function BookTable() {
 
   const [bookToDelete, setBookToDelete] = useState<IBook>();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { data, isFetching } = useQuery({
+  const { data } = useQuery({
     queryKey: ["book", searchTerm, selectedCategories, currentPage, booksPerPage],
     queryFn: async () => {
       const res = await bookService.queryBooks({

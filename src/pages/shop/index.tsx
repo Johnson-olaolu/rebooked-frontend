@@ -99,7 +99,7 @@ const mockBooks: Book[] = [
 
 export default function ShopPage() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [books, setBooks] = useState<Book[]>(mockBooks);
+  const [books] = useState<Book[]>(mockBooks);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50]);
   const [searchQuery, setSearchQuery] = useState("");

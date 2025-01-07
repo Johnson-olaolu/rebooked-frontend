@@ -1,7 +1,6 @@
 import AuthenticatedLayout from "@/components/layout/AuthenticatedLayout";
 import { useAuthStore } from "@/store";
 import { isValidToken } from "@/utils/misc";
-import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
 const PrivateRoutes = (): JSX.Element => {

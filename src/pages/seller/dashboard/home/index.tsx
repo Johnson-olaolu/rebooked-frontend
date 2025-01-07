@@ -1,4 +1,3 @@
-import React from "react";
 import SalesChart from "./components/SalesChart";
 import BookTable from "./components/BookTable";
 

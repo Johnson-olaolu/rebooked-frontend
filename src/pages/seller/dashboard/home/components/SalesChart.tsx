@@ -12,8 +12,7 @@ export default function SalesChart() {
   const { user } = useUserStore();
   const [timeQuery, setTimeQuery] = useState<TimeQuery>(TimeQuery.LAST_SIX_MONTHS);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { data, isFetching } = useQuery({
+  const { data } = useQuery({
     queryKey: ["book", timeQuery],
     queryFn: async () => {
       const res = await bookService.querySoldBooks({

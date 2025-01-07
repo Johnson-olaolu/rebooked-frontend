@@ -14,6 +14,7 @@ import AuthService from "@/services/auth.service";
 import { GoogleButton } from "@/components/extra/oauth/GoogleButton";
 import { FacebookButton } from "@/components/extra/oauth/FacebookButton";
 
+//TODO implement redirect
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z
