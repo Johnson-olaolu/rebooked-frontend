@@ -24,7 +24,7 @@ export default function Header() {
             <Link to="/auth/login">Log In</Link>
           </Button>
           <Button asChild>
-            <Link to="/auth/signup">Sign Up</Link>
+            <Link to="/auth/signup?role=seller">Sign Up</Link>
           </Button>
         </div>
       </div>

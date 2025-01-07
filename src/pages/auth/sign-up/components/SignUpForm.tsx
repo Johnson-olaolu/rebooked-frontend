@@ -1,15 +1,14 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Eye, EyeOff } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { useAuthStore, useUserStore } from "@/store";
+import { useAuthStore } from "@/store";
 import AuthService from "@/services/auth.service";
 import { GoogleButton } from "@/components/extra/oauth/GoogleButton";
 import { FacebookButton } from "@/components/extra/oauth/FacebookButton";
@@ -35,13 +34,13 @@ const signUpSchema = z
 type SignUpFormValues = z.infer<typeof signUpSchema>;
 
 export default function SignUpForm() {
+  const [searchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   const setAuth = useAuthStore((state) => state.setAuth);
-  const setUser = useUserStore((state) => state.setUser);
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
@@ -60,16 +59,16 @@ export default function SignUpForm() {
         fullName: values.name,
         email: values.email,
         password: values.password,
+        roleName: searchParams.get("role") || "user",
       });
 
       if (response.data) {
         setAuth(response.data.token);
-        setUser(response.data.user);
         toast({
           title: "Success",
           description: "Account created successfully",
         });
-        navigate("/auth/verify-email");
+        navigate(`/auth/verify-email?email=${response.data.user.email}`);
       }
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {

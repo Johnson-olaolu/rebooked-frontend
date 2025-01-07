@@ -41,6 +41,7 @@ export interface SignUpPayload {
   fullName: string;
   email: string;
   password: string;
+  roleName?: string;
 }
 
 export interface ChangePasswordPayload {
