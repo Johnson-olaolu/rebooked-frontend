@@ -15,7 +15,7 @@ interface CustomAvatarProps {
   readonly fallback?: string;
 }
 
-export function CustomAvatar({ image, imageUrl, handleUpload, className = "w-40 h-40", fallback }: CustomAvatarProps) {
+export default function CustomAvatar({ image, imageUrl, handleUpload, className = "w-40 h-40", fallback }: CustomAvatarProps) {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);

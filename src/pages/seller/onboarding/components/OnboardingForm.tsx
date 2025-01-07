@@ -18,7 +18,7 @@ import { getInitials } from "@/utils/misc";
 import userService from "@/services/user.service";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { CustomAvatar } from "@/components/extra/CustomAvatar";
+import CustomAvatar from "@/components/extra/CustomAvatar";
 
 const addressSchema = z.object({
   // formattedAddress: z.string(),
