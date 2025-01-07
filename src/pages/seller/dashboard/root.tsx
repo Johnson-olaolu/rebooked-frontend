@@ -12,13 +12,13 @@ const DashboardRoutes = () => {
   return (
     <Routes>
       <Route element={<DashboardLayout />}>
-        <Route index element={<Navigate to="/dashboard/home" />} />
+        <Route index element={<Navigate to="/seller/dashboard/home" />} />
         <Route path="/home" element={<DashboardHome />} />
         <Route path="/upload-book" element={<UploadBookPage />} />
         <Route path="/book/:bookId" element={<BookPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/chat" element={<ChatPage />} />
-        <Route path="/*" element={<Navigate to={"/404"} />} />
+        <Route path="/*" element={<Navigate to={"/seller/404"} />} />
       </Route>
     </Routes>
   );

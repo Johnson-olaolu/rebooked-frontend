@@ -84,9 +84,9 @@ export function GoogleButton({ isLoading, className }: GoogleButtonProps) {
         if (!authResponse.data.user.emailVerified) {
           navigate(`/auth/verify-email?email=${authResponse.data.user.email}`);
         } else if (!authResponse.data.user.onboarded) {
-          navigate("/onboarding");
+          navigate("/seller/onboarding");
         } else {
-          navigate("/dashboard");
+          navigate("/seller/dashboard");
         }
       }
       // eslint-disable-next-line @typescript-eslint/no-unused-vars

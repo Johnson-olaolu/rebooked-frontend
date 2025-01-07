@@ -30,7 +30,7 @@ export default function Header() {
               <Link to="/login">Login</Link>
             </Button>
             <Button asChild>
-              <Link to="/signup">Become a Seller</Link>
+              <Link to="/seller">Become a Seller</Link>
             </Button>
           </div>
         </div>

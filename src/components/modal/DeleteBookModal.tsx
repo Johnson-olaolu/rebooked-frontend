@@ -38,7 +38,7 @@ export function DeleteBookModal({ book, isOpen: open, onClose }: DeleteBookModal
         description: "Book status updated successfully",
       });
       onClose();
-      navigate("/dashboard");
+      navigate("/seller/dashboard");
     },
     onError: () => {
       toast({
