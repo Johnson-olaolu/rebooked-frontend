@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { CustomAvatar } from "@/components/extra/CustomAvatar";
 import { IFile, IUpdateProfilePayload } from "@/services/types";
 import { useUserStore } from "@/store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -19,6 +18,7 @@ import { getInitials } from "@/utils/misc";
 import userService from "@/services/user.service";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { CustomAvatar } from "@/components/extra/CustomAvatar";
 
 const addressSchema = z.object({
   // formattedAddress: z.string(),
