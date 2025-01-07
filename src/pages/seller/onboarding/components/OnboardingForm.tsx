@@ -14,11 +14,11 @@ import { FormItem, FormMessage } from "@/components/ui/form";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { CountryDropdown } from "@/components/ui/country-dropdown";
 import { StateDropdown } from "@/components/ui/state-dropdown";
-import { getInitials } from "@/utils/misc";
+// import { getInitials } from "@/utils/misc";
 import userService from "@/services/user.service";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import CustomAvatar from "@/components/extra/CustomAvatar";
+// import CustomAvatar from "@/components/extra/CustomAvatar";
 
 const addressSchema = z.object({
   // formattedAddress: z.string(),
@@ -83,10 +83,10 @@ export default function OnboardingForm() {
     },
   });
 
-  const handleProfilePictureUpload = (file: IFile) => {
-    queryClient.invalidateQueries({ queryKey: ["user"] });
-    form.setValue("profilePicture", file);
-  };
+  // const handleProfilePictureUpload = (file: IFile) => {
+  //   queryClient.invalidateQueries({ queryKey: ["user"] });
+  //   form.setValue("profilePicture", file);
+  // };
 
   const handleSubmit = async (values: OnbordingFormValues) => {
     console.log(values);
@@ -100,12 +100,12 @@ export default function OnboardingForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="mt-8 space-y-8">
         <div className="flex flex-col items-center">
-          <CustomAvatar
+          {/* <CustomAvatar
             imageUrl={form.watch("profilePicture")?.url ?? user?.profile?.profilePictureUrl}
             image={form.watch("profilePicture")}
             fallback={getInitials(user?.fullName)}
             handleUpload={handleProfilePictureUpload}
-          />
+          /> */}
         </div>
 
         <Separator />
