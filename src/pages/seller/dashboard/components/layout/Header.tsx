@@ -11,7 +11,7 @@ export default function Header() {
   return (
     <header className="bg-white shadow">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link to="seller/dashboard" className="text-2xl font-bold text-primary">
+        <Link to="seller/dashboard" className="text-2xl font-bold text-[#0B3B2C]">
           Rebooked
         </Link>
         <nav className="flex items-center space-x-4">

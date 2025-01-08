@@ -25,9 +25,9 @@ export default function Header() {
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="hidden lg:inline text-sm text-gray-600">Need help? Call us: +1 234 567 8900</span>
+            {/* <span className="hidden lg:inline text-sm text-gray-600">Need help? Call us: +1 234 567 8900</span> */}
             <Button variant="outline" asChild>
-              <Link to="/login">Login</Link>
+              <Link to="/auth/login">Login</Link>
             </Button>
             <Button asChild>
               <Link to="/seller">Become a Seller</Link>
