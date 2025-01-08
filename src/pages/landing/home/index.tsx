@@ -1,5 +1,5 @@
 import AnnouncementBar from "./components/AnnouncementBar";
-import Header from "./components/Header";
+import Header from "../../components/layout.tsx/Header";
 import Hero from "./components/Hero";
 import Stats from "./components/Stats";
 import WeeklyHighlights from "./components/WeeklyHighlights";
@@ -12,7 +12,7 @@ import Testimonials from "./components/Testimonials";
 import ServiceHighlights from "./components/ServiceHighlights";
 import BlogSection from "./components/BlogSection";
 import Newsletter from "./components/Newsletter";
-import Footer from "./components/Footer";
+import Footer from "../../components/layout.tsx/Footer";
 
 const Home = () => {
   return (
