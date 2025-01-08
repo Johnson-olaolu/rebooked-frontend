@@ -1,5 +1,3 @@
-import AnnouncementBar from "./components/AnnouncementBar";
-import Header from "../../components/layout.tsx/Header";
 import Hero from "./components/Hero";
 import Stats from "./components/Stats";
 import WeeklyHighlights from "./components/WeeklyHighlights";
@@ -12,29 +10,23 @@ import Testimonials from "./components/Testimonials";
 import ServiceHighlights from "./components/ServiceHighlights";
 import BlogSection from "./components/BlogSection";
 import Newsletter from "./components/Newsletter";
-import Footer from "../../components/layout.tsx/Footer";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <AnnouncementBar />
-      <Header />
-      <main>
-        <Hero />
-        <Stats />
-        <WeeklyHighlights />
-        <TopCategories />
-        <CurrentBestsellers />
-        <FeaturedBook />
-        <TopPicks />
-        <FeaturedAuthors />
-        <Testimonials />
-        <ServiceHighlights />
-        <BlogSection />
-        <Newsletter />
-      </main>
-      <Footer />
-    </div>
+    <main>
+      <Hero />
+      <Stats />
+      <WeeklyHighlights />
+      <TopCategories />
+      <CurrentBestsellers />
+      <FeaturedBook />
+      <TopPicks />
+      <FeaturedAuthors />
+      <Testimonials />
+      <ServiceHighlights />
+      <BlogSection />
+      <Newsletter />
+    </main>
   );
 };
 
