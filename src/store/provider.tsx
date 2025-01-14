@@ -15,12 +15,16 @@ export function StoreProvider({ children, loadingComponent }: StoreProviderProps
   useAppStore();
 
   useEffect(() => {
-    const hydrateStores = async () => {
-      await Promise.resolve();
-      setIsHydrated(true);
-    };
+    const unsubHydrate = useAppStore.persist.onHydrate(() => setIsHydrated(false));
 
-    hydrateStores();
+    const unsubFinishHydration = useAppStore.persist.onFinishHydration(() => setIsHydrated(true));
+
+    setIsHydrated(useAppStore.persist.hasHydrated());
+
+    return () => {
+      unsubHydrate();
+      unsubFinishHydration();
+    };
   }, []);
 
   if (!isHydrated) {
