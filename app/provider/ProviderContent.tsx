@@ -7,7 +7,6 @@ const ProviderContent = () => {
 
   return (
     <>
-      <div className="">iubiuniuniunuh ub</div>
       <Toaster />
       {/* {getModal()} */}
       {/* {getNotification()} */}

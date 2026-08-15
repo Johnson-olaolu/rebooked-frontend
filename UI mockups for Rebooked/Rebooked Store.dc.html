@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0}
+body{background:#e5d8bf;background-image:radial-gradient(circle at 20% 10%,rgba(255,255,255,.5),transparent 45%),radial-gradient(circle at 85% 70%,rgba(120,84,50,.14),transparent 50%);font-family:Karla,system-ui,sans-serif;color:#241b12}
+a{color:#6a4326;text-decoration:none}
+a:hover{color:#9c3a2c}
+</style>
+</helmet>
+
+<section style="padding:44px 48px 28px">
+  <div style="display:flex;align-items:flex-end;gap:26px;flex-wrap:wrap;max-width:1180px">
+    <img src="assets/rebooked-logo-ink.png" alt="Rebooked" style="width:196px;height:61px;display:block;object-fit:contain;object-position:left center">
+    <div>
+      <div style="font:500 13px/1 Karla,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:rgba(36,27,18,.5)">Round 2 · The store</div>
+      <h1 style="margin:8px 0 0;font:400 34px/1.1 Newsreader,Georgia,serif">Browse, search, and meet the seller.</h1>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px;max-width:1180px;margin:30px 0 0;padding:24px 26px;background:rgba(255,252,245,.72);border:1px solid rgba(36,27,18,.14);border-radius:10px">
+    <div>
+      <div style="font:600 11px/1 Karla,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9c3a2c;margin-bottom:10px">In this round</div>
+      <p style="margin:0;font:15px/1.6 Karla,sans-serif;color:rgba(36,27,18,.78);text-wrap:pretty">Store browse with filters, a search-results state, book detail, seller public profile, and the no-results empty state — plus the two mobile screens with the persistent tab bar.</p>
+    </div>
+    <div>
+      <div style="font:600 11px/1 Karla,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9c3a2c;margin-bottom:10px">Decisions worth a look</div>
+      <p style="margin:0;font:15px/1.6 Karla,sans-serif;color:rgba(36,27,18,.78);text-wrap:pretty">Condition sits next to price on every card — it's the thing buyers judge on. Distance shows instead of shipping. Every price is followed by the no-payments note wherever a buyer might expect a cart.</p>
+    </div>
+    <div>
+      <div style="font:600 11px/1 Karla,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9c3a2c;margin-bottom:10px">Still to come</div>
+      <p style="margin:0;font:15px/1.6 Karla,sans-serif;color:rgba(36,27,18,.78);text-wrap:pretty">Dashboard and listings management, then inbox and conversation threads with the report/block flow.</p>
+    </div>
+  </div>
+</section>
+
+<section id="t2" style="padding:14px 48px 60px">
+  <div style="display:flex;align-items:baseline;gap:10px;margin:0 0 22px">
+    <a href="#t2" style="font:600 10px ui-monospace,Menlo,monospace;padding:4px 8px;background:#241b12;color:#f6efe1;border-radius:4px">2</a>
+    <span style="font:600 13px/1.2 Karla,sans-serif">Store — desktop &amp; mobile</span>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:34px;align-items:flex-start">
+
+    <div id="2a" style="display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;align-items:baseline;gap:8px;font:11px/1.3 Karla,sans-serif;color:rgba(36,27,18,.55)"><a href="#2a" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(36,27,18,.1);color:#241b12;border-radius:5px">2a</a>Store home / browse</div>
+      <x-import component-from-global-scope="ChromeWindow" from="./browser-window.jsx" width="1240px" height="1584px" url="rebooked.co/store" tabs="{{ tabStore }}" hint-size="1240px,1584px">
+        <div style="min-height:100%;background:#f6efe1">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:26px;padding:16px 40px;border-bottom:1px solid rgba(36,27,18,.1);background:#fffdf7">
+            <img src="assets/rebooked-logo-ink.png" alt="Rebooked" style="width:120px;height:38px;display:block;object-fit:contain;object-position:left center">
+            <div style="flex:1;max-width:460px;display:flex;align-items:center;gap:10px;padding:11px 15px;background:#f6efe1;border:1px solid rgba(36,27,18,.2);border-radius:7px">
+              <span style="font:15px Karla,sans-serif;color:rgba(36,27,18,.4)">Search title, author or ISBN</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:22px;font:15px Karla,sans-serif">
+              <span style="color:#241b12;font-weight:600;border-bottom:2px solid #6a4326;padding-bottom:2px">Store</span>
+              <span style="color:rgba(36,27,18,.7)">My listings</span>
+              <span style="display:flex;align-items:center;gap:7px;color:rgba(36,27,18,.7)">Messages<span style="min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#9c3a2c;color:#f6efe1;font:600 11px/18px Karla,sans-serif;text-align:center">3</span></span>
+              <span style="padding:10px 18px;border-radius:6px;background:#6a4326;color:#f6efe1;font-weight:600;box-shadow:inset 0 -2px 0 rgba(0,0,0,.18)">List a book</span>
+              <div style="width:34px;height:34px;border-radius:50%;background:#ece0c9;border:1px solid rgba(36,27,18,.15);display:flex;align-items:center;justify-content:center;font:500 14px Newsreader,Georgia,serif;color:#6a4326">TM</div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:252px 1fr;gap:32px;padding:30px 40px 40px">
+            <div style="display:flex;flex-direction:column;gap:24px">
+              <div>
+                <div style="font:600 11px Karla,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:rgba(36,27,18,.5);margin-bottom:12px">Category</div>
+                <div style="display:flex;flex-direction:column;gap:9px;font:15px Karla,sans-serif">
+                  <div style="display:flex;justify-content:space-between"><span style="font-weight:600">All books</span><span style="color:rgba(36,27,18,.45)">2,847</span></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:rgba(36,27,18,.78)">Textbooks</span><span style="color:rgba(36,27,18,.45)">1,482</span></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:rgba(36,27,18,.78)">Literary fiction</span><span style="color:rgba(36,27,18,.45)">936</span></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:rgba(36,27,18,.78)">Crime &amp; thriller</span><span style="color:rgba(36,27,18,.45)">704</span></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:rgba(36,27,18,.78)">Kids &amp; young adult</span><span style="color:rgba(36,27,18,.45)">592</span></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:rgba(36,27,18,.78)">Rare &amp; collectable</span><span style="color:rgba(36,27,18,.45)">118</span></div>
+                </div>
+              </div>
+              <div style="height:1px;background:rgba(36,27,18,.12)"></div>
+              <div>
+                <div style="font:600 11px Karla,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:rgba(36,27,18,.5);margin-bottom:12px">Condition</div>
+                <div style="display:flex;flex-direction:column;gap:10px;font:15px Karla,sans-serif">
+                  <div style="display:flex;align-items:center;gap:10px"><div style="width:16px;height:16px;border-radius:3px;border:1px solid rgba(36,27,18,.35);background:#fffdf7"></div>New</div>
+                  <div style="display:flex;align-items:center;gap:10px"><div style="width:16px;height:16px;border-radius:3px;background:#6a4326;color:#f6efe1;font:600 11px/16px Karla,sans-serif;text-align:center">✓</div>Like new</div>
+                  <div style="display:flex;align-items:center;gap:10px"><div style="width:16px;height:16px;border-radius:3px;background:#6a4326;color:#f6efe1;font:600 11px/16px Karla,sans-serif;text-align:center">✓</div>Good</div>
+                  <div style="display:flex;align-items:center;gap:10px"><div style="width:16px;height:16px;border-radius:3px;border:1px solid rgba(36,27,18,.35);background:#fffdf7"></div>Fair</div>
+                </div>
+              </div>
+              <div style="height:1px;background:rgba(36,27,18,.12)"></div>
+              <div>
+                <div style="font:600 11px Karla,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:rgba(36,27,18,.5);margin-bottom:12px">Price</div>
+                <div style="display:flex;align-items:center;gap:10px;font:15px Karla,sans-serif">
+                  <div style="flex:1;padding:9px 12px;background:#fffdf7;border:1px solid rgba(36,27,18,.2);border-radius:5px">R0</div>
+                  <span style="color:rgba(36,27,18,.45)">–</span>
+                  <div style="flex:1;padding:9px 12px;background:#fffdf7;border:1px solid rgba(36,27,18,.2);border-radius:5px">R250</div>
+                </div>
+                <div style="margin-top:14px;height:4px;border-radius:2px;background:rgba(36,27,18,.14);position:relative">
+                  <div style="position:absolute;left:0;right:38%;top:0;bottom:0;border-radius:2px;background:#6a4326"></div>
+                  <div style="position:absolute;right:38%;top:-5px;width:14px;height:14px;border-radius:50%;background:#fffdf7;border:2px solid #6a4326"></div>
+                </div>
+              </div>
+              <div style="height:1px;background:rgba(36,27,18,.12)"></div>
+              <div>
+                <div style="font:600 11px Karla,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:rgba(36,27,18,.5);margin-bottom:12px">Location</div>
+                <div style="padding:10px 12px;background:#fffdf7;border:1px solid rgba(36,27,18,.2);border-radius:5px;font:15px Karla,sans-serif">Cape Town · within 15 km</div>
+                <div style="margin-top:12px;display:flex;align-items:center;gap:10px;font:15px Karla,sans-serif;color:rgba(36,27,18,.78)"><div style="width:34px;height:19px;border-radius:10px;background:#6b7355;position:relative"><div style="position:absolute;right:2px;top:2px;width:15px;height:15px;border-radius:50%;background:#fffdf7"></div></div>Local pickup only</div>
+              </div>
+              <div style="padding:16px;background:#ece0c9;border-radius:8px;font:13.5px/1.55 Karla,sans-serif;color:rgba(36,27,18,.7)">Rebooked never handles the money. You agree the price and the handover directly with the seller.</div>
+            </div>
+
+            <div>
+              <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:20px">
+                <div>
+                  <h1 style="margin:0;font:400 34px/1.1 Newsreader,Georgia,serif">All books</h1>
+                  <p style="margin:7px 0 0;font:15px Karla,sans-serif;color:rgba(36,27,18,.6)">2,847 listings · 68 added today</p>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;font:14px Karla,sans-serif">
+                  <span style="color:rgba(36,27,18,.55)">Sort</span>
+                  <span style="padding:8px 13px;border-radius:6px;background:#4a2d18;color:#f6efe1;font-weight:600">Recently added</span>
+                  <span style="padding:8px 13px;border-radius:6px;border:1px solid rgba(36,27,18,.2);color:rgba(36,27,18,.7)">Price</span>
+                  <span style="padding:8px 13px;border-radius:6px;border:1px solid rgba(36,27,18,.2);color:rgba(36,27,18,.7)">Nearest</span>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:22px;font:13.5px Karla,sans-serif">
+                <span style="display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;background:#ece0c9;border:1px solid rgba(36,27,18,.14)">Like new, Good<span style="color:rgba(36,27,18,.45)">×</span></span>
+                <span style="display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;background:#ece0c9;border:1px solid rgba(36,27,18,.14)">Under R250<span style="color:rgba(36,27,18,.45)">×</span></span>
+                <span style="display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;background:#ece0c9;border:1px solid rgba(36,27,18,.14)">Within 15 km<span style="color:rgba(36,27,18,.45)">×</span></span>
+                <span style="padding:7px 12px;color:#9c3a2c;font-weight:600">Clear all</span>
+              </div>
+
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:22px">
+                <sc-for list="{{ books }}" as="b" hint-placeholder-count="9">
+                  <div style="background:#fffdf7;border:1px solid rgba(36,27,18,.13);border-radius:9px;overflow:hidden;box-shadow:0 8px 22px rgba(74,45,24,.06);display:flex;flex-direction:column">
+                    <div style="height:206px;position:relative;display:flex;align-items:flex-end;padding:13px;background:{{ b.tone }}">
+                      <span style="position:absolute;top:11px;right:11px;padding:4px 9px;border-radius:999px;background:rgba(246,239,225,.92);font:600 10.5px Karla,sans-serif;letter-spacing:.07em;text-transform:uppercase;color:#4a2d18">{{ b.condition }}</span>
+                      <span style="font:12px Karla,sans-serif;color:rgba(246,239,225,.8)">Cover photo</span>
+                    </div>
+                    <div style="padding:14px 15px 16px;display:flex;flex-direction:column;gap:4px;flex:1">
+                      <div style="font:500 17.5px/1.25 Newsreader,Georgia,serif">{{ b.title }}</div>
+                      <div style="font:13px Karla,sans-serif;color:rgba(36,27,18,.55)">{{ b.author }}</div>
+                      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:13px">
+                        <span style="font:600 18px Newsreader,Georgia,serif;color:#6a4326">{{ b.price }}</span>
+                        <span style="font:12px Karla,sans-serif;color:rgba(36,27,18,.5)">{{ b.place }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="display:flex;align-items:center;justify-content:center;gap:9px;margin-top:30px;font:14px Karla,sans-serif">
+                <span style="padding:9px 14px;border-radius:6px;background:#4a2d18;color:#f6efe1;font-weight:600">1</span>
+                <span style="padding:9px 14px;border-radius:6px;border:1px solid rgba(36,27,18,.2)">2</span>
+                <span style="padding:9px 14px;border-radius:6px;border:1px solid rgba(36,27,18,.2)">3</span>
+                <span style="color:rgba(36,27,18,.45)">…</span>
+                <span style="padding:9px 14px;border-radius:6px;border:1px solid rgba(36,27,18,.2)">Next →</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <div id="2b" style="display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;align-items:baseline;gap:8px;font:11px/1.3 Karla,sans-serif;color:rgba(36,27,18,.55)"><a href="#2b" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(36,27,18,.1);color:#241b12;border-radius:5px">2b</a>Search results</div>
+      <x-import component-from-global-scope="ChromeWindow" from="./browser-window.jsx" width="1060px" height="1170px" url="rebooked.co/store?q=organic+chemistry" tabs="{{ tabSearch }}" hint-size="1060px,1170px">
+        <div style="min-height:100%;background:#f6efe1">
+          <div style="display:flex;align-items:center;gap:20px;padding:16px 34px;border-bottom:1px solid rgba(36,27,18,.1);background:#fffdf7">
+            <img src="assets/rebooked-logo-ink.png" alt="Rebooked" style="width:108px;height:34px;display:block;object-fit:contain;object-position:left center">
+            <div style="flex:1;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 15px;background:#f6efe1;border:2px solid #6a4326;border-radius:7px;font:15px Karla,sans-serif">
+              <span>organic chemistry</span>
+              <span style="color:rgba(36,27,18,.4)">×</span>
+            </div>
+            <div style="width:34px;height:34px;border-radius:50%;background:#ece0c9;border:1px solid rgba(36,27,18,.15);display:flex;align-items:center;justify-content:center;font:500 14px Newsreader,Georgia,serif;color:#6a4326">TM</div>
+          </div>
+
+          <div style="padding:26px 34px 34px">
+            <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px">
+              <div>
+                <h1 style="margin:0;font:400 30px/1.15 Newsreader,Georgia,serif">14 results for “organic chemistry”</h1>
+                <p style="margin:7px 0 0;font:14.5px Karla,sans-serif;color:rgba(36,27,18,.6)">Textbooks · sorted by price, low to high</p>
+              </div>
+              <div style="display:flex;gap:8px;font:14px Karla,sans-serif">
+                <span style="padding:8px 13px;border-radius:6px;background:#4a2d18;color:#f6efe1;font-weight:600">Price ↑</span>
+                <span style="padding:8px 13px;border-radius:6px;border:1px solid rgba(36,27,18,.2);color:rgba(36,27,18,.7)">Newest</span>
+                <span style="padding:8px 13px;border-radius:6px;border:1px solid rgba(36,27,18,.2);color:rgba(36,27,18,.7)">Filters</span>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:14px;margin-top:24px">
+              <sc-for list="{{ results }}" as="r" hint-placeholder-count="5">
+                <div style="display:grid;grid-template-columns:84px 1fr auto;gap:20px;align-items:center;padding:16px;background:#fffdf7;border:1px solid rgba(36,27,18,.13);border-radius:9px">
+                  <div style="height:112px;border-radius:4px 7px 7px 4px;background:{{ r.tone }};display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;font:10.5px Karla,sans-serif;color:rgba(246,239,225,.75)">Cover</div>
+                  <div style="display:flex;flex-direction:column;gap:5px">
+                    <div style="font:500 20px/1.2 Newsreader,Georgia,serif">{{ r.title }}</div>
+                    <div style="font:14px Karla,sans-serif;color:rgba(36,27,18,.6)">{{ r.author }} · {{ r.edition }}</div>
+                    <div style="display:flex;align-items:center;gap:12px;margin-top:4px;font:13px Karla,sans-serif;color:rgba(36,27,18,.55)">
+                      <span style="padding:3px 9px;border-radius:999px;background:#ece0c9;font-weight:600;color:#4a2d18">{{ r.condition }}</span>
+                      <span>{{ r.place }}</span>
+                      <span>{{ r.seller }}</span>
+                    </div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:11px">
+                    <span style="font:600 24px Newsreader,Georgia,serif;color:#6a4326">{{ r.price }}</span>
+                    <span style="padding:10px 17px;border-radius:6px;background:#6a4326;color:#f6efe1;font:600 14px Karla,sans-serif;box-shadow:inset 0 -2px 0 rgba(0,0,0,.18)">Message seller</span>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <p style="margin:22px 0 0;font:14px Karla,sans-serif;color:rgba(36,27,18,.55)">Not finding it? <span style="color:#6a4326;font-weight:600">Save this search</span> and we'll tell you when someone lists it.</p>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <div id="2c" style="display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;align-items:baseline;gap:8px;font:11px/1.3 Karla,sans-serif;color:rgba(36,27,18,.55)"><a href="#2c" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(36,27,18,.1);color:#241b12;border-radius:5px">2c</a>Book detail</div>
+      <x-import component-from-global-scope="ChromeWindow" from="./browser-window.jsx" width="1060px" height="1042px" url="rebooked.co/book/half-of-a-yellow-sun-4821" tabs="{{ tabBook }}" hint-size="1060px,1042px">
+        <div style="min-height:100%;background:#f6efe1">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 34px;border-bottom:1px solid rgba(36,27,18,.1);background:#fffdf7">
+            <img src="assets/rebooked-logo-ink.png" alt="Rebooked" style="width:108px;height:34px;display:block;object-fit:contain;object-position:left center">
+            <div style="display:flex;align-items:center;gap:20px;font:14.5px Karla,sans-serif;color:rgba(36,27,18,.7)"><span>Store</span><span>My listings</span><span>Messages</span><div style="width:32px;height:32px;border-radius:50%;background:#ece0c9;border:1px solid rgba(36,27,18,.15);display:flex;align-items:center;justify-content:center;font:500 13px Newsreader,Georgia,serif;color:#6a4326">TM</div></div>
+          </div>
+
+          <div style="padding:20px 34px 34px">
+            <div style="font:14px Karla,sans-serif;color:rgba(36,27,18,.55);margin-bottom:20px">Store · Literary fiction · <span style="color:#241b12">Half of a Yellow Sun</span></div>
+
+            <div style="display:grid;grid-template-columns:400px 1fr;gap:38px;align-items:start">
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <div style="height:470px;border-radius:5px 10px 10px 5px;background:#6b7355;display:flex;align-items:flex-end;padding:18px;box-shadow:0 20px 44px rgba(74,45,24,.2)">
+                  <span style="font:13px Karla,sans-serif;color:rgba(246,239,225,.8)">Cover photo — front</span>
+                </div>
+                <div style="display:flex;gap:10px">
+                  <div style="width:76px;height:96px;border-radius:3px 6px 6px 3px;background:#6b7355;border:2px solid #6a4326"></div>
+                  <div style="width:76px;height:96px;border-radius:3px 6px 6px 3px;background:#ece0c9;border:1px solid rgba(36,27,18,.15);display:flex;align-items:center;justify-content:center;font:10.5px Karla,sans-serif;color:rgba(36,27,18,.5);text-align:center">Spine</div>
+                  <div style="width:76px;height:96px;border-radius:3px 6px 6px 3px;background:#ece0c9;border:1px solid rgba(36,27,18,.15);display:flex;align-items:center;justify-content:center;font:10.5px Karla,sans-serif;color:rgba(36,27,18,.5);text-align:center">Page wear</div>
+                </div>
+              </div>
+
+              <div>
+                <span style="display:inline-block;padding:5px 11px;border-radius:999px;background:#ece0c9;font:600 11px Karla,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#4a2d18">Like new</span>
+                <h1 style="margin:14px 0 0;font:400 44px/1.05 Newsreader,Georgia,serif;letter-spacing:-.01em">Half of a Yellow Sun</h1>
+                <p style="margin:10px 0 0;font:18px Karla,sans-serif;color:rgba(36,27,18,.65)">Chimamanda Ngozi Adichie · Fourth Estate, 2007 · Paperback</p>
+
+                <div style="display:flex;align-items:baseline;gap:14px;margin:24px 0 0">
+                  <span style="font:600 40px Newsreader,Georgia,serif;color:#6a4326">R120</span>
+                  <span style="font:14px Karla,sans-serif;color:rgba(36,27,18,.55)">Listed 2 days ago · 31 views</span>
+                </div>
+
+                <div style="display:flex;gap:12px;margin:22px 0 0">
+                  <span style="padding:15px 28px;border-radius:7px;background:#6a4326;color:#f6efe1;font:600 16px Karla,sans-serif;box-shadow:inset 0 -2px 0 rgba(0,0,0,.18)">Message seller</span>
+                  <span style="padding:15px 24px;border-radius:7px;border:1px solid rgba(36,27,18,.28);font:600 16px Karla,sans-serif">Save for later</span>
+                </div>
+                <p style="margin:14px 0 0;font:13.5px/1.55 Karla,sans-serif;color:rgba(36,27,18,.6);max-width:440px">Rebooked does not process payments. Agree the amount and the handover with the seller in your conversation.</p>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 26px;margin:26px 0 0;padding:20px 0;border-top:1px solid rgba(36,27,18,.12);border-bottom:1px solid rgba(36,27,18,.12);font:15px Karla,sans-serif">
+                  <div style="display:flex;justify-content:space-between"><span style="color:rgba(36,27,18,.55)">Condition</span><span>Like new</span></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:rgba(36,27,18,.55)">Genre</span><span>Literary fiction</span></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:rgba(36,27,18,.55)">Pickup</span><span>Rondebosch, CPT</span></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:rgba(36,27,18,.55)">Posting</span><span>Buyer pays courier</span></div>
+                </div>
+
+                <h2 style="margin:24px 0 8px;font:400 22px Newsreader,Georgia,serif">Seller's notes</h2>
+                <p style="margin:0;max-width:520px;font:16px/1.65 Karla,sans-serif;color:rgba(36,27,18,.78);text-wrap:pretty">Read once and kept on the shelf since. Spine is uncracked, no annotations, small crease on the back cover corner (third photo). Happy to meet near UCT upper campus or Rondebosch Main Road any weekday afternoon.</p>
+
+                <div style="display:flex;align-items:center;gap:15px;margin:26px 0 0;padding:18px;background:#fffdf7;border:1px solid rgba(36,27,18,.13);border-radius:9px">
+                  <div style="width:52px;height:52px;border-radius:50%;background:#ece0c9;border:1px solid rgba(36,27,18,.15);display:flex;align-items:center;justify-content:center;font:500 19px Newsreader,Georgia,serif;color:#6a4326">NM</div>
+                  <div style="flex:1">
+                    <div style="font:600 16px Karla,sans-serif">Nadia M.</div>
+                    <div style="margin-top:3px;font:13.5px Karla,sans-serif;color:rgba(36,27,18,.6)">★★★★★ 4.9 · 47 books rehomed · Joined March 2024</div>
+                  </div>
+                  <span style="font:600 14px Karla,sans-serif;color:#6a4326">View profile →</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <div id="2d" style="display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;align-items:baseline;gap:8px;font:11px/1.3 Karla,sans-serif;color:rgba(36,27,18,.55)"><a href="#2d" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(36,27,18,.1);color:#241b12;border-radius:5px">2d</a>Seller public profile</div>
+      <x-import component-from-global-scope="ChromeWindow" from="./browser-window.jsx" width="1060px" height="1100px" url="rebooked.co/u/nadia-m" tabs="{{ tabSeller }}" hint-size="1060px,1100px">
+        <div style="min-height:100%;background:#f6efe1">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 34px;border-bottom:1px solid rgba(36,27,18,.1);background:#fffdf7">
+            <img src="assets/rebooked-logo-ink.png" alt="Rebooked" style="width:108px;height:34px;display:block;object-fit:contain;object-position:left center">
+            <div style="display:flex;align-items:center;gap:20px;font:14.5px Karla,sans-serif;color:rgba(36,27,18,.7)"><span>Store</span><span>My listings</span><span>Messages</span><div style="width:32px;height:32px;border-radius:50%;background:#ece0c9;border:1px solid rgba(36,27,18,.15);display:flex;align-items:center;justify-content:center;font:500 13px Newsreader,Georgia,serif;color:#6a4326">TM</div></div>
+          </div>
+
+          <div style="padding:34px 34px 40px">
+            <div style="display:flex;align-items:flex-start;gap:24px;padding:26px;background:#4a2d18;border-radius:11px;color:#f6efe1;position:relative;overflow:hidden">
+              <div style="width:96px;height:96px;border-radius:50%;background:#ece0c9;display:flex;align-items:center;justify-content:center;font:500 34px Newsreader,Georgia,serif;color:#6a4326;flex-shrink:0">NM</div>
+              <div style="flex:1;position:relative;z-index:1">
+                <h1 style="margin:0;font:400 34px/1.1 Newsreader,Georgia,serif">Nadia M.</h1>
+                <div style="margin-top:8px;font:15px Karla,sans-serif;color:rgba(246,239,225,.72)">Rondebosch, Cape Town · Joined March 2024 · Usually replies within a day</div>
+                <p style="margin:14px 0 0;max-width:560px;font:15.5px/1.6 Karla,sans-serif;color:rgba(246,239,225,.85);text-wrap:pretty">Clearing out a decade of English lit and a few chemistry texts from undergrad. Everything I list I've actually read. Happy to meet on campus.</p>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:9px;align-items:flex-end;position:relative;z-index:1">
+                <span style="padding:12px 20px;border-radius:7px;background:#f6efe1;color:#4a2d18;font:600 15px Karla,sans-serif">Message Nadia</span>
+                <span style="font:13px Karla,sans-serif;color:rgba(246,239,225,.6)">Report this seller</span>
+              </div>
+              <img src="assets/rebooked-mark-cream.png" alt="" style="position:absolute;right:0;bottom:-30px;width:220px;height:150px;object-fit:contain;opacity:.08">
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:20px 0 0">
+              <div style="padding:18px;background:#fffdf7;border:1px solid rgba(36,27,18,.13);border-radius:9px">
+                <div style="font:400 30px Newsreader,Georgia,serif;color:#6a4326">4.9</div>
+                <div style="margin-top:4px;font:13px Karla,sans-serif;color:rgba(36,27,18,.6)">★★★★★ from 38 buyers</div>
+              </div>
+              <div style="padding:18px;background:#fffdf7;border:1px solid rgba(36,27,18,.13);border-radius:9px">
+                <div style="font:400 30px Newsreader,Georgia,serif;color:#6a4326">47</div>
+                <div style="margin-top:4px;font:13px Karla,sans-serif;color:rgba(36,27,18,.6)">Books rehomed</div>
+              </div>
+              <div style="padding:18px;background:#fffdf7;border:1px solid rgba(36,27,18,.13);border-radius:9px">
+                <div style="font:400 30px Newsreader,Georgia,serif;color:#6a4326">12</div>
+                <div style="margin-top:4px;font:13px Karla,sans-serif;color:rgba(36,27,18,.6)">Available now</div>
+              </div>
+              <div style="padding:18px;background:#fffdf7;border:1px solid rgba(36,27,18,.13);border-radius:9px">
+                <div style="display:flex;align-items:center;gap:7px;font:600 14px Karla,sans-serif;color:#6b7355">✓ Email verified</div>
+                <div style="margin-top:8px;font:13px Karla,sans-serif;color:rgba(36,27,18,.6)">Phone number on file</div>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 320px;gap:30px;margin-top:32px;align-items:start">
+              <div>
+                <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px">
+                  <h2 style="margin:0;font:400 26px Newsreader,Georgia,serif">On Nadia's shelf</h2>
+                  <span style="font:14px Karla,sans-serif;color:rgba(36,27,18,.55)">12 available · 4 in conversation</span>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px">
+                  <sc-for list="{{ shelf }}" as="s" hint-placeholder-count="6">
+                    <div style="background:#fffdf7;border:1px solid rgba(36,27,18,.13);border-radius:8px;overflow:hidden">
+                      <div style="height:150px;background:{{ s.tone }};display:flex;align-items:flex-end;padding:11px;font:11px Karla,sans-serif;color:rgba(246,239,225,.78)">Cover</div>
+                      <div style="padding:12px 13px 14px">
+                        <div style="font:500 15.5px/1.25 Newsreader,Georgia,serif">{{ s.title }}</div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:9px">
+                          <span style="font:600 15px Newsreader,Georgia,serif;color:#6a4326">{{ s.price }}</span>
+                          <span style="font:11.5px Karla,sans-serif;color:rgba(36,27,18,.5)">{{ s.condition }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="padding:22px;background:#ece0c9;border-radius:10px">
+                <h2 style="margin:0 0 16px;font:400 22px Newsreader,Georgia,serif">What buyers said</h2>
+                <div style="display:flex;flex-direction:column;gap:16px">
+                  <div style="padding-bottom:16px;border-bottom:1px solid rgba(36,27,18,.14)">
+                    <div style="font:13px Karla,sans-serif;color:#6b7355">★★★★★</div>
+                    <p style="margin:7px 0 0;font:14.5px/1.6 Karla,sans-serif;color:rgba(36,27,18,.8)">Met me at the library, book was exactly as described. Easy.</p>
+                    <div style="margin-top:7px;font:12.5px Karla,sans-serif;color:rgba(36,27,18,.5)">Sipho K. · 2 weeks ago</div>
+                  </div>
+                  <div style="padding-bottom:16px;border-bottom:1px solid rgba(36,27,18,.14)">
+                    <div style="font:13px Karla,sans-serif;color:#6b7355">★★★★★</div>
+                    <p style="margin:7px 0 0;font:14.5px/1.6 Karla,sans-serif;color:rgba(36,27,18,.8)">Replied the same evening and held it for me until Saturday.</p>
+                    <div style="margin-top:7px;font:12.5px Karla,sans-serif;color:rgba(36,27,18,.5)">Lerato B. · 1 month ago</div>
+                  </div>
+                  <div>
+                    <div style="font:13px Karla,sans-serif;color:#6b7355">★★★★☆</div>
+                    <p style="margin:7px 0 0;font:14.5px/1.6 Karla,sans-serif;color:rgba(36,27,18,.8)">Good book, slightly more wear than the photos showed.</p>
+                    <div style="margin-top:7px;font:12.5px Karla,sans-serif;color:rgba(36,27,18,.5)">Jonas P. · 2 months ago</div>
+                  </div>
+                </div>
+                <div style="margin-top:18px;font:14px Karla,sans-serif;color:#6a4326;font-weight:600">All 38 reviews →</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <div id="2e" style="display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;align-items:baseline;gap:8px;font:11px/1.3 Karla,sans-serif;color:rgba(36,27,18,.55)"><a href="#2e" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(36,27,18,.1);color:#241b12;border-radius:5px">2e</a>Empty state — nothing matches</div>
+      <x-import component-from-global-scope="ChromeWindow" from="./browser-window.jsx" width="1060px" height="668px" url="rebooked.co/store?q=untranslated+borges" tabs="{{ tabEmpty }}" hint-size="1060px,668px">
+        <div style="min-height:100%;background:#f6efe1;display:flex;flex-direction:column">
+          <div style="display:flex;align-items:center;gap:20px;padding:16px 34px;border-bottom:1px solid rgba(36,27,18,.1);background:#fffdf7">
+            <img src="assets/rebooked-logo-ink.png" alt="Rebooked" style="width:108px;height:34px;display:block;object-fit:contain;object-position:left center">
+            <div style="flex:1;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 15px;background:#f6efe1;border:2px solid #6a4326;border-radius:7px;font:15px Karla,sans-serif"><span>untranslated borges, first edition</span><span style="color:rgba(36,27,18,.4)">×</span></div>
+            <div style="width:34px;height:34px;border-radius:50%;background:#ece0c9;border:1px solid rgba(36,27,18,.15);display:flex;align-items:center;justify-content:center;font:500 14px Newsreader,Georgia,serif;color:#6a4326">TM</div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px">
+            <img src="assets/rebooked-mark-ink.png" alt="" style="width:132px;height:86px;object-fit:contain;opacity:.22">
+            <h1 style="margin:22px 0 0;font:400 34px/1.15 Newsreader,Georgia,serif">Nobody's shelved that one yet</h1>
+            <p style="margin:12px 0 0;max-width:440px;font:16px/1.6 Karla,sans-serif;color:rgba(36,27,18,.65);text-wrap:pretty">No listings match <span style="color:#241b12">untranslated borges, first edition</span> with your filters. Loosening the condition filter usually helps.</p>
+            <div style="display:flex;gap:12px;margin-top:26px">
+              <span style="padding:13px 22px;border-radius:7px;background:#6a4326;color:#f6efe1;font:600 15px Karla,sans-serif;box-shadow:inset 0 -2px 0 rgba(0,0,0,.18)">Alert me when it's listed</span>
+              <span style="padding:13px 22px;border-radius:7px;border:1px solid rgba(36,27,18,.28);font:600 15px Karla,sans-serif">Clear all filters</span>
+            </div>
+            <div style="margin-top:34px;padding-top:22px;border-top:1px solid rgba(36,27,18,.12);font:14.5px Karla,sans-serif;color:rgba(36,27,18,.55)">Meanwhile: <span style="color:#6a4326;font-weight:600">Borges — Ficciones (Good, R95)</span> · <span style="color:#6a4326;font-weight:600">Labyrinths (Fair, R60)</span></div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <div id="2f" style="display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;align-items:baseline;gap:8px;font:11px/1.3 Karla,sans-serif;color:rgba(36,27,18,.55)"><a href="#2f" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(36,27,18,.1);color:#241b12;border-radius:5px">2f</a>Mobile — browse</div>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+        <div style="box-sizing:border-box;height:100%;background:#f6efe1;display:flex;flex-direction:column;padding:74px 0 0">
+          <div style="padding:0 20px 14px">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <img src="assets/rebooked-logo-ink.png" alt="Rebooked" style="width:104px;height:33px;display:block;object-fit:contain;object-position:left center">
+              <div style="width:32px;height:32px;border-radius:50%;background:#ece0c9;border:1px solid rgba(36,27,18,.15);display:flex;align-items:center;justify-content:center;font:500 13px Newsreader,Georgia,serif;color:#6a4326">TM</div>
+            </div>
+            <div style="margin-top:14px;padding:12px 14px;background:#fffdf7;border:1px solid rgba(36,27,18,.2);border-radius:8px;font:15px Karla,sans-serif;color:rgba(36,27,18,.42)">Search title, author or ISBN</div>
+            <div style="display:flex;gap:8px;margin-top:12px;font:13.5px Karla,sans-serif">
+              <span style="padding:7px 13px;border-radius:999px;background:#4a2d18;color:#f6efe1;font-weight:600">All</span>
+              <span style="padding:7px 13px;border-radius:999px;background:#ece0c9">Textbooks</span>
+              <span style="padding:7px 13px;border-radius:999px;background:#ece0c9">Fiction</span>
+              <span style="padding:7px 13px;border-radius:999px;background:#ece0c9">Near me</span>
+            </div>
+          </div>
+
+          <div style="flex:1;padding:6px 20px 20px">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px">
+              <span style="font:500 19px Newsreader,Georgia,serif">Recently added</span>
+              <span style="font:13px Karla,sans-serif;color:rgba(36,27,18,.5)">68 today</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+              <sc-for list="{{ mobileBooks }}" as="m" hint-placeholder-count="4">
+                <div style="background:#fffdf7;border:1px solid rgba(36,27,18,.13);border-radius:8px;overflow:hidden">
+                  <div style="height:132px;background:{{ m.tone }};position:relative">
+                    <span style="position:absolute;top:8px;right:8px;padding:3px 7px;border-radius:999px;background:rgba(246,239,225,.92);font:600 9.5px Karla,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#4a2d18">{{ m.condition }}</span>
+                  </div>
+                  <div style="padding:10px 11px 12px">
+                    <div style="font:500 15px/1.25 Newsreader,Georgia,serif">{{ m.title }}</div>
+                    <div style="margin-top:3px;font:12px Karla,sans-serif;color:rgba(36,27,18,.55)">{{ m.author }}</div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:9px">
+                      <span style="font:600 15px Newsreader,Georgia,serif;color:#6a4326">{{ m.price }}</span>
+                      <span style="font:11px Karla,sans-serif;color:rgba(36,27,18,.5)">{{ m.place }}</span>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:10px 12px 30px;background:#fffdf7;border-top:1px solid rgba(36,27,18,.14)">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px 0;min-height:44px;font:11px Karla,sans-serif;color:#6a4326;font-weight:700"><div style="width:22px;height:22px;border-radius:4px;background:#6a4326"></div>Store</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px 0;min-height:44px;font:11px Karla,sans-serif;color:rgba(36,27,18,.5)"><div style="width:22px;height:22px;border-radius:4px;background:rgba(36,27,18,.25)"></div>Listings</div>
+            <div style="position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px 0;min-height:44px;font:11px Karla,sans-serif;color:rgba(36,27,18,.5)"><div style="width:22px;height:22px;border-radius:4px;background:rgba(36,27,18,.25)"></div><span style="position:absolute;top:2px;right:22px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:#9c3a2c;color:#f6efe1;font:600 10px/16px Karla,sans-serif;text-align:center">3</span>Messages</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px 0;min-height:44px;font:11px Karla,sans-serif;color:rgba(36,27,18,.5)"><div style="width:22px;height:22px;border-radius:11px;background:rgba(36,27,18,.25)"></div>Profile</div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <div id="2g" style="display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;align-items:baseline;gap:8px;font:11px/1.3 Karla,sans-serif;color:rgba(36,27,18,.55)"><a href="#2g" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(36,27,18,.1);color:#241b12;border-radius:5px">2g</a>Mobile — book detail</div>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+        <div style="box-sizing:border-box;height:100%;background:#f6efe1;display:flex;flex-direction:column;padding:74px 0 0">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:0 20px 12px;font:15px Karla,sans-serif;color:rgba(36,27,18,.7)">
+            <span>← Store</span>
+            <span>Save</span>
+          </div>
+          <div style="flex:1;min-height:0;padding:0 20px">
+            <div style="height:234px;border-radius:5px 9px 9px 5px;background:#6b7355;display:flex;align-items:flex-end;padding:14px;box-shadow:0 14px 30px rgba(74,45,24,.18)"><span style="font:12px Karla,sans-serif;color:rgba(246,239,225,.8)">Cover photo 1 of 3</span></div>
+            <span style="display:inline-block;margin-top:16px;padding:4px 10px;border-radius:999px;background:#ece0c9;font:600 10.5px Karla,sans-serif;letter-spacing:.07em;text-transform:uppercase;color:#4a2d18">Like new</span>
+            <h1 style="margin:12px 0 0;font:400 30px/1.08 Newsreader,Georgia,serif">Half of a Yellow Sun</h1>
+            <p style="margin:7px 0 0;font:15px Karla,sans-serif;color:rgba(36,27,18,.62)">Chimamanda Ngozi Adichie · 2007</p>
+            <div style="display:flex;align-items:baseline;gap:12px;margin-top:16px">
+              <span style="font:600 32px Newsreader,Georgia,serif;color:#6a4326">R120</span>
+              <span style="font:13px Karla,sans-serif;color:rgba(36,27,18,.55)">Rondebosch · 2 km</span>
+            </div>
+            <p style="margin:16px 0 0;font:15px/1.6 Karla,sans-serif;color:rgba(36,27,18,.78);text-wrap:pretty">Read once and kept on the shelf since. Uncracked spine, no annotations, small crease on the back corner.</p>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:18px;padding:14px;background:#fffdf7;border:1px solid rgba(36,27,18,.13);border-radius:9px">
+              <div style="width:42px;height:42px;border-radius:50%;background:#ece0c9;border:1px solid rgba(36,27,18,.15);display:flex;align-items:center;justify-content:center;font:500 16px Newsreader,Georgia,serif;color:#6a4326">NM</div>
+              <div style="flex:1">
+                <div style="font:600 15px Karla,sans-serif">Nadia M.</div>
+                <div style="margin-top:2px;font:12.5px Karla,sans-serif;color:rgba(36,27,18,.6)">★★★★★ 4.9 · 47 rehomed</div>
+              </div>
+              <span style="font:13px Karla,sans-serif;color:#6a4326;font-weight:600">→</span>
+            </div>
+          </div>
+          <div style="padding:14px 20px 34px;background:#fffdf7;border-top:1px solid rgba(36,27,18,.14)">
+            <div style="padding:15px;border-radius:8px;background:#6a4326;color:#f6efe1;font:600 16px Karla,sans-serif;text-align:center;min-height:44px;box-shadow:inset 0 -2px 0 rgba(0,0,0,.18)">Message Nadia about this book</div>
+            <p style="margin:10px 0 0;font:12px/1.5 Karla,sans-serif;color:rgba(36,27,18,.55);text-align:center">Rebooked doesn't process payments — you'll arrange that in the chat.</p>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+  </div>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;1400&quot;,&quot;height&quot;:&quot;1000&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const t = (title) => [{ title }];
+    const B = (title, author, price, condition, place, tone) => ({ title, author, price, condition, place, tone });
+    return {
+      tabStore: t('Store · Rebooked'),
+      tabSearch: t('organic chemistry · Rebooked'),
+      tabBook: t('Half of a Yellow Sun · Rebooked'),
+      tabSeller: t('Nadia M. · Rebooked'),
+      tabEmpty: t('No results · Rebooked'),
+      books: [
+        B('Half of a Yellow Sun', 'Chimamanda Ngozi Adichie', 'R120', 'Like new', 'Rondebosch', '#6b7355'),
+        B('Organic Chemistry, 9th ed.', 'Paula Bruice', 'R450', 'Good', 'Hatfield', '#9c3a2c'),
+        B('The Master and Margarita', 'Mikhail Bulgakov', 'R70', 'Good', 'Melville', '#4a2d18'),
+        B('Cry, the Beloved Country', 'Alan Paton', 'R95', 'Like new', 'Durban North', '#6a4326'),
+        B('Thirteen Cents', 'K. Sello Duiker', 'R85', 'Good', 'Observatory', '#6b7355'),
+        B('Calculus: Early Transcendentals', 'James Stewart', 'R520', 'Like new', 'Stellenbosch', '#4a2d18'),
+        B('The Long Walk to Freedom', 'Nelson Mandela', 'R140', 'Good', 'Claremont', '#9c3a2c'),
+        B('Norwegian Wood', 'Haruki Murakami', 'R110', 'Like new', 'Sea Point', '#6a4326'),
+        B('Disgrace', 'J. M. Coetzee', 'R80', 'Good', 'Woodstock', '#6b7355'),
+      ],
+      mobileBooks: [
+        B('Half of a Yellow Sun', 'C. N. Adichie', 'R120', 'Like new', '2 km', '#6b7355'),
+        B('Thirteen Cents', 'K. S. Duiker', 'R85', 'Good', '4 km', '#9c3a2c'),
+        B('Norwegian Wood', 'H. Murakami', 'R110', 'Like new', '6 km', '#4a2d18'),
+        B('Disgrace', 'J. M. Coetzee', 'R80', 'Good', '3 km', '#6a4326'),
+      ],
+      results: [
+        { title: 'Organic Chemistry', author: 'John McMurry', edition: '8th edition', price: 'R280', condition: 'Fair', place: 'Observatory · 3 km', seller: 'Sipho K.', tone: '#6b7355' },
+        { title: 'Organic Chemistry', author: 'Paula Bruice', edition: '9th edition', price: 'R450', condition: 'Good', place: 'Hatfield · courier', seller: 'Nadia M.', tone: '#9c3a2c' },
+        { title: 'Organic Chemistry as a Second Language', author: 'David Klein', edition: '5th edition', price: 'R190', condition: 'Like new', place: 'Rondebosch · 2 km', seller: 'Lerato B.', tone: '#4a2d18' },
+        { title: 'Solutions Manual: Organic Chemistry', author: 'Paula Bruice', edition: '9th edition', price: 'R120', condition: 'Good', place: 'Claremont · 5 km', seller: 'Jonas P.', tone: '#6a4326' },
+        { title: 'Organic Chemistry Study Guide', author: 'Jan Simek', edition: '2019', price: 'R95', condition: 'Fair', place: 'Stellenbosch · courier', seller: 'Ayesha D.', tone: '#6b7355' },
+      ],
+      shelf: [
+        { title: 'Purple Hibiscus', price: 'R90', condition: 'Good', tone: '#6b7355' },
+        { title: 'The Bell Jar', price: 'R75', condition: 'Fair', tone: '#9c3a2c' },
+        { title: 'Beloved', price: 'R110', condition: 'Like new', tone: '#4a2d18' },
+        { title: 'Wide Sargasso Sea', price: 'R65', condition: 'Good', tone: '#6a4326' },
+        { title: 'Organic Chemistry', price: 'R450', condition: 'Good', tone: '#6b7355' },
+        { title: 'A Fine Balance', price: 'R130', condition: 'Like new', tone: '#4a2d18' },
+      ],
+    };
+  }
+}
+
+</script>
+</body>
+</html>
