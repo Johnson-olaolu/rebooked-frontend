@@ -98,7 +98,7 @@ const VerifyEmailPage = () => {
                 </button>
 
                 <p className="mt-4 text-sm text-foreground/55">
-                    <Link to="/auth/register" className="font-semibold text-primary hover:underline">
+                    <Link to="/register" className="font-semibold text-primary hover:underline">
                         Change email
                     </Link>{" "}
                     ·{" "}

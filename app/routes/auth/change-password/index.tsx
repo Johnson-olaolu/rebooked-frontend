@@ -57,7 +57,7 @@ const ChangePasswordPage = () => {
         setTimeout(() => {
             setSubmitting(false);
             toast.success("Password updated — you're logged in.");
-            navigate("/auth/login");
+            navigate("/login");
         }, 700);
     };
 

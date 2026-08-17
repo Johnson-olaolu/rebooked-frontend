@@ -20,14 +20,14 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (!accessToken) {
       const redirectUrl = encodeURIComponent(pathname);
-      router.replace(`/auth/login?redirect=${redirectUrl}`);
+      router.replace(`/login?redirect=${redirectUrl}`);
     }
   }, [accessToken, pathname]);
 
   useEffect(() => {
     if (isError) {
       const redirectUrl = encodeURIComponent(pathname);
-      router.replace(`/auth/login?redirect=${redirectUrl}`);
+      router.replace(`/login?redirect=${redirectUrl}`);
     }
     if (isSuccess && data) {
       setUser(data.data!);

@@ -4,7 +4,6 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Checkbox } from "~/components/ui/checkbox";
-import AuthSplitLayout from "../components/AuthSplitLayout";
 
 const LoginPage = () => {
     const [email, setEmail] = useState("");
@@ -26,18 +25,7 @@ const LoginPage = () => {
     };
 
     return (
-        <AuthSplitLayout quote="Someone has been waiting to hear about your copy of Sapiens."
-            footer={
-                <>
-                    <p className="text-sm text-white/50">
-                        New here?{" "}
-                        <Link to="/auth/register" className="font-semibold text-white underline-offset-4 underline">
-                            Create an account
-                        </Link>
-                    </p>
-                </>
-            }
-        >
+        <>
             <h1 className="mb-7 font-serif text-3xl md:text-4xl">Welcome back</h1>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4.5">
@@ -95,11 +83,11 @@ const LoginPage = () => {
 
             <p className="mt-7 text-center text-sm text-foreground/60">
                 New here?{" "}
-                <Link to="/auth/register" className="font-semibold text-primary underline-offset-4 hover:underline">
+                <Link to="/register" className="font-semibold text-primary underline-offset-4 hover:underline">
                     Create an account
                 </Link>
             </p>
-        </AuthSplitLayout>
+        </>
     );
 };
 

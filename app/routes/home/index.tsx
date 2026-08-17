@@ -68,7 +68,7 @@ export function ServerComponent() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg" className="h-12 rounded-lg bg-primary px-6 text-base font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90">
-              <Link to="/auth/register">List your first book</Link>
+              <Link to="/register">List your first book</Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="h-12 rounded-lg border-foreground/25 px-6 text-base font-semibold">
               <Link to="/#how-it-works">Browse the store</Link>
@@ -215,7 +215,7 @@ export function ServerComponent() {
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-5">
           <span className="text-foreground/65">2,847 books currently looking for a new reader.</span>
           <Button asChild size="lg" className="h-12 rounded-lg bg-primary px-6 text-base font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90">
-            <Link to="/auth/register">Browse all books →</Link>
+            <Link to="/register">Browse all books →</Link>
           </Button>
         </div>
       </section>

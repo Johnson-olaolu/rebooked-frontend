@@ -20,17 +20,17 @@ const Header = () => {
                     <Link to="/about-us" className="transition-colors hover:text-foreground">
                         About us
                     </Link>
-                    <Link to="/auth/login" className="transition-colors hover:text-foreground">
+                    <Link to="/login" className="transition-colors hover:text-foreground">
                         Log in
                     </Link>
                 </nav>
 
                 <div className="flex items-center gap-3">
                     <Button asChild variant="outline" className="hidden h-10 rounded-lg px-4 text-[15px] font-semibold sm:inline-flex">
-                        <Link to="/auth/login">Log in</Link>
+                        <Link to="/login">Log in</Link>
                     </Button>
                     <Button asChild className="h-10 rounded-lg bg-primary px-5 text-[15px] font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90">
-                        <Link to="/auth/register">Join Rebooked</Link>
+                        <Link to="/register">Join Rebooked</Link>
                     </Button>
                 </div>
             </div>

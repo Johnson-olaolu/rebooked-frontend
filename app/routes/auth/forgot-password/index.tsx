@@ -32,7 +32,7 @@ const ForgotPasswordPage = () => {
                     <Button variant="outline" onClick={() => setSent(false)} className="mt-6 h-11 w-full rounded-lg font-semibold">
                         Use a different email
                     </Button>
-                    <Link to="/auth/login" className="mt-5 inline-block text-sm font-semibold text-foreground/60 hover:text-primary">
+                    <Link to="/login" className="mt-5 inline-block text-sm font-semibold text-foreground/60 hover:text-primary">
                         ← Back to log in
                     </Link>
                 </div>
@@ -70,7 +70,7 @@ const ForgotPasswordPage = () => {
             </form>
 
             <Link
-                to="/auth/login"
+                to="/login"
                 className="mt-5 block text-center text-sm text-foreground/60 transition-colors hover:text-primary"
             >
                 ← Back to log in

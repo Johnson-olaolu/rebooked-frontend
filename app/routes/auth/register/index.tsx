@@ -5,7 +5,6 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Checkbox } from "~/components/ui/checkbox";
-import AuthSplitLayout from "../components/AuthSplitLayout";
 
 function getPasswordStrength(password: string) {
     if (!password) return { label: "", percent: 0, tone: "bg-border" };
@@ -55,19 +54,11 @@ const RegisterPage = () => {
     };
 
     return (
-        <AuthSplitLayout
-            variant="ink"
-            quote="Shelf space is temporary. Good books aren't."
-            bullets={[
-                "Free to list, always",
-                "You keep 100% — no payment processing",
-                "Verified emails on both sides",
-            ]}
-        >
+        <>
             <h1 className="font-serif text-3xl md:text-4xl">Create your account</h1>
             <p className="mt-2.5 mb-7 text-foreground/60">
                 Already have one?{" "}
-                <Link to="/auth/login" className="font-semibold text-primary underline-offset-4 hover:underline">
+                <Link to="/login" className="font-semibold text-primary underline-offset-4 hover:underline">
                     Log in
                 </Link>
             </p>
@@ -175,7 +166,7 @@ const RegisterPage = () => {
                     Continue with Google
                 </Button>
             </form>
-        </AuthSplitLayout>
+        </>
     );
 };
 
