@@ -9,6 +9,15 @@ export interface IResponse<D = null> {
   message: string;
 }
 
+export interface IResponsePagiination<D> extends IResponse<D> {
+  pagination: {
+    currentPage: number;
+    size: number;
+    totalPages: number;
+    totalElements: number;
+  }
+}
+
 export interface IPageable<D> {
   content: D[];
   empty: boolean;

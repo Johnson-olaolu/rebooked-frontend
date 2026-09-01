@@ -26,17 +26,15 @@ export const createAppSlice: StateCreator<IAppSlice, [], [], IAppSlice> = (set, 
   };
 };
 
-export type IStore = IAppSlice & IAuthSlice & IUserSlice;
+export type IStore = IAppSlice
 
 export const createBaseStore = () => {
   return createStore<IStore>()(
     persist(
       (...a) => ({
         ...createAppSlice(...a),
-        ...createAuthSlice(...a),
-        ...createUserSlice(...a),
       }),
-      { name: "rebooked-store", storage: typeof window !== "undefined" ? localStorage : undefined },
+      { name: "rebooked-store" },
     ),
   );
 };
