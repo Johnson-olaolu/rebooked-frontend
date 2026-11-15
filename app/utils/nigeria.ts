@@ -63,3 +63,10 @@ export const normalizeNgState = (name?: string | null): NgState | undefined => {
   const compact = cleaned.replace(/\s/g, "").replace("nassarawa", "nasarawa");
   return NG_STATES.find((state) => state.toLowerCase().replace(/\s/g, "") === compact);
 };
+
+/** Display label for a state: "Oyo" → "Oyo State". The FCT isn't a state, so it's left as is. */
+export const formatNgState = (state?: string | null) => {
+  const name = normalizeNgState(state) ?? state?.trim();
+  if (!name) return "";
+  return name === "Federal Capital Territory" || /\bstate$/i.test(name) ? name : `${name} State`;
+};

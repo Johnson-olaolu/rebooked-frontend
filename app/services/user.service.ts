@@ -14,6 +14,11 @@ class UserService {
    * Merges the fields sent into the profile. The backend requires userName and
    * address.city (400 with `errors` otherwise) and then marks onboarding complete.
    */
+  /** Account fields. Only fullName is sent; changing email needs its own verified flow. */
+  async updateUser(userId: string, payload: { fullName: string }): Promise<IResponse<IUser>> {
+    return await https.patch({ url: `${this.baseUrl}/${userId}`, body: payload });
+  }
+
   async updateProfile(userId: string, payload: IUpdateProfilePayload): Promise<IResponse<IUser>> {
     return await https.patch({ url: `${this.baseUrl}/${userId}/profile`, body: payload });
   }

@@ -19,7 +19,6 @@ export const SIDEBAR_ITEMS: { label: string; to: string; icon: LucideIcon; end?:
     { label: "My listings", to: "/dashboard/listings", icon: Library },
     { label: "Messages", to: "/dashboard/messages", icon: MessageSquare },
     { label: "Notifications", to: "/dashboard/notifications", icon: Bell },
-    { label: "Browse store", to: "/shop", icon: Store },
     { label: "Settings", to: "/dashboard/settings", icon: Settings },
 ];
 
@@ -59,7 +58,22 @@ const DashboardSidebar = () => {
                 </button>
             </div>
 
-            <nav className="flex flex-col gap-1">
+            {/* Shop gets its own section so it's always one click away. */}
+            <div className="border-b border-[#f6efe1]/12 pb-5">
+                <Link
+                    to="/shop"
+                    title={collapsed ? "Browse the shop" : undefined}
+                    className={cn(
+                        "flex items-center gap-3 rounded-lg bg-[#f6efe1] py-2.5 text-[15px] font-semibold text-[#4a2d18] shadow-[inset_0_-2px_0_rgba(0,0,0,0.12)] transition-colors hover:bg-[#f6efe1]/90",
+                        collapsed ? "justify-center px-0" : "px-3",
+                    )}
+                >
+                    <Store className="size-4.5 shrink-0" aria-hidden />
+                    <span className={cn("truncate", collapsed && "sr-only")}>Browse the shop</span>
+                </Link>
+            </div>
+
+            <nav className="-mt-1 flex flex-col gap-1">
                 {SIDEBAR_ITEMS.map(({ label, to, icon: Icon, end }) => (
                     <NavLink
                         key={to}

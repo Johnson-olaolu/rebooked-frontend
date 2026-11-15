@@ -11,6 +11,7 @@ import {
 import { useLogout } from "~/hooks/useLogout";
 import { cn } from "~/lib/utils";
 import type { IUser } from "~/types/user";
+import { formatNgState } from "~/utils/nigeria";
 import UserAvatar, { getDisplayName } from "./UserAvatar";
 
 export const USER_MENU_LINKS = [
@@ -34,7 +35,8 @@ const UserMenu = ({ user, variant = "header", showName = true, collapsed = false
   const navigate = useNavigate();
   const logout = useLogout();
   const name = getDisplayName(user);
-  const city = user.profile?.address?.city;
+  const address = user.profile?.address;
+  const location = [address?.city?.trim(), formatNgState(address?.state)].filter(Boolean).join(", ");
 
   return (
     <DropdownMenu>
@@ -52,7 +54,7 @@ const UserMenu = ({ user, variant = "header", showName = true, collapsed = false
             <>
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-sm font-semibold text-[#f6efe1]">{name}</span>
-                {city && <span className="block truncate text-xs text-[#f6efe1]/60">{city}</span>}
+                {location && <span className="block truncate text-xs text-[#f6efe1]/60">{location}</span>}
               </span>
               <ChevronsUpDown className="size-4 shrink-0 text-[#f6efe1]/50" />
             </>
@@ -70,15 +72,17 @@ const UserMenu = ({ user, variant = "header", showName = true, collapsed = false
       )}
 
       <DropdownMenuContent
-        align={variant === "sidebar" ? "end" : "end"}
-        side={variant === "sidebar" ? "right" : "bottom"}
-        sideOffset={variant === "sidebar" ? 12 : 8}
+        // Sidebar: open above the user block, matching its width when expanded.
+        align={variant === "sidebar" ? "start" : "end"}
+        side={variant === "sidebar" ? "top" : "bottom"}
+        sideOffset={8}
+        className={cn(variant === "sidebar" && !collapsed && "w-(--radix-dropdown-menu-trigger-width) min-w-0")}
       >
         <DropdownMenuLabel className="flex items-center gap-3">
           <UserAvatar user={user} className="size-9" />
           <span className="min-w-0">
             <span className="block truncate font-semibold">{name}</span>
-            <span className="block truncate text-xs text-foreground/55">{user.email}</span>
+            <span className="block truncate text-xs text-foreground/55">{location || user.email}</span>
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

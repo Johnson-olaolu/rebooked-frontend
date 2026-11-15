@@ -1,4 +1,4 @@
-import { Library, MessageSquare, Store, UserRound, type LucideIcon } from "lucide-react";
+import { House, Library, MessageSquare, Store, UserRound, type LucideIcon } from "lucide-react";
 import { Link, NavLink, Outlet } from "react-router";
 import UserMenu from "~/components/UserMenu";
 import { useBaseStore } from "~/hooks/store";
@@ -7,7 +7,7 @@ import AuthProvider from "~/provider/AuthProvider";
 import DashboardSidebar from "./DashboardSidebar";
 
 const tabs: { label: string; to: string; icon: LucideIcon; end?: boolean }[] = [
-    { label: "Store", to: "/shop", icon: Store },
+    { label: "Home", to: "/dashboard", icon: House, end: true },
     { label: "Listings", to: "/dashboard/listings", icon: Library },
     { label: "Messages", to: "/dashboard/messages", icon: MessageSquare },
     { label: "Profile", to: "/dashboard/settings", icon: UserRound },
@@ -27,7 +27,17 @@ const DashboardShell = () => {
                     <Link to="/dashboard" className="shrink-0">
                         <img src="/brand/rebooked-logo-ink.png" alt="Rebooked" className="h-8 w-auto object-contain" />
                     </Link>
-                    {user && <UserMenu user={user} />}
+                    <div className="flex items-center gap-3">
+                        {/* Shop sits up top in its own pill so it's always reachable. */}
+                        <Link
+                            to="/shop"
+                            className="flex h-9 items-center gap-1.5 rounded-full bg-primary px-3.5 text-sm font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90"
+                        >
+                            <Store className="size-4" aria-hidden />
+                            Shop
+                        </Link>
+                        {user && <UserMenu user={user} />}
+                    </div>
                 </header>
 
                 {/* Bottom padding leaves room for the mobile tab bar. */}
