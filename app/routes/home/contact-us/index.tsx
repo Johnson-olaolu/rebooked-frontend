@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { useSearchParams } from "react-router";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -9,7 +10,14 @@ const EMPTY = { name: "", email: "", message: "" };
 
 const ContactUsPage = () => {
     const [submitting, setSubmitting] = useState(false);
-    const [form, setForm] = useState(EMPTY);
+    const [params] = useSearchParams();
+    // "Report this seller" (seller page) arrives with ?subject=report&seller=<id>.
+    const reportedSeller = params.get("subject") === "report" ? params.get("seller") : null;
+    const [form, setForm] = useState(() =>
+        reportedSeller
+            ? { ...EMPTY, message: `I'd like to report a seller (seller page: /seller/${reportedSeller}).\n\nWhat happened: ` }
+            : EMPTY,
+    );
     const canSubmit = form.name.trim().length > 0 && isValidEmail(form.email) && form.message.trim().length > 0 && !submitting;
     const bind = (key: keyof typeof EMPTY) => ({
         value: form[key],

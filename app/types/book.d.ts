@@ -27,6 +27,12 @@ export interface ISellerSummary {
   state?: string | null;
 }
 
+/** Copied from the seller's address onto the book (API_CHANGES #17a). */
+export interface IBookLocation {
+  state?: string | null;
+  city?: string | null;
+}
+
 export interface IBook extends IDocument {
   title: string;
   author?: string | null;
@@ -43,6 +49,7 @@ export interface IBook extends IDocument {
   viewCount?: number;
   soldDate?: string | null;
   seller?: ISellerSummary;
+  location?: IBookLocation | null;
 }
 
 export interface ICreateBookPayload {
@@ -78,4 +85,41 @@ export interface IShelfQuery {
   status?: BookStatus;
   page?: number;
   pageSize?: number;
+}
+
+export type ShopSort = "NEWEST" | "PRICE_ASC" | "PRICE_DESC";
+
+/** `GET /book/query` (public). Lists are sent comma-separated. See API_CHANGES #17b. */
+export interface IBookQuery {
+  search?: string;
+  categoryIds?: string[];
+  states?: string[];
+  conditions?: BookCondition[];
+  minPrice?: number;
+  maxPrice?: number;
+  free?: boolean;
+  sort?: ShopSort;
+  userId?: string;
+  /** ACTIVE (default) or SOLD; SOLD needs `userId` (#17f). */
+  status?: "ACTIVE" | "SOLD";
+  page?: number;
+  pageSize?: number;
+}
+
+/** Per-filter counts, each ignoring its own group (#17c). Optional until the backend sends them. */
+export interface IShopFacets {
+  categories?: Record<string, number>;
+  states?: Record<string, number>;
+  conditions?: Partial<Record<BookCondition, number>>;
+  free?: number;
+}
+
+export interface IShopPage {
+  content: IBook[];
+  page: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+  facets?: IShopFacets;
+  addedToday?: number;
 }

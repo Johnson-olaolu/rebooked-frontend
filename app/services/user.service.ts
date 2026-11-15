@@ -1,6 +1,6 @@
 import type { IResponse } from "~/types/api";
 import type { IUpdateProfilePayload } from "~/types/profile";
-import type { IUser } from "~/types/user";
+import type { ISellerProfile, IUser } from "~/types/user";
 import https from "~/utils/https";
 
 class UserService {
@@ -9,6 +9,30 @@ class UserService {
   getLoggedInUser = async (): Promise<IResponse<IUser>> => {
     return await https.get({ url: `${this.baseUrl}/me` });
   };
+
+  /**
+   * A seller's public profile. The API returns the public summary to everyone else and the full
+   * user to the person themselves, so both shapes are folded into one.
+   */
+  async getPublic(id: string): Promise<IResponse<ISellerProfile>> {
+    const response: IResponse<ISellerProfile | IUser> = await https.get({ url: `${this.baseUrl}/${id}` });
+    const data = response.data;
+    if (!("email" in data)) return { ...response, data };
+    const profile = data.profile;
+    return {
+      ...response,
+      data: {
+        id: data.id,
+        userName: profile?.userName || data.fullName,
+        profilePictureUrl: profile?.profilePictureUrl,
+        city: profile?.address?.city,
+        state: profile?.address?.state,
+        bio: profile?.bio,
+        joinedAt: data.createdAt,
+        hasPhone: !!profile?.contactPhone,
+      },
+    };
+  }
 
   /**
    * Merges the fields sent into the profile. The backend requires userName and

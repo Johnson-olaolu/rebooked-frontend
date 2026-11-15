@@ -12,6 +12,10 @@ Use these words in UI copy, legal pages, toasts, route paths and code names, so 
 | Hiding one for now | **Archive** / **Put back on shelf** | deactivate, unpublish, relist |
 | Changing one | **Edit** (drafts: **Continue**), saved with **Save changes** | update listing |
 | A book's public page | **book page** ("View book page") | listing page, product page |
+| A book in a grid | **book card** | product tile, listing card |
+| A seller's public page | **their shelf** ("On Ola's shelf", "View shelf →") | store, storefront, seller shop |
+| Books a seller has sold | **rehomed** ("12 books rehomed") | sold listings, completed orders |
+| Where a book is | the seller's **state** ("Books in Lagos State", "Anywhere in Nigeria") | region, area, near me (until distance exists) |
 | Sold or given away | **Mark as sold** (the book leaves the shelf) | close listing |
 | Count of books on offer | **Books on shelf** | active listings |
 | Everyone's books | **the shop** ("Browse the shop") | store, marketplace |
@@ -33,7 +37,8 @@ Light verbs that fit the theme are welcome where they read naturally: "shelve th
 
 ## In code
 
-- Routes: `/dashboard/shelf` (tabs via `?status=`), `/dashboard/shelf/new`, `/dashboard/shelf/:id/edit`, `/book/:id` (public), `/shop`. `/dashboard/listings` only redirects to `/dashboard/shelf` for old links.
+- Routes: `/dashboard/shelf` (tabs via `?status=`), `/dashboard/shelf/new`, `/dashboard/shelf/:id/edit`, `/book/:id` (public), `/seller/:id` (public), `/shop`, `/shop/categories`, `/shop/category/:slug`, `/shop/in/:state` (e.g. `lagos`, `fct`), `/shop/free`.
+- Shop filters live in the URL: `?q=&cat=<slugs>&state=<names>|any&cond=&min=&max=&free=1&sort=price_asc|price_desc&page=`. With no `state`, a logged-in user's own state applies. `/dashboard/listings` only redirects to `/dashboard/shelf` for old links.
 - Names: `ShelfPage`, `AddToShelfPage`, `EditBookPage`, `BookPage`, `BookForm`, `useBookActions`, `bookService.getMyShelf`. Data types follow the API (`IBook`, `BookStatus`); user-facing names say shelf.
 - Icons: lucide `Library` for the shelf and `Store` for the shop.
 

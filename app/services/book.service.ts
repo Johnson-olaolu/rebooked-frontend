@@ -1,5 +1,14 @@
 import type { IResponse } from "~/types/api";
-import type { BookStatus, IBook, ICreateBookPayload, IShelfPage, IShelfQuery, IUpdateBookPayload } from "~/types/book";
+import type {
+  BookStatus,
+  IBook,
+  IBookQuery,
+  ICreateBookPayload,
+  IShelfPage,
+  IShelfQuery,
+  IShopPage,
+  IUpdateBookPayload,
+} from "~/types/book";
 import https from "~/utils/https";
 
 class BookService {
@@ -13,6 +22,21 @@ class BookService {
   /** The caller's own books (drafts included), newest first, with per-status counts. */
   async getMyShelf({ status, page = 0, pageSize = 20 }: IShelfQuery = {}): Promise<IResponse<IShelfPage>> {
     return await https.get({ url: `${this.baseUrl}/me`, query: { status, page, pageSize } });
+  }
+
+  /** The shop: ACTIVE books (or a seller's SOLD ones), filtered and sorted. Lists go comma-separated. */
+  async query({ categoryIds, states, conditions, ...rest }: IBookQuery = {}): Promise<IResponse<IShopPage>> {
+    const list = (values?: string[]) => (values && values.length ? values.join(",") : undefined);
+    return await https.get({
+      url: `${this.baseUrl}/query`,
+      query: {
+        ...rest,
+        categoryIds: list(categoryIds),
+        states: list(states),
+        conditions: list(conditions),
+        free: rest.free ? true : undefined,
+      },
+    });
   }
 
   /** One book. Public; a draft is only returned to its owner. */

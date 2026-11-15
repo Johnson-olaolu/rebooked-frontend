@@ -42,3 +42,17 @@ export interface IUser extends IDocument {
   emailVerified: boolean;
   deleted: boolean;
 }
+
+/** What anyone can see about a seller (`GET /user/{id}`, API_CHANGES #17e). */
+export interface ISellerProfile {
+  id: string;
+  userName: string;
+  profilePictureUrl?: string | null;
+  city?: string | null;
+  state?: string | null;
+  bio?: string | null;
+  joinedAt?: string | null;
+  availableCount?: number | null;
+  soldCount?: number | null;
+  hasPhone?: boolean;
+}

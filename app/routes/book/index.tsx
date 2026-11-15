@@ -11,6 +11,7 @@ import bookService from "~/services/book.service";
 import type { IBook } from "~/types/book";
 import type { IFile } from "~/types/file";
 import { conditionLabel, editPath } from "~/utils/book";
+import { categoryPath, statePath } from "~/utils/slug";
 import { getErrorStatus } from "~/utils/https";
 import { formatNaira } from "~/utils/money";
 import { formatNgState } from "~/utils/nigeria";
@@ -203,7 +204,8 @@ const BookPage = () => {
     const location_ = sellerLocation(book);
     const price = formatNaira(book.price, book.isFree);
     const available = book.status === "ACTIVE";
-    const category = book.categories?.[0]?.name;
+    const category = book.categories?.[0];
+    const sellerState = book.location?.state ?? book.seller?.state;
 
     const messageSeller = () => {
         if (!isLoggedIn) {
@@ -260,7 +262,11 @@ const BookPage = () => {
                     {category && (
                         <>
                             <ChevronRight className="size-3.5" aria-hidden />
-                            <li>{category}</li>
+                            <li>
+                                <Link to={categoryPath(category)} className="hover:text-foreground">
+                                    {category.name}
+                                </Link>
+                            </li>
                         </>
                     )}
                     <ChevronRight className="size-3.5" aria-hidden />
@@ -304,11 +310,28 @@ const BookPage = () => {
                         {book.condition && <Detail label="Condition">{conditionLabel(book.condition)}</Detail>}
                         {!!book.categories?.length && (
                             <Detail label={book.categories.length === 1 ? "Category" : "Categories"}>
-                                {book.categories.map((item) => item.name).join(", ")}
+                                {book.categories.map((item, index) => (
+                                    <span key={item.id}>
+                                        {index > 0 && ", "}
+                                        <Link to={categoryPath(item)} className="hover:underline">
+                                            {item.name}
+                                        </Link>
+                                    </span>
+                                ))}
                             </Detail>
                         )}
                         {book.isbn && <Detail label="ISBN">{book.isbn}</Detail>}
-                        {location_ && <Detail label="Location">{location_}</Detail>}
+                        {location_ && (
+                            <Detail label="Location">
+                                {sellerState ? (
+                                    <Link to={statePath(sellerState)} title={`More books in ${formatNgState(sellerState)}`} className="hover:underline">
+                                        {location_}
+                                    </Link>
+                                ) : (
+                                    location_
+                                )}
+                            </Detail>
+                        )}
                     </dl>
 
                     {book.description && (
@@ -321,7 +344,11 @@ const BookPage = () => {
                     )}
 
                     {book.seller && (
-                        <section aria-label="Seller" className="flex items-center gap-3.5 rounded-lg border border-foreground/10 bg-card p-4">
+                        <Link
+                            to={`/seller/${book.seller.id}`}
+                            aria-label={`Seller: ${book.seller.userName || "Rebooked seller"}. View their shelf`}
+                            className="flex items-center gap-3.5 rounded-lg border border-foreground/10 bg-card p-4 transition-colors hover:border-primary/40"
+                        >
                             <UserAvatar
                                 name={book.seller.userName}
                                 photoUrl={book.seller.profilePictureUrl}
@@ -331,7 +358,8 @@ const BookPage = () => {
                                 <div className="truncate font-semibold">{book.seller.userName || "Rebooked seller"}</div>
                                 {location_ && <div className="truncate text-sm text-foreground/55">{location_}</div>}
                             </div>
-                        </section>
+                            <span className="ml-auto shrink-0 text-sm font-semibold text-primary">View shelf →</span>
+                        </Link>
                     )}
                 </div>
             </div>

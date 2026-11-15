@@ -10,6 +10,11 @@ export default [
     route("contact-us", "./routes/home/contact-us/index.tsx"),
     route("shop", "./routes/shop/index.tsx"), // public; UI adapts when logged in
     route("book/:id", "./routes/book/index.tsx"), // public book page; drafts only for their owner
+    route("shop/categories", "./routes/shop/categories/index.tsx"),
+    route("shop/category/:slug", "./routes/shop/category/index.tsx"),
+    route("shop/in/:state", "./routes/shop/state/index.tsx"), // e.g. /shop/in/lagos, /shop/in/fct
+    route("shop/free", "./routes/shop/free/index.tsx"),
+    route("seller/:id", "./routes/seller/index.tsx"), // public seller page (mockup 2d)
   ]),
 
   // Dashboard (requires a logged-in, onboarded user)

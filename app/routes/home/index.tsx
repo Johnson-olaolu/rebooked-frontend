@@ -1,6 +1,7 @@
 import type { Route } from "../+types/home";
 import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
+import HomeCategories from "./components/HomeCategories";
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -18,16 +19,6 @@ const featuredBooks = [
   { title: "Organic Chemistry, 9th ed.", author: "Paula Bruice", price: "R450", place: "Hatfield", condition: "Good", tone: "bg-secondary" },
   { title: "The Master and Margarita", author: "Mikhail Bulgakov", price: "R70", place: "Melville", condition: "Fair", tone: "bg-destructive" },
   { title: "Cry, the Beloved Country", author: "Alan Paton", price: "R310", place: "Durban North", condition: "First ed.", tone: "bg-[#4a2d18]" },
-];
-
-const categories = [
-  { name: "Textbooks", count: "1,482 books" },
-  { name: "Literary fiction", count: "936 books" },
-  { name: "Crime & thriller", count: "704 books" },
-  { name: "Rare & collectable", count: "118 books" },
-  { name: "Kids & young adult", count: "592 books" },
-  { name: "History & politics", count: "430 books" },
-  { name: "Poetry", count: "211 books" },
 ];
 
 const topAuthors = [
@@ -138,19 +129,7 @@ export function ServerComponent() {
       {/* Categories */}
       <section className="border-t border-border bg-secondary/60 px-6 py-14 md:px-12">
         <div className="mx-auto max-w-7xl">
-          <h2 className="mb-6 font-serif text-3xl md:text-4xl">Browse by category</h2>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {categories.map((category) => (
-              <div key={category.name} className="flex flex-col gap-1.5 rounded-lg border border-border bg-background p-5">
-                <div className="font-serif text-xl">{category.name}</div>
-                <div className="text-sm text-foreground/55">{category.count}</div>
-              </div>
-            ))}
-            <div className="flex flex-col gap-1.5 rounded-lg border border-border bg-primary p-5 text-primary-foreground">
-              <div className="font-serif text-xl">Near you</div>
-              <div className="text-sm text-primary-foreground/70">Within 10 km</div>
-            </div>
-          </div>
+          <HomeCategories />
         </div>
       </section>
 
@@ -215,7 +194,7 @@ export function ServerComponent() {
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-5">
           <span className="text-foreground/65">2,847 books currently looking for a new reader.</span>
           <Button asChild size="lg" className="h-12 rounded-lg bg-primary px-6 text-base font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90">
-            <Link to="/register">Browse all books →</Link>
+            <Link to="/shop">Browse all books →</Link>
           </Button>
         </div>
       </section>

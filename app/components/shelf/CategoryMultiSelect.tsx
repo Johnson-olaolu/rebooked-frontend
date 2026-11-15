@@ -2,16 +2,25 @@ import { Check, ChevronDown, X } from "lucide-react";
 import { Popover as PopoverPrimitive } from "radix-ui";
 import { useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { cn } from "~/lib/utils";
-import type { ICategory } from "~/types/book";
+
+/** Anything with an id and a name: categories, states… */
+export interface MultiSelectOption {
+    id: string;
+    name: string;
+}
 
 interface CategoryMultiSelectProps {
     id?: string;
-    categories: ICategory[];
+    categories: MultiSelectOption[];
     value: string[];
     onChange: (ids: string[]) => void;
     loading?: boolean;
     invalid?: boolean;
     placeholder?: string;
+    /** Plural noun for the list's messages ("categories", "states"). */
+    noun?: string;
+    /** Accessible name for the list. */
+    label?: string;
 }
 
 /**
@@ -26,6 +35,8 @@ const CategoryMultiSelect = ({
     loading = false,
     invalid = false,
     placeholder = "Search categories…",
+    noun = "categories",
+    label,
 }: CategoryMultiSelectProps) => {
     const listId = useId();
     const anchorRef = useRef<HTMLDivElement>(null);
@@ -35,7 +46,7 @@ const CategoryMultiSelect = ({
     const [active, setActive] = useState(0);
 
     const byId = useMemo(() => new Map(categories.map((category) => [category.id, category])), [categories]);
-    const selected = value.map((categoryId) => byId.get(categoryId)).filter((category): category is ICategory => !!category);
+    const selected = value.map((categoryId) => byId.get(categoryId)).filter((category): category is MultiSelectOption => !!category);
 
     const options = useMemo(() => {
         const term = search.trim().toLowerCase();
@@ -142,11 +153,11 @@ const CategoryMultiSelect = ({
                     }}
                     className="z-50 w-(--radix-popover-trigger-width) min-w-(--radix-popper-anchor-width) overflow-hidden rounded-lg border border-border bg-card p-1 text-foreground shadow-[0_14px_34px_rgba(74,45,24,0.14)]"
                 >
-                    <ul id={listId} role="listbox" aria-multiselectable className="max-h-64 overflow-y-auto">
+                    <ul id={listId} role="listbox" aria-multiselectable aria-label={label} className="max-h-64 overflow-y-auto">
                         {loading ? (
-                            <li className="px-2.5 py-2 text-sm text-foreground/55">Loading categories…</li>
+                            <li className="px-2.5 py-2 text-sm text-foreground/55">Loading {noun}…</li>
                         ) : options.length === 0 ? (
-                            <li className="px-2.5 py-2 text-sm text-foreground/55">No categories match “{search}”.</li>
+                            <li className="px-2.5 py-2 text-sm text-foreground/55">No {noun} match “{search}”.</li>
                         ) : (
                             options.map((category, index) => {
                                 const isSelected = value.includes(category.id);
