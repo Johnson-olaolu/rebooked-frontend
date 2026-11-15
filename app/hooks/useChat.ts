@@ -105,7 +105,7 @@ export const useUnreadCount = () => {
 export const useConversations = (filter: ConversationFilter, search: string) =>
   useInfiniteQuery({
     queryKey: chatKeys.list(filter, search),
-    queryFn: ({ pageParam }) => chatService.list({ filter, search, page: pageParam, pageSize: 30 }).then((r) => r.data),
+    queryFn: ({ pageParam }) => chatService.list({ filter, search, page: pageParam, pageSize: 40 }).then((r) => r.data),
     initialPageParam: 0,
     getNextPageParam: (last) => (last.page + 1 < last.totalPages ? last.page + 1 : undefined),
     placeholderData: (previous) => previous,

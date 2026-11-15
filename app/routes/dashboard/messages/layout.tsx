@@ -37,56 +37,43 @@ const MessagesLayout = () => {
 
     if (!id && counts && counts.ALL === 0) {
         return (
-            <>
-                <h1 className="mb-6 font-serif text-3xl md:text-4xl">Conversations</h1>
-                <EmptyState
-                    title="No conversations yet"
-                    description="When someone messages you about a book, or you message a seller, the conversation opens here: one per person, with every book you're discussing."
-                    action={
-                        <div className="flex flex-wrap justify-center gap-3">
-                            <Button asChild variant="outline" className="h-11 rounded-md px-5 text-[15px] font-semibold">
-                                <Link to="/shop">Browse the shop</Link>
-                            </Button>
-                            <Button asChild className={primaryButton}>
-                                <Link to="/dashboard/shelf/new">+ Add to shelf</Link>
-                            </Button>
-                        </div>
-                    }
-                />
-            </>
+            <div className="flex h-full items-center justify-center overflow-y-auto p-5 md:p-10">
+                <div className="w-full max-w-2xl">
+                    <EmptyState
+                        title="No conversations yet"
+                        description="When someone messages you about a book, or you message a seller, the conversation opens here: one per person, with every book you're discussing."
+                        action={
+                            <div className="flex flex-wrap justify-center gap-3">
+                                <Button asChild variant="outline" className="h-11 rounded-md px-5 text-[15px] font-semibold">
+                                    <Link to="/shop">Browse the shop</Link>
+                                </Button>
+                                <Button asChild className={primaryButton}>
+                                    <Link to="/dashboard/shelf/new">+ Add to shelf</Link>
+                                </Button>
+                            </div>
+                        }
+                    />
+                </div>
+            </div>
         );
     }
 
+    // Two full-height panes (WhatsApp-style): only the list and the messages scroll.
     return (
-        <>
-            <div className={cn("mb-5", id && "hidden md:block")}>
-                <h1 className="font-serif text-3xl md:text-4xl">Conversations</h1>
-                <p className="mt-1.5 text-foreground/60">
-                    {unread ? `${unread} unread · ` : ""}one conversation per person, with every book you're discussing
-                </p>
-            </div>
-            <div
+        <div className="flex h-full min-h-0 bg-card">
+            <ConversationList
+                onCounts={onCounts}
+                unread={unread}
                 className={cn(
-                    "flex min-h-[28rem] overflow-hidden rounded-xl border border-foreground/10 bg-card",
-                    // Fill the viewport below the header (mobile: minus the top bar and tab bar).
-                    // Mobile thread: edge to edge between the top bar (~61px) and the tab bar (~65px).
-                    id
-                        ? "-mx-5 -mt-8 -mb-28 h-[calc(100dvh-7.9rem)] rounded-none border-x-0 border-y-0 md:mx-0 md:my-0 md:rounded-xl md:border"
-                        : "h-[calc(100dvh-17rem)]",
-                    "md:h-[calc(100dvh-13rem)]",
+                    "h-full w-full shrink-0 border-foreground/10 md:w-[22rem] md:border-r lg:w-[24rem] xl:w-[26rem]",
+                    id && "hidden md:flex",
                 )}
-            >
-                <ConversationList
-                    compact
-                    onCounts={onCounts}
-                    className={cn("w-full border-foreground/10 md:w-[22rem] md:shrink-0 md:border-r", id && "hidden md:flex")}
-                />
-                <section className={cn("min-w-0 flex-1 flex-col", id ? "flex" : "hidden md:flex")}>
-                    <ConnectionBar />
-                    <Outlet />
-                </section>
-            </div>
-        </>
+            />
+            <section className={cn("h-full min-w-0 flex-1 flex-col bg-background", id ? "flex" : "hidden md:flex")}>
+                <ConnectionBar />
+                <Outlet />
+            </section>
+        </div>
     );
 };
 

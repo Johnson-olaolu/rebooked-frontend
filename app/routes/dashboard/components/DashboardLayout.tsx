@@ -1,5 +1,5 @@
 import { House, Library, MessageSquare, Store, UserRound, type LucideIcon } from "lucide-react";
-import { Link, NavLink, Outlet } from "react-router";
+import { Link, NavLink, Outlet, useMatch } from "react-router";
 import UnreadBadge from "~/components/chat/UnreadBadge";
 import UserMenu from "~/components/UserMenu";
 import { useUnreadCount } from "~/hooks/useChat";
@@ -18,15 +18,24 @@ const tabs: { label: string; to: string; icon: LucideIcon; end?: boolean }[] = [
 const DashboardShell = () => {
     const user = useBaseStore((state) => state.user);
     const unread = useUnreadCount();
+    // Messages fill the whole screen (WhatsApp-style): only the list and the thread scroll. On a phone
+    // an open thread also hides the top bar and tabs; its own header has the back button.
+    const inMessages = !!useMatch("/dashboard/messages/*");
+    const inThread = !!useMatch("/dashboard/messages/:id");
 
     return (
-        <div className="flex min-h-screen bg-background text-foreground">
+        <div className={cn("flex bg-background text-foreground", inMessages ? "h-dvh overflow-hidden" : "min-h-screen")}>
             {/* Desktop: collapsible sidebar (mockup 3a). */}
             <DashboardSidebar />
 
-            <div className="flex min-w-0 flex-1 flex-col">
+            <div className={cn("flex min-w-0 flex-1 flex-col", inMessages && "h-dvh")}>
                 {/* Mobile: slim header (mockup 3f). */}
-                <header className="sticky top-0 z-40 flex items-center justify-between border-b border-foreground/10 bg-card px-5 py-3 md:hidden">
+                <header
+                    className={cn(
+                        "sticky top-0 z-40 flex shrink-0 items-center justify-between border-b border-foreground/10 bg-card px-5 py-3 md:hidden",
+                        inThread && "hidden",
+                    )}
+                >
                     <Link to="/dashboard" className="shrink-0">
                         <img src="/brand/rebooked-logo-ink.png" alt="Rebooked" className="h-8 w-auto object-contain" />
                     </Link>
@@ -44,7 +53,14 @@ const DashboardShell = () => {
                 </header>
 
                 {/* Bottom padding leaves room for the mobile tab bar. */}
-                <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-8 pb-28 md:px-10 md:py-10 md:pb-12">
+                <main
+                    className={cn(
+                        "w-full flex-1",
+                        inMessages
+                            ? cn("min-h-0 overflow-hidden", !inThread && "pb-[4.1rem] md:pb-0")
+                            : "mx-auto max-w-6xl px-5 py-8 pb-28 md:px-10 md:py-10 md:pb-12",
+                    )}
+                >
                     <Outlet />
                 </main>
             </div>
@@ -52,7 +68,10 @@ const DashboardShell = () => {
             {/* Mobile: bottom tab bar (mockup 3f). */}
             <nav
                 aria-label="Dashboard tabs"
-                className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t border-foreground/15 bg-card px-3 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:hidden"
+                className={cn(
+                    "fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t border-foreground/15 bg-card px-3 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:hidden",
+                    inThread && "hidden",
+                )}
             >
                 {tabs.map(({ label, to, icon: Icon, end }) => (
                     <NavLink

@@ -56,7 +56,7 @@ const BooksStrip = ({ conversation, onMarkSold }: BooksStripProps) => {
     const otherName = conversation.other?.userName ?? "";
 
     return (
-        <div className="border-b border-foreground/10 bg-background/60">
+        <div className="shrink-0 border-b border-foreground/10 bg-card/70">
             <button
                 type="button"
                 onClick={() => setExpanded((value) => !value)}
@@ -66,7 +66,7 @@ const BooksStrip = ({ conversation, onMarkSold }: BooksStripProps) => {
                 {books.length === 1 ? "Book in this chat" : `${books.length} books in this chat`}
                 <ChevronDown className={cn("size-4 transition-transform md:hidden", expanded && "rotate-180")} aria-hidden />
             </button>
-            <ul className={cn("max-h-56 overflow-y-auto px-4 pb-3", !expanded && "hidden md:block", books.length > 2 && "md:max-h-44")}>
+            <ul className={cn("max-h-56 overflow-y-auto px-4 pb-2 md:max-h-36", !expanded && "hidden md:block")}>
                 {books.map((book) => {
                     const open = isOpen(book);
                     const canSell = book.role === "SELLER" && open;
@@ -282,7 +282,7 @@ const ThreadPage = () => {
     return (
         <>
             {/* Header */}
-            <header className="flex items-center gap-3 border-b border-foreground/10 px-3 py-3 md:px-4">
+            <header className="flex shrink-0 items-center gap-3 border-b border-foreground/10 bg-card px-3 py-3 md:px-5">
                 <Link
                     to="/dashboard/messages"
                     aria-label="Back to conversations"
@@ -322,7 +322,7 @@ const ThreadPage = () => {
                     </div>
                 )}
                 {messagesQuery.isLoading ? (
-                    <div aria-busy className="space-y-3">
+                    <div aria-busy className="mx-auto max-w-4xl space-y-3">
                         <div className="h-10 w-1/2 animate-pulse rounded-2xl bg-secondary" />
                         <div className="ml-auto h-10 w-2/5 animate-pulse rounded-2xl bg-secondary" />
                         <div className="h-14 w-3/5 animate-pulse rounded-2xl bg-secondary" />
@@ -337,7 +337,7 @@ const ThreadPage = () => {
                 ) : items.length === 0 ? (
                     <p className="pt-10 text-center text-sm text-foreground/55">Say hello: ask if it's still available, or where to meet.</p>
                 ) : (
-                    <ol className="flex flex-col gap-1.5">
+                    <ol className="mx-auto flex w-full max-w-4xl flex-col gap-1.5">
                         {items.map((item, index) => {
                             const time = itemTime(item);
                             const previous = items[index - 1];
@@ -426,7 +426,7 @@ const ThreadPage = () => {
             </div>
 
             {/* Composer */}
-            <div className="border-t border-foreground/10 bg-card px-3 pt-2 pb-3 md:px-4">
+            <div className="shrink-0 border-t border-foreground/10 bg-card px-3 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:px-5">
                 <p className="mb-2 rounded-md bg-secondary/70 px-3 py-1.5 text-[12px] leading-snug text-foreground/65">{MONEY_NOTE}</p>
                 {books.length > 1 && (
                     <label className="mb-2 flex items-center gap-2 text-xs text-foreground/60">
