@@ -23,6 +23,8 @@ const ChangePasswordPage = () => {
         }),
         [password]
     );
+    const passwordsMatch = confirmPassword.length === 0 || confirmPassword === password;
+    const canSubmit = checks.length && checks.complexity && confirmPassword === password && !submitting;
 
     if (!token) {
         return (
@@ -42,15 +44,8 @@ const ChangePasswordPage = () => {
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-
-        if (password !== confirmPassword) {
-            toast.error("Passwords don't match.");
-            return;
-        }
-        if (!checks.length || !checks.complexity) {
-            toast.error("Please meet the password requirements below.");
-            return;
-        }
+        // The button is disabled until this passes; this only guards against odd submits.
+        if (!canSubmit) return;
 
         setSubmitting(true);
         // TODO: replace with real reset request (token + new password) once the auth service is wired up.
@@ -96,8 +91,10 @@ const ChangePasswordPage = () => {
                         placeholder="••••••••••••"
                         value={confirmPassword}
                         onChange={(event) => setConfirmPassword(event.target.value)}
+                        aria-invalid={!passwordsMatch}
                         required
                     />
+                    {!passwordsMatch && <span className="text-xs text-destructive">Passwords don't match</span>}
                 </div>
 
                 <div className="flex flex-col gap-2.5 rounded-lg bg-secondary/70 p-4 text-sm">
@@ -111,7 +108,7 @@ const ChangePasswordPage = () => {
 
                 <Button
                     type="submit"
-                    disabled={submitting}
+                    disabled={!canSubmit}
                     className="mt-1 h-12 rounded-lg bg-primary text-base font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90"
                 >
                     {submitting ? "Saving…" : "Save and log in"}

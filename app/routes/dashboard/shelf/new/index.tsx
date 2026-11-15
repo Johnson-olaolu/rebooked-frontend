@@ -73,6 +73,17 @@ const validate = (values: FormValues, photos: ShelfPhoto[], mode: Mode): Errors 
     return errors;
 };
 
+/** Short phrases for the "still needed" hint, in form order. */
+const MISSING_LABELS: Partial<Record<FieldKey, string>> = {
+    photos: "add a photo",
+    title: "add the title",
+    author: "add the author",
+    condition: "pick a condition",
+    categoryIds: "pick a category",
+    price: "set a price",
+    description: "write a description",
+};
+
 const SERVER_FIELDS: Record<string, FieldKey> = {
     title: "title",
     author: "author",
@@ -161,6 +172,24 @@ const AddToShelfPage = () => {
     });
     const saving = saveMutation.isPending;
 
+    // Buttons stay disabled until the form can go through. Format problems (bad ISBN, too long)
+    // show inline as you type; missing "required" fields go into the hint by the buttons instead.
+    const draftErrors = validate(values, photos, "DRAFT");
+    const publishErrors = validate(values, photos, "ACTIVE");
+    const formatErrors: Errors = { ...draftErrors };
+    if (!values.title.trim()) delete formatErrors.title;
+    const shown: Errors = { ...formatErrors, ...errors };
+    const missing = (Object.keys(MISSING_LABELS) as FieldKey[]).filter((key) => publishErrors[key] && !formatErrors[key]);
+    const hint = uploading
+        ? "Hang on, your photos are still uploading."
+        : missing.length > 0
+          ? `To add to shelf: ${missing.map((key) => MISSING_LABELS[key]).join(", ")}.`
+          : Object.keys(formatErrors).length > 0
+            ? "Fix the highlighted fields to continue."
+            : "";
+    const canDraft = Object.keys(draftErrors).length === 0 && !uploading && !saving;
+    const canPublish = Object.keys(publishErrors).length === 0 && !uploading && !saving;
+
     // Warn before closing or reloading the tab with unsaved work.
     useEffect(() => {
         if (!dirty || saveMutation.isSuccess) return;
@@ -170,14 +199,8 @@ const AddToShelfPage = () => {
     }, [dirty, saveMutation.isSuccess]);
 
     const submit = (mode: Mode) => {
-        if (uploading) return void toast("Hang on — your photos are still uploading.");
-        const nextErrors = validate(values, photos, mode);
-        setErrors(nextErrors);
-        if (Object.keys(nextErrors).length > 0) {
-            toast.error(mode === "DRAFT" ? "A draft needs at least a title." : "Please fix the highlighted fields.");
-            document.querySelector<HTMLElement>("[aria-invalid=true]")?.focus();
-            return;
-        }
+        // The buttons are disabled until this passes; this only guards against odd submits (e.g. Enter).
+        if (!(mode === "DRAFT" ? canDraft : canPublish)) return;
 
         const uploaded = photos.filter((photo) => photo.status === "done" && photo.id);
         const imageIds = uploaded.map((photo) => photo.id!);
@@ -244,10 +267,10 @@ const AddToShelfPage = () => {
                             coverKey={coverKey}
                             onCoverChange={setCoverKey}
                             max={BOOK_LIMITS.photos}
-                            invalid={!!errors.photos}
+                            invalid={!!shown.photos}
                             disabled={saving}
                         />
-                        {errors.photos && <p className="mt-2 text-sm text-destructive">{errors.photos}</p>}
+                        {shown.photos && <p className="mt-2 text-sm text-destructive">{shown.photos}</p>}
                     </section>
 
                     <section aria-label="Preview" className="hidden rounded-lg border border-foreground/10 bg-card p-5 lg:block">
@@ -273,34 +296,34 @@ const AddToShelfPage = () => {
                 </aside>
 
                 <section className="flex flex-col gap-5 rounded-lg border border-foreground/10 bg-card p-5 md:p-6 lg:order-1">
-                    <Field label="Title" htmlFor="title" error={errors.title}>
+                    <Field label="Title" htmlFor="title" error={shown.title}>
                         <Input
                             id="title"
                             value={values.title}
                             onChange={(event) => set("title", event.target.value)}
-                            aria-invalid={!!errors.title}
+                            aria-invalid={!!shown.title}
                             maxLength={BOOK_LIMITS.title}
                             placeholder="Half of a Yellow Sun"
                         />
                     </Field>
 
                     <div className="grid gap-5 sm:grid-cols-[1fr_190px]">
-                        <Field label="Author" htmlFor="author" error={errors.author}>
+                        <Field label="Author" htmlFor="author" error={shown.author}>
                             <Input
                                 id="author"
                                 value={values.author}
                                 onChange={(event) => set("author", event.target.value)}
-                                aria-invalid={!!errors.author}
+                                aria-invalid={!!shown.author}
                                 maxLength={BOOK_LIMITS.author}
                                 placeholder="Chimamanda Ngozi Adichie"
                             />
                         </Field>
-                        <Field label="ISBN" htmlFor="isbn" optional error={errors.isbn}>
+                        <Field label="ISBN" htmlFor="isbn" optional error={shown.isbn}>
                             <Input
                                 id="isbn"
                                 value={values.isbn}
                                 onChange={(event) => set("isbn", event.target.value)}
-                                aria-invalid={!!errors.isbn}
+                                aria-invalid={!!shown.isbn}
                                 inputMode="numeric"
                                 maxLength={17}
                                 placeholder="9780007200283"
@@ -310,10 +333,10 @@ const AddToShelfPage = () => {
 
                     <Field
                         label="Condition"
-                        error={errors.condition}
+                        error={shown.condition}
                         hint={`${CONDITION_HINTS[values.condition ?? "GOOD"]} Be honest — it's what your rating is built on.`}
                     >
-                        <div role="radiogroup" aria-label="Condition" aria-invalid={!!errors.condition} className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+                        <div role="radiogroup" aria-label="Condition" aria-invalid={!!shown.condition} className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
                             {BOOK_CONDITIONS.map(({ value, label }) => {
                                 const checked = values.condition === value;
                                 return (
@@ -328,7 +351,7 @@ const AddToShelfPage = () => {
                                             checked
                                                 ? "border-2 border-primary bg-secondary font-semibold"
                                                 : "border-input hover:border-foreground/30",
-                                            errors.condition && !checked && "border-destructive/60",
+                                            shown.condition && !checked && "border-destructive/60",
                                         )}
                                     >
                                         {label}
@@ -341,7 +364,7 @@ const AddToShelfPage = () => {
                     <Field
                         label="Categories"
                         htmlFor="categories"
-                        error={errors.categoryIds ?? (categoriesQuery.isError ? "We couldn't load categories." : undefined)}
+                        error={shown.categoryIds ?? (categoriesQuery.isError ? "We couldn't load categories." : undefined)}
                         hint="Pick as many as fit — it helps buyers find it."
                     >
                         <CategoryMultiSelect
@@ -350,16 +373,16 @@ const AddToShelfPage = () => {
                             value={values.categoryIds}
                             onChange={(ids) => set("categoryIds", ids)}
                             loading={categoriesQuery.isLoading}
-                            invalid={!!errors.categoryIds}
+                            invalid={!!shown.categoryIds}
                         />
                     </Field>
 
-                    <Field label="Asking price" htmlFor="price" error={errors.price}>
+                    <Field label="Asking price" htmlFor="price" error={shown.price}>
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                             <div
                                 className={cn(
                                     "flex h-9 items-center rounded-lg border border-input transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 sm:w-48",
-                                    errors.price && "border-destructive ring-3 ring-destructive/20",
+                                    shown.price && "border-destructive ring-3 ring-destructive/20",
                                     values.isFree && "opacity-50",
                                 )}
                             >
@@ -370,7 +393,7 @@ const AddToShelfPage = () => {
                                     value={values.isFree ? "" : values.price ? Number(values.price).toLocaleString("en-NG") : ""}
                                     onChange={(event) => set("price", event.target.value.replace(/\D/g, "").replace(/^0+/, "").slice(0, 8))}
                                     disabled={values.isFree}
-                                    aria-invalid={!!errors.price}
+                                    aria-invalid={!!shown.price}
                                     placeholder={values.isFree ? "Free" : "3,500"}
                                     className="h-full min-w-0 flex-1 bg-transparent px-2 text-base outline-none placeholder:text-muted-foreground md:text-sm"
                                 />
@@ -401,7 +424,7 @@ const AddToShelfPage = () => {
                     <Field
                         label="Description"
                         htmlFor="description"
-                        error={errors.description}
+                        error={shown.description}
                         hint={`${values.description.length} / ${BOOK_LIMITS.description}`}
                     >
                         <textarea
@@ -409,7 +432,7 @@ const AddToShelfPage = () => {
                             rows={5}
                             value={values.description}
                             onChange={(event) => set("description", event.target.value)}
-                            aria-invalid={!!errors.description}
+                            aria-invalid={!!shown.description}
                             maxLength={BOOK_LIMITS.description}
                             placeholder="Edition, any notes or highlights, and where you're happy to meet."
                             className={textareaClass}
@@ -418,14 +441,30 @@ const AddToShelfPage = () => {
                 </section>
             </div>
 
-            <div className="sticky bottom-20 z-10 flex items-center justify-end gap-2 rounded-lg sm:gap-2.5 border border-foreground/10 bg-card/95 p-3 backdrop-blur md:bottom-4">
-                <Button type="button" variant="ghost" disabled={saving} onClick={handleCancel} className="mr-auto h-11 rounded-md px-2 sm:px-4">
+            <div className="sticky bottom-20 z-10 flex flex-wrap items-center justify-end gap-2 rounded-lg border border-foreground/10 bg-card/95 p-3 backdrop-blur sm:flex-nowrap sm:gap-2.5 md:bottom-4">
+                <Button
+                    type="button"
+                    variant="ghost"
+                    disabled={saving}
+                    onClick={handleCancel}
+                    className={cn("mr-auto h-11 rounded-md px-2 sm:px-4", hint && "sm:mr-0")}
+                >
                     Cancel
                 </Button>
+                {hint && (
+                    // Above the buttons on mobile, between Cancel and them on desktop.
+                    <p
+                        id="shelf-form-hint"
+                        aria-live="polite"
+                        className="order-first w-full px-1 text-sm text-foreground/60 sm:order-none sm:mr-auto sm:w-auto sm:flex-1"
+                    >
+                        {hint}
+                    </p>
+                )}
                 <Button
                     type="button"
                     variant="outline"
-                    disabled={saving}
+                    disabled={!canDraft}
                     onClick={() => submit("DRAFT")}
                     className="h-11 rounded-md px-3 font-semibold sm:px-4"
                 >
@@ -433,7 +472,8 @@ const AddToShelfPage = () => {
                 </Button>
                 <Button
                     type="submit"
-                    disabled={saving}
+                    disabled={!canPublish}
+                    aria-describedby={hint ? "shelf-form-hint" : undefined}
                     className="h-11 rounded-md bg-primary px-4 text-[15px] sm:px-6 font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90"
                 >
                     {saving && saveMutation.variables?.status === "ACTIVE" ? "Adding…" : "Add to shelf"}

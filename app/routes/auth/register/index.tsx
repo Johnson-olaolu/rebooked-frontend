@@ -9,7 +9,7 @@ import { Checkbox } from "~/components/ui/checkbox";
 import { useBaseStore } from "~/hooks/store";
 import authService from "~/services/auth.service";
 import type { IRegisterPayload } from "~/types/auth";
-import { isValidPassword, PASSWORD_RULES } from "~/utils/auth";
+import { isValidEmail, isValidPassword, PASSWORD_RULES } from "~/utils/auth";
 import { getErrorMessage, getFieldErrors } from "~/utils/https";
 
 function getPasswordStrength(password: string) {
@@ -60,25 +60,21 @@ const RegisterPage = () => {
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-
-        if (!isValidPassword(password)) {
-            setFieldErrors({ password: "Use 8+ characters with an uppercase letter, a lowercase letter, a number and a symbol." });
-            return;
-        }
-        if (password !== confirmPassword) {
-            toast.error("Passwords don't match.");
-            return;
-        }
-        if (!agreeTerms) {
-            toast.error("Please agree to the Terms to continue.");
-            return;
-        }
+        // The button is disabled until this passes; this only guards against odd submits.
+        if (!canSubmit) return;
 
         setFieldErrors({});
         registerMutation.mutate({ fullName: fullName.trim(), email: email.trim(), password });
     };
 
     const submitting = registerMutation.isPending;
+    const canSubmit =
+        fullName.trim().length > 0 &&
+        isValidEmail(email) &&
+        isValidPassword(password) &&
+        confirmPassword === password &&
+        agreeTerms &&
+        !submitting;
 
     return (
         <>
@@ -204,7 +200,7 @@ const RegisterPage = () => {
 
                 <Button
                     type="submit"
-                    disabled={submitting}
+                    disabled={!canSubmit}
                     className="mt-1.5 h-12 rounded-lg bg-primary text-base font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90"
                 >
                     {submitting ? "Creating account…" : "Create account"}

@@ -147,7 +147,7 @@ const OnboardingStepOne = () => {
             <div className="mt-9 flex items-center gap-4">
                 <Button
                     type="submit"
-                    disabled={uploadMutation.isPending}
+                    disabled={!userName.trim() || uploadMutation.isPending}
                     className="h-12 rounded-lg bg-primary px-7 text-base font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90"
                 >
                     Continue

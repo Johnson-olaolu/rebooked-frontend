@@ -3,17 +3,27 @@ import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { isValidEmail } from "~/utils/auth";
+
+const EMPTY = { name: "", email: "", message: "" };
 
 const ContactUsPage = () => {
     const [submitting, setSubmitting] = useState(false);
+    const [form, setForm] = useState(EMPTY);
+    const canSubmit = form.name.trim().length > 0 && isValidEmail(form.email) && form.message.trim().length > 0 && !submitting;
+    const bind = (key: keyof typeof EMPTY) => ({
+        value: form[key],
+        onChange: (event: { target: { value: string } }) => setForm((current) => ({ ...current, [key]: event.target.value })),
+    });
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        if (!canSubmit) return;
         setSubmitting(true);
         setTimeout(() => {
             setSubmitting(false);
             toast.success("Message sent — we'll get back to you within a day or two.");
-            event.currentTarget.reset();
+            setForm(EMPTY);
         }, 700);
     };
 
@@ -41,11 +51,11 @@ const ContactUsPage = () => {
             <form onSubmit={handleSubmit} className="flex flex-col gap-5 rounded-xl border border-border bg-card p-6 md:p-8">
                 <div className="flex flex-col gap-2">
                     <Label htmlFor="name">Name</Label>
-                    <Input id="name" name="name" placeholder="Thandi Mokoena" required />
+                    <Input id="name" name="name" placeholder="Thandi Mokoena" required {...bind("name")} />
                 </div>
                 <div className="flex flex-col gap-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" name="email" type="email" placeholder="you@example.com" required />
+                    <Input id="email" name="email" type="email" placeholder="you@example.com" required {...bind("email")} />
                 </div>
                 <div className="flex flex-col gap-2">
                     <Label htmlFor="message">Message</Label>
@@ -53,12 +63,13 @@ const ContactUsPage = () => {
                         id="message"
                         name="message"
                         required
+                        {...bind("message")}
                         rows={5}
                         placeholder="How can we help?"
                         className="w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                     />
                 </div>
-                <Button type="submit" disabled={submitting} className="h-11 rounded-lg bg-primary font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90">
+                <Button type="submit" disabled={!canSubmit} className="h-11 rounded-lg bg-primary font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90">
                     {submitting ? "Sending…" : "Send message"}
                 </Button>
             </form>

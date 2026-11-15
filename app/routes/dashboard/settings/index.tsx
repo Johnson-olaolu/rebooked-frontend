@@ -18,12 +18,12 @@ import fileService from "~/services/file.service";
 import userService from "~/services/user.service";
 import type { IUpdateProfilePayload } from "~/types/profile";
 import type { IUser } from "~/types/user";
+import { isValidEmail } from "~/utils/auth";
 import { getErrorMessage, getFieldErrors } from "~/utils/https";
 
 const MAX_PHOTO_BYTES = 10 * 1024 * 1024;
 const BIO_MAX = 300;
 const NG_PHONE = /^(\+234|0)[789][01]\d{8}$/;
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type FieldKey = "fullName" | "userName" | "bio" | "contactEmail" | "contactPhone";
 
@@ -57,7 +57,7 @@ const validate = (values: FormValues) => {
     if (userName.length < 2) errors.userName = "Display name needs at least 2 characters";
     else if (userName.length > 40) errors.userName = "Keep it under 40 characters";
     if (values.bio.length > BIO_MAX) errors.bio = `Keep it under ${BIO_MAX} characters`;
-    if (values.contactEmail.trim() && !EMAIL.test(values.contactEmail.trim())) errors.contactEmail = "Enter a valid email";
+    if (values.contactEmail.trim() && !isValidEmail(values.contactEmail)) errors.contactEmail = "Enter a valid email";
     if (values.contactPhone.trim() && !NG_PHONE.test(values.contactPhone.replace(/[\s-]/g, ""))) {
         errors.contactPhone = "Use a Nigerian number, e.g. 0803 123 4567 or +234 803 123 4567";
     }
@@ -173,16 +173,21 @@ const SettingsPage = () => {
         },
     });
 
+    // Once something changes, show rule breaks as you type (Save stays disabled until they're fixed).
+    const liveErrors = dirty ? validate(values) : {};
+    const liveAddressErrors = dirty ? validateAddress(values.address) : {};
+    const shownErrors = { ...liveErrors, ...errors };
+    const shownAddressErrors = { ...liveAddressErrors, ...addressErrors };
+    const valid = Object.keys(liveErrors).length === 0 && Object.keys(liveAddressErrors).length === 0;
+
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const nextErrors = validate(values);
         const nextAddressErrors = validateAddress(values.address);
         setErrors(nextErrors);
         setAddressErrors(nextAddressErrors);
-        if (Object.keys(nextErrors).length > 0 || Object.keys(nextAddressErrors).length > 0) {
-            toast.error("Please fix the highlighted fields.");
-            return;
-        }
+        // Save is disabled until this passes; this only guards against odd submits.
+        if (Object.keys(nextErrors).length > 0 || Object.keys(nextAddressErrors).length > 0) return;
         saveMutation.mutate(values);
     };
 
@@ -249,10 +254,10 @@ const SettingsPage = () => {
                         id="userName"
                         value={values.userName}
                         onChange={(event) => set("userName", event.target.value)}
-                        aria-invalid={!!errors.userName}
+                        aria-invalid={!!shownErrors.userName}
                         maxLength={40}
                     />
-                    <FieldError message={errors.userName} hint="Shown on your shelf and in conversations." />
+                    <FieldError message={shownErrors.userName} hint="Shown on your shelf and in conversations." />
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -264,11 +269,11 @@ const SettingsPage = () => {
                         rows={4}
                         value={values.bio}
                         onChange={(event) => set("bio", event.target.value)}
-                        aria-invalid={!!errors.bio}
+                        aria-invalid={!!shownErrors.bio}
                         placeholder="Mostly textbooks and Nigerian fiction. Happy to meet around Yaba."
                         className="w-full min-w-0 resize-y rounded-lg border border-input bg-transparent px-2.5 py-2 text-base outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm"
                     />
-                    <FieldError message={errors.bio} hint={`${values.bio.length}/${BIO_MAX}`} />
+                    <FieldError message={shownErrors.bio} hint={`${values.bio.length}/${BIO_MAX}`} />
                 </div>
             </Section>
 
@@ -279,11 +284,11 @@ const SettingsPage = () => {
                         id="fullName"
                         value={values.fullName}
                         onChange={(event) => set("fullName", event.target.value)}
-                        aria-invalid={!!errors.fullName}
+                        aria-invalid={!!shownErrors.fullName}
                         maxLength={80}
                         autoComplete="name"
                     />
-                    <FieldError message={errors.fullName} />
+                    <FieldError message={shownErrors.fullName} />
                 </div>
                 <div className="flex flex-col gap-2">
                     <Label htmlFor="email">Email</Label>
@@ -302,10 +307,10 @@ const SettingsPage = () => {
                         type="email"
                         value={values.contactEmail}
                         onChange={(event) => set("contactEmail", event.target.value)}
-                        aria-invalid={!!errors.contactEmail}
+                        aria-invalid={!!shownErrors.contactEmail}
                         placeholder="you@example.com"
                     />
-                    <FieldError message={errors.contactEmail} />
+                    <FieldError message={shownErrors.contactEmail} />
                 </div>
                 <div className="flex flex-col gap-2">
                     <Label htmlFor="contactPhone">
@@ -316,11 +321,11 @@ const SettingsPage = () => {
                         type="tel"
                         value={values.contactPhone}
                         onChange={(event) => set("contactPhone", event.target.value)}
-                        aria-invalid={!!errors.contactPhone}
+                        aria-invalid={!!shownErrors.contactPhone}
                         placeholder="0803 123 4567"
                         autoComplete="tel"
                     />
-                    <FieldError message={errors.contactPhone} />
+                    <FieldError message={shownErrors.contactPhone} />
                 </div>
             </Section>
 
@@ -328,7 +333,7 @@ const SettingsPage = () => {
                 <AddressFields
                     value={values.address}
                     onChange={(address) => set("address", address)}
-                    errors={addressErrors}
+                    errors={shownAddressErrors}
                     onClearError={(key) => setAddressErrors(({ [key]: _removed, ...rest }) => rest)}
                 />
             </Section>
@@ -346,7 +351,7 @@ const SettingsPage = () => {
                 </Button>
                 <Button
                     type="submit"
-                    disabled={!dirty || saving || uploadMutation.isPending}
+                    disabled={!dirty || !valid || saving || uploadMutation.isPending}
                     className="h-11 rounded-md bg-primary px-6 text-[15px] font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90"
                 >
                     {saving ? "Saving…" : "Save changes"}

@@ -1,5 +1,13 @@
-import { ImagePlus, Loader2, RotateCw, Star, X } from "lucide-react";
-import { useEffect, useRef, useState, type Dispatch, type DragEvent, type SetStateAction } from "react";
+import { Camera, ImagePlus, Loader2, RotateCw, Star, X } from "lucide-react";
+import {
+    useEffect,
+    useRef,
+    useState,
+    type ChangeEvent,
+    type Dispatch,
+    type DragEvent,
+    type SetStateAction,
+} from "react";
 import { toast } from "sonner";
 import { cn } from "~/lib/utils";
 import fileService from "~/services/file.service";
@@ -35,6 +43,7 @@ interface PhotoUploaderProps {
 /** Drop zone + thumbnails. Photos upload as soon as they're picked; any one can be made the cover. */
 const PhotoUploader = ({ photos, setPhotos, coverKey, onCoverChange, max, invalid, disabled }: PhotoUploaderProps) => {
     const inputRef = useRef<HTMLInputElement>(null);
+    const cameraRef = useRef<HTMLInputElement>(null);
     const [dragging, setDragging] = useState(false);
     const cover = resolveCoverKey(photos, coverKey);
     const remaining = max - photos.length;
@@ -86,7 +95,12 @@ const PhotoUploader = ({ photos, setPhotos, coverKey, onCoverChange, max, invali
         });
     };
 
-    const handleDrop = (event: DragEvent<HTMLDivElement>) => {
+    const handleInput = (event: ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files) addFiles(event.target.files);
+        event.target.value = "";
+    };
+
+    const handleDrop =(event: DragEvent<HTMLDivElement>) => {
         event.preventDefault();
         setDragging(false);
         if (!disabled && event.dataTransfer.files.length) addFiles(event.dataTransfer.files);
@@ -94,6 +108,31 @@ const PhotoUploader = ({ photos, setPhotos, coverKey, onCoverChange, max, invali
 
     return (
         <div className="flex flex-col gap-3">
+            {/* Touch devices: open the camera directly, or pick from the gallery. */}
+            {remaining > 0 && (
+                <div className="hidden grid-cols-2 gap-2.5 pointer-coarse:grid">
+                    {[
+                        { label: "Take photo", icon: Camera, input: cameraRef },
+                        { label: "Choose photos", icon: ImagePlus, input: inputRef },
+                    ].map(({ label, icon: Icon, input }) => (
+                        <button
+                            key={label}
+                            type="button"
+                            disabled={disabled}
+                            aria-invalid={invalid}
+                            onClick={() => input.current?.click()}
+                            className={cn(
+                                "flex flex-col items-center justify-center gap-1.5 rounded-lg border-2 border-dashed border-foreground/20 bg-card px-3 py-5 font-semibold outline-none active:bg-secondary focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-60",
+                                invalid && "border-destructive",
+                            )}
+                        >
+                            <Icon className="size-6 text-foreground/45" aria-hidden />
+                            {label}
+                        </button>
+                    ))}
+                </div>
+            )}
+            {/* Mouse/trackpad: drop zone that also opens the file picker. */}
             {remaining > 0 && (
                 <div
                     role="button"
@@ -114,7 +153,7 @@ const PhotoUploader = ({ photos, setPhotos, coverKey, onCoverChange, max, invali
                     onDragLeave={() => setDragging(false)}
                     onDrop={handleDrop}
                     className={cn(
-                        "flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border-2 border-dashed border-foreground/20 bg-card px-4 py-7 text-center transition-colors outline-none hover:border-primary/50 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
+                        "flex cursor-pointer flex-col items-center pointer-coarse:hidden justify-center gap-1.5 rounded-lg border-2 border-dashed border-foreground/20 bg-card px-4 py-7 text-center transition-colors outline-none hover:border-primary/50 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
                         dragging && "border-primary bg-secondary",
                         invalid && "border-destructive",
                         disabled && "pointer-events-none opacity-60",
@@ -123,7 +162,7 @@ const PhotoUploader = ({ photos, setPhotos, coverKey, onCoverChange, max, invali
                     <ImagePlus className="size-6 text-foreground/45" aria-hidden />
                     <span className="font-semibold">{photos.length ? "Add more photos" : "Drop the cover photo"}</span>
                     <span className="text-sm text-foreground/55">
-                        or tap to choose · {remaining} of {max} left
+                        or click to choose
                     </span>
                 </div>
             )}
@@ -133,10 +172,16 @@ const PhotoUploader = ({ photos, setPhotos, coverKey, onCoverChange, max, invali
                 accept="image/*"
                 multiple
                 className="hidden"
-                onChange={(event) => {
-                    if (event.target.files) addFiles(event.target.files);
-                    event.target.value = "";
-                }}
+                onChange={handleInput}
+            />
+            {/* `capture` opens the rear camera on phones; browsers without a camera fall back to the picker. */}
+            <input
+                ref={cameraRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                className="hidden"
+                onChange={handleInput}
             />
 
             {photos.length > 0 && (
@@ -201,7 +246,9 @@ const PhotoUploader = ({ photos, setPhotos, coverKey, onCoverChange, max, invali
                     })}
                 </ul>
             )}
-            <p className="text-sm text-foreground/55">Front cover first, then spine and any damage. Up to {max}.</p>
+            <p className="text-sm text-foreground/55">
+                Front cover first, then spine and any damage. {remaining > 0 ? `${remaining} of ${max} left.` : `That's the most you can add (${max}).`}
+            </p>
         </div>
     );
 };

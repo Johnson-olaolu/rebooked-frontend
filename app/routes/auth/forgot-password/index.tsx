@@ -3,15 +3,18 @@ import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { isValidEmail } from "~/utils/auth";
 import AuthCardLayout from "../components/AuthCardLayout";
 
 const ForgotPasswordPage = () => {
     const [email, setEmail] = useState("");
     const [submitting, setSubmitting] = useState(false);
     const [sent, setSent] = useState(false);
+    const canSubmit = isValidEmail(email) && !submitting;
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        if (!canSubmit) return;
         setSubmitting(true);
         // TODO: replace with real password reset request once the auth service is wired up.
         setTimeout(() => {
@@ -62,7 +65,7 @@ const ForgotPasswordPage = () => {
                 </div>
                 <Button
                     type="submit"
-                    disabled={submitting}
+                    disabled={!canSubmit}
                     className="mt-1 h-12 rounded-lg bg-primary text-base font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90"
                 >
                     {submitting ? "Sending…" : "Send reset link"}

@@ -9,7 +9,7 @@ import { Checkbox } from "~/components/ui/checkbox";
 import { useBaseStore } from "~/hooks/store";
 import authService from "~/services/auth.service";
 import type { ILoginPayload } from "~/types/auth";
-import { getPostAuthPath } from "~/utils/auth";
+import { getPostAuthPath, isValidEmail } from "~/utils/auth";
 import { getErrorMessage, getErrorStatus } from "~/utils/https";
 
 const LoginPage = () => {
@@ -51,11 +51,13 @@ const LoginPage = () => {
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        if (!canSubmit) return;
         setError("");
         loginMutation.mutate({ email: email.trim(), password });
     };
 
     const submitting = loginMutation.isPending;
+    const canSubmit = isValidEmail(email) && password.length > 0 && !submitting;
 
     return (
         <>
@@ -107,7 +109,7 @@ const LoginPage = () => {
 
                 <Button
                     type="submit"
-                    disabled={submitting}
+                    disabled={!canSubmit}
                     className="h-12 rounded-lg bg-primary text-base font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90"
                 >
                     {submitting ? "Logging in…" : "Log in"}

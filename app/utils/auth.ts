@@ -14,6 +14,11 @@ export const PASSWORD_RULES: { label: string; test: (password: string) => boolea
 
 export const isValidPassword = (password: string) => PASSWORD_REGEX.test(password);
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/** Loose shape check (something@domain.tld); the server is the real judge. */
+export const isValidEmail = (email: string) => EMAIL_REGEX.test(email.trim());
+
 /** Where a user should land after logging in or verifying. */
 export const getPostAuthPath = (user: IUser, redirect?: string | null) => {
   if (!user.emailVerified) return "/auth/verify-email";

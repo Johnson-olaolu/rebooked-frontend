@@ -60,6 +60,8 @@ const OnboardingStepTwo = () => {
         },
     });
 
+    const canSubmit = Object.keys(validateAddress(address)).length === 0 && !saveMutation.isPending;
+
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const nextErrors = validateAddress(address);
@@ -89,7 +91,7 @@ const OnboardingStepTwo = () => {
             <div className="mt-9 flex items-center gap-4">
                 <Button
                     type="submit"
-                    disabled={saveMutation.isPending}
+                    disabled={!canSubmit}
                     className="h-12 rounded-lg bg-primary px-7 text-base font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90"
                 >
                     {saveMutation.isPending ? "Saving…" : "Take me to my dashboard"}
