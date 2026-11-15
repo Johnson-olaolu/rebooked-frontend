@@ -8,7 +8,7 @@ import DashboardSidebar from "./DashboardSidebar";
 
 const tabs: { label: string; to: string; icon: LucideIcon; end?: boolean }[] = [
     { label: "Home", to: "/dashboard", icon: House, end: true },
-    { label: "Listings", to: "/dashboard/listings", icon: Library },
+    { label: "Shelf", to: "/dashboard/shelf", icon: Library },
     { label: "Messages", to: "/dashboard/messages", icon: MessageSquare },
     { label: "Profile", to: "/dashboard/settings", icon: UserRound },
 ];

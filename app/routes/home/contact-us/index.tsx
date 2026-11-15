@@ -23,7 +23,7 @@ const ContactUsPage = () => {
                 <span className="text-xs font-semibold tracking-[0.16em] text-destructive uppercase">Get in touch</span>
                 <h1 className="mt-4 font-serif text-4xl leading-tight md:text-5xl">We'd like to hear from you.</h1>
                 <p className="mt-6 leading-relaxed text-foreground/70">
-                    Questions about a listing, a report about another user, or feedback on Rebooked itself — send it our way
+                    Questions about a book, a report about another user, or feedback on Rebooked itself — send it our way
                     and a real person will read it.
                 </p>
                 <div className="mt-8 flex flex-col gap-4 text-sm text-foreground/65">

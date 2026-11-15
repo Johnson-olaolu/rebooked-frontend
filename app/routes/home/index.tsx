@@ -8,7 +8,7 @@ export function meta({ }: Route.MetaArgs) {
     {
       name: "description",
       content:
-        "List the books you've finished, find the ones you keep meaning to read, and message the person on the other end directly. No fees, no middleman.",
+        "Shelve the books you've finished, find the ones you keep meaning to read, and message the person on the other end directly. No fees, no middleman.",
     },
   ];
 }
@@ -21,13 +21,13 @@ const featuredBooks = [
 ];
 
 const categories = [
-  { name: "Textbooks", count: "1,482 listings" },
-  { name: "Literary fiction", count: "936 listings" },
-  { name: "Crime & thriller", count: "704 listings" },
-  { name: "Rare & collectable", count: "118 listings" },
-  { name: "Kids & young adult", count: "592 listings" },
-  { name: "History & politics", count: "430 listings" },
-  { name: "Poetry", count: "211 listings" },
+  { name: "Textbooks", count: "1,482 books" },
+  { name: "Literary fiction", count: "936 books" },
+  { name: "Crime & thriller", count: "704 books" },
+  { name: "Rare & collectable", count: "118 books" },
+  { name: "Kids & young adult", count: "592 books" },
+  { name: "History & politics", count: "430 books" },
+  { name: "Poetry", count: "211 books" },
 ];
 
 const topAuthors = [
@@ -64,14 +64,14 @@ export function ServerComponent() {
             Every book deserves a second reader.
           </h1>
           <p className="mt-6 max-w-lg text-lg leading-relaxed text-foreground/70 text-pretty">
-            List the books you've finished, find the ones you keep meaning to read, and message the person on the other end directly. Rebooked introduces you — you two sort out the handover.
+            Shelve the books you've finished, find the ones you keep meaning to read, and message the person on the other end directly. Rebooked introduces you — you two sort out the handover.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg" className="h-12 rounded-lg bg-primary px-6 text-base font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90">
-              <Link to="/register">List your first book</Link>
+              <Link to="/register">Start your shelf</Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="h-12 rounded-lg border-foreground/25 px-6 text-base font-semibold">
-              <Link to="/#how-it-works">Browse the store</Link>
+              <Link to="/shop">Browse the shop</Link>
             </Button>
           </div>
           <p className="mt-5 text-sm text-foreground/50">
@@ -158,7 +158,7 @@ export function ServerComponent() {
       <section className="border-t border-border px-6 py-14 md:px-12">
         <div className="mx-auto grid max-w-7xl gap-11 md:grid-cols-[1.1fr_0.9fr]">
           <div>
-            <h2 className="mb-1.5 font-serif text-3xl md:text-4xl">Most-listed authors</h2>
+            <h2 className="mb-1.5 font-serif text-3xl md:text-4xl">Most-shelved authors</h2>
             <p className="mb-6 text-foreground/60">What Rebooked readers are passing on right now.</p>
             <div className="grid grid-cols-1 gap-x-6 gap-y-2.5 sm:grid-cols-2">
               {topAuthors.map((author, index) => (

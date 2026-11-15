@@ -175,7 +175,7 @@ const AddressFields = ({ value, onChange, errors = {}, onClearError }: AddressFi
                 {errors.addressLine ? (
                     <span className="text-sm text-destructive">{errors.addressLine}</span>
                 ) : (
-                    <span className="text-sm text-foreground/50">Private — never shown on your listings.</span>
+                    <span className="text-sm text-foreground/50">Private — never shown on your shelf.</span>
                 )}
             </div>
         </div>

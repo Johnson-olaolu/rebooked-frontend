@@ -1,7 +1,7 @@
 const sections = [
     {
         title: "What we collect",
-        body: "Your name, email address, and approximate location (city/suburb) when you create an account. Photos and descriptions you add to a listing. Messages you send through Rebooked, so we can moderate abuse and resolve disputes.",
+        body: "Your name, email address, and approximate location (city/suburb) when you create an account. Photos and descriptions you add to a book on your shelf. Messages you send through Rebooked, so we can moderate abuse and resolve disputes.",
     },
     {
         title: "What we don't collect",
@@ -9,11 +9,11 @@ const sections = [
     },
     {
         title: "How we use it",
-        body: "To run your account, show your listings in the store, connect you with other readers, and keep the platform safe. We don't sell your data to third parties or use it for ad targeting.",
+        body: "To run your account, show your shelf in the shop, connect you with other readers, and keep the platform safe. We don't sell your data to third parties or use it for ad targeting.",
     },
     {
         title: "Who can see it",
-        body: "Your display name, photo, city/suburb, and listings are public. Your exact address and email are never shown to other users — conversations happen through Rebooked messaging.",
+        body: "Your display name, photo, city/suburb, and shelf are public. Your exact address and email are never shown to other users — conversations happen through Rebooked messaging.",
     },
     {
         title: "Your choices",

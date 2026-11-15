@@ -1,7 +1,7 @@
 import { Button } from "~/components/ui/button";
 import { getDisplayName } from "~/components/UserAvatar";
 import { useBaseStore } from "~/hooks/store";
-import { listBookSoon } from "./components/actions";
+import { addToShelfSoon } from "./components/actions";
 
 const greeting = () => {
     const hour = new Date().getHours();
@@ -11,7 +11,7 @@ const greeting = () => {
 };
 
 const STATS = [
-    { label: "Active listings", value: "0", hint: "List your first book" },
+    { label: "Books on shelf", value: "0", hint: "Add your first book" },
     { label: "In conversation", value: "0", hint: "No open chats" },
     { label: "Unread messages", value: "0", hint: "You're all caught up" },
     { label: "Sold all time", value: "0", hint: "—" },
@@ -33,10 +33,10 @@ const DashboardOverview = () => {
                 </div>
                 {/* Full-width on mobile (mockup 3f), top-right on desktop (mockup 3a). */}
                 <Button
-                    onClick={listBookSoon}
+                    onClick={addToShelfSoon}
                     className="h-11 w-full rounded-md bg-primary md:w-auto px-5 text-[15px] font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90"
                 >
-                    + List a book
+                    + Add to shelf
                 </Button>
             </div>
 

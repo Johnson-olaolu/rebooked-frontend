@@ -16,7 +16,7 @@ import UserAvatar, { getDisplayName } from "./UserAvatar";
 
 export const USER_MENU_LINKS = [
   { label: "My dashboard", to: "/dashboard", icon: LayoutDashboard },
-  { label: "My listings", to: "/dashboard/listings", icon: Library },
+  { label: "My shelf", to: "/dashboard/shelf", icon: Library },
   { label: "Messages", to: "/dashboard/messages", icon: MessageSquare },
   { label: "Profile settings", to: "/dashboard/settings", icon: Settings },
 ];

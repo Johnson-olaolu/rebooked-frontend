@@ -16,7 +16,7 @@ import { cn } from "~/lib/utils";
 
 export const SIDEBAR_ITEMS: { label: string; to: string; icon: LucideIcon; end?: boolean }[] = [
     { label: "Overview", to: "/dashboard", icon: LayoutDashboard, end: true },
-    { label: "My listings", to: "/dashboard/listings", icon: Library },
+    { label: "My shelf", to: "/dashboard/shelf", icon: Library },
     { label: "Messages", to: "/dashboard/messages", icon: MessageSquare },
     { label: "Notifications", to: "/dashboard/notifications", icon: Bell },
     { label: "Settings", to: "/dashboard/settings", icon: Settings },

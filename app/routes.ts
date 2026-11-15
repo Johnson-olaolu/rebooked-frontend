@@ -14,7 +14,8 @@ export default [
   // Dashboard (requires a logged-in, onboarded user)
   route("dashboard", "./routes/dashboard/components/DashboardLayout.tsx", [
     index("./routes/dashboard/index.tsx"),
-    route("listings", "./routes/dashboard/listings/index.tsx"),
+    route("shelf", "./routes/dashboard/shelf/index.tsx"),
+    route("listings", "./routes/dashboard/listings/index.tsx"), // old path → /dashboard/shelf
     route("messages", "./routes/dashboard/messages/index.tsx"),
     route("notifications", "./routes/dashboard/notifications/index.tsx"),
     route("settings", "./routes/dashboard/settings/index.tsx"),

@@ -7,7 +7,7 @@ const TOTAL_STEPS = 2;
 const PANEL_CONTENT = {
     1: {
         quote: "Every good shelf starts with a familiar face.",
-        bullets: ["Your name and photo appear on your listings", "Change them any time from your profile"],
+        bullets: ["Your name and photo appear on your shelf", "Change them any time from your profile"],
     },
     2: {
         quote: "The best books change hands close to home.",

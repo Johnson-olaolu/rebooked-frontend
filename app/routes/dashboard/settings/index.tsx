@@ -205,10 +205,10 @@ const SettingsPage = () => {
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
             <div>
                 <h1 className="font-serif text-3xl md:text-4xl">Profile settings</h1>
-                <p className="mt-1.5 text-foreground/60">This is what buyers see on your listings and in messages.</p>
+                <p className="mt-1.5 text-foreground/60">This is what buyers see on your shelf and in messages.</p>
             </div>
 
-            <Section title="Profile" description="Your photo and display name appear on every listing.">
+            <Section title="Profile" description="Your photo and display name appear on your shelf.">
                 <div className="flex items-center gap-5">
                     <div className="relative">
                         <UserAvatar user={previewUser} className="size-20 text-2xl" />
@@ -252,7 +252,7 @@ const SettingsPage = () => {
                         aria-invalid={!!errors.userName}
                         maxLength={40}
                     />
-                    <FieldError message={errors.userName} hint="Shown on your listings and in conversations." />
+                    <FieldError message={errors.userName} hint="Shown on your shelf and in conversations." />
                 </div>
 
                 <div className="flex flex-col gap-2">

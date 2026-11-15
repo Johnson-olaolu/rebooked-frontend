@@ -33,15 +33,15 @@ const ShopPage = () => {
                 {isLoggedIn ? (
                     <div className="flex items-center gap-3">
                         <Button asChild variant="outline" className="h-11 rounded-lg px-4 text-[15px] font-semibold">
-                            <Link to="/dashboard/listings">My listings</Link>
+                            <Link to="/dashboard/shelf">My shelf</Link>
                         </Button>
-                        <Button className={primaryButton} onClick={() => toast("Listing books is coming soon.")}>
-                            + List a book
+                        <Button className={primaryButton} onClick={() => toast("Adding books to your shelf is coming soon.")}>
+                            + Add to shelf
                         </Button>
                     </div>
                 ) : (
                     <Button asChild className={primaryButton}>
-                        <Link to="/register">Join Rebooked to list your books</Link>
+                        <Link to="/register">Join Rebooked to start your shelf</Link>
                     </Button>
                 )}
             </div>
@@ -77,8 +77,8 @@ const ShopPage = () => {
                 <img src="/brand/rebooked-mark-ink.png" alt="" className="h-14 w-auto object-contain opacity-40" />
                 <h2 className="mt-5 font-serif text-2xl">Nobody's shelved anything yet</h2>
                 <p className="mt-2 max-w-md text-foreground/60">
-                    The shop opens as soon as the first books are listed.
-                    {isLoggedIn ? " Got some books to pass on? Be the first." : " Join to be the first to list yours."}
+                    The shop opens as soon as the first books hit the shelves.
+                    {isLoggedIn ? " Got some books to pass on? Be the first." : " Join to be the first to fill a shelf."}
                 </p>
             </div>
         </div>

@@ -138,7 +138,7 @@ const OnboardingStepOne = () => {
                         <span className="text-sm text-destructive">{userNameError}</span>
                     ) : (
                         <span className="text-sm text-foreground/50">
-                            Shown on your listings and in conversations. You can change it later.
+                            Shown on your shelf and in conversations. You can change it later.
                         </span>
                     )}
                 </div>

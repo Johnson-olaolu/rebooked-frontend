@@ -1,15 +1,15 @@
 const sections = [
     {
         title: "1. What Rebooked is",
-        body: "Rebooked is a platform that lets people list secondhand books and message each other about them. We do not buy, sell, ship, or process payment for any book listed on the platform.",
+        body: "Rebooked is a platform that lets people put secondhand books on their shelf and message each other about them. We do not buy, sell, ship, or process payment for any book on the platform.",
     },
     {
         title: "2. Your account",
         body: "You must provide accurate information when signing up and verify your email address. You're responsible for anything posted from your account, and for keeping your password secure.",
     },
     {
-        title: "3. Listings",
-        body: "Listings must be for real books you own and intend to sell or give away. Misleading condition descriptions, prohibited items, or spam listings may be removed without notice.",
+        title: "3. Your shelf",
+        body: "Books on your shelf must be real books you own and intend to sell or give away. Misleading condition descriptions, prohibited items, or spam may be removed without notice.",
     },
     {
         title: "4. No payment protection",

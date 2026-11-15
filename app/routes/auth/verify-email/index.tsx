@@ -85,7 +85,7 @@ const VerifyEmailPage = () => {
                 <p className="mt-2 mb-7 leading-relaxed text-foreground/65">
                     Enter the 6-digit code we sent to{" "}
                     {email ? <span className="font-semibold text-foreground">{email}</span> : "your email address"}. Verified
-                    accounts get a badge on their listings — buyers trust them more.
+                    accounts get a badge on their shelf — buyers trust them more.
                 </p>
 
                 <div className="flex justify-center">
