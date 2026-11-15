@@ -24,7 +24,10 @@ export default [
     route("shelf/new", "./routes/dashboard/shelf/new/index.tsx"),
     route("shelf/:id/edit", "./routes/dashboard/shelf/edit/index.tsx"),
     route("listings", "./routes/dashboard/listings/index.tsx"), // old path → /dashboard/shelf
-    route("messages", "./routes/dashboard/messages/index.tsx"),
+    route("messages", "./routes/dashboard/messages/layout.tsx", [
+      index("./routes/dashboard/messages/index.tsx"),
+      route(":id", "./routes/dashboard/messages/thread.tsx"), // one conversation per person (API_CHANGES #18)
+    ]),
     route("notifications", "./routes/dashboard/notifications/index.tsx"),
     route("settings", "./routes/dashboard/settings/index.tsx"),
   ]),

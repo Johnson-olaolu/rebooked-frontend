@@ -61,6 +61,18 @@ class HttpFacade {
     );
   }
 
+  /**
+   * A usable access token for the chat socket: refreshed first when it's about to expire, or always
+   * when `force` (the server said it expired). Shares the in-flight refresh with HTTP requests.
+   */
+  freshToken = async (force = false): Promise<string | undefined> => {
+    const { accessToken, refreshToken, accessTokenExpiresAt } = getBaseStore().getState();
+    if (!accessToken) return undefined;
+    const expired = !!accessTokenExpiresAt && Date.now() > accessTokenExpiresAt - EXPIRY_SKEW_MS;
+    if (refreshToken && (force || expired)) return this.refreshOrLogout();
+    return accessToken;
+  };
+
   /** Refreshes the token pair; on failure logs out and sends the user to /login. */
   private refreshOrLogout(): Promise<string> {
     if (!this.refreshPromise) {

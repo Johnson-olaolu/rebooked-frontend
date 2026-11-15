@@ -1,20 +1,14 @@
-import { Link } from "react-router";
-import { Button } from "~/components/ui/button";
-import EmptyState from "../components/EmptyState";
+import { MessageSquare } from "lucide-react";
 
-const MessagesPage = () => (
-    <>
-        <h1 className="mb-6 font-serif text-3xl md:text-4xl">Messages</h1>
-        <EmptyState
-            title="No messages yet"
-            description="When a buyer asks about one of your books, or you message a seller, the conversation shows up here."
-            action={
-                <Button asChild variant="outline" className="h-11 rounded-md px-5 text-[15px] font-semibold">
-                    <Link to="/shop">Browse the shop</Link>
-                </Button>
-            }
-        />
-    </>
+/** Desktop right pane before a conversation is picked (mobile shows only the list). */
+const MessagesIndex = () => (
+    <div className="flex flex-1 flex-col items-center justify-center p-10 text-center">
+        <MessageSquare className="size-10 text-foreground/25" aria-hidden />
+        <p className="mt-4 font-serif text-2xl">Pick a conversation</p>
+        <p className="mt-1.5 max-w-xs text-sm text-foreground/55">
+            Every book you're discussing with someone sits in one thread with them.
+        </p>
+    </div>
 );
 
-export default MessagesPage;
+export default MessagesIndex;

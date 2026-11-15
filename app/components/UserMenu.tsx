@@ -8,10 +8,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { useUnreadCount } from "~/hooks/useChat";
 import { useLogout } from "~/hooks/useLogout";
 import { cn } from "~/lib/utils";
 import type { IUser } from "~/types/user";
 import { formatNgState } from "~/utils/nigeria";
+import UnreadBadge from "./chat/UnreadBadge";
 import UserAvatar, { getDisplayName } from "./UserAvatar";
 
 export const USER_MENU_LINKS = [
@@ -34,6 +36,7 @@ interface UserMenuProps {
 const UserMenu = ({ user, variant = "header", showName = true, collapsed = false }: UserMenuProps) => {
   const navigate = useNavigate();
   const logout = useLogout();
+  const unread = useUnreadCount();
   const name = getDisplayName(user);
   const address = user.profile?.address;
   const location = [address?.city?.trim(), formatNgState(address?.state)].filter(Boolean).join(", ");
@@ -65,7 +68,10 @@ const UserMenu = ({ user, variant = "header", showName = true, collapsed = false
           className="flex items-center gap-2.5 rounded-full py-1 pr-2 pl-1 outline-none transition-colors hover:bg-secondary focus-visible:ring-3 focus-visible:ring-ring/50 data-[state=open]:bg-secondary"
           aria-label="Open account menu"
         >
-          <UserAvatar user={user} />
+          <span className="relative">
+            <UserAvatar user={user} />
+            {unread > 0 && <span className="absolute -top-0.5 -right-0.5 size-2.5 rounded-full bg-[#9c3a2c] ring-2 ring-background" aria-label={`${unread} unread messages`} />}
+          </span>
           {showName && <span className="hidden max-w-36 truncate text-[15px] font-semibold sm:inline">{name}</span>}
           <ChevronDown className={cn("size-4 text-foreground/50", !showName && "hidden sm:block")} />
         </DropdownMenuTrigger>
@@ -90,6 +96,7 @@ const UserMenu = ({ user, variant = "header", showName = true, collapsed = false
           <DropdownMenuItem key={to} onSelect={() => navigate(to)}>
             <Icon />
             {label}
+            {to === "/dashboard/messages" && <UnreadBadge count={unread} className="ml-auto" />}
           </DropdownMenuItem>
         ))}
         <DropdownMenuSeparator />

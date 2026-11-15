@@ -1,5 +1,6 @@
 "use client";
 import { Toaster } from "~/components/ui/sonner";
+import ChatConnection from "./ChatConnection";
 
 const ProviderContent = () => {
   // const { getModal } = useModal();
@@ -8,6 +9,7 @@ const ProviderContent = () => {
   return (
     <>
       <Toaster position="top-right" />
+      <ChatConnection />
       {/* {getModal()} */}
       {/* {getNotification()} */}
     </>

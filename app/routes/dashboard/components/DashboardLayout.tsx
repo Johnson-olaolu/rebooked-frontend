@@ -1,6 +1,8 @@
 import { House, Library, MessageSquare, Store, UserRound, type LucideIcon } from "lucide-react";
 import { Link, NavLink, Outlet } from "react-router";
+import UnreadBadge from "~/components/chat/UnreadBadge";
 import UserMenu from "~/components/UserMenu";
+import { useUnreadCount } from "~/hooks/useChat";
 import { useBaseStore } from "~/hooks/store";
 import { cn } from "~/lib/utils";
 import AuthProvider from "~/provider/AuthProvider";
@@ -15,6 +17,7 @@ const tabs: { label: string; to: string; icon: LucideIcon; end?: boolean }[] = [
 
 const DashboardShell = () => {
     const user = useBaseStore((state) => state.user);
+    const unread = useUnreadCount();
 
     return (
         <div className="flex min-h-screen bg-background text-foreground">
@@ -63,7 +66,10 @@ const DashboardShell = () => {
                             )
                         }
                     >
-                        <Icon className="size-5.5" />
+                        <span className="relative">
+                            <Icon className="size-5.5" />
+                            {to === "/dashboard/messages" && <UnreadBadge count={unread} className="absolute -top-1.5 -right-3 h-4 min-w-4 px-1 text-[10px]" />}
+                        </span>
                         {label}
                     </NavLink>
                 ))}

@@ -2,15 +2,17 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ChevronRight, MessageCircle } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router";
-import { toast } from "sonner";
+import StartChatDialog from "~/components/chat/StartChatDialog";
 import { Button } from "~/components/ui/button";
 import UserAvatar from "~/components/UserAvatar";
+import { useConversationWith } from "~/hooks/useChat";
 import { useCurrentUser } from "~/hooks/useCurrentUser";
 import { cn } from "~/lib/utils";
 import bookService from "~/services/book.service";
 import type { IBook } from "~/types/book";
 import type { IFile } from "~/types/file";
 import { conditionLabel, editPath } from "~/utils/book";
+import { threadPath } from "~/utils/chat";
 import { categoryPath, statePath } from "~/utils/slug";
 import { getErrorStatus } from "~/utils/https";
 import { formatNaira } from "~/utils/money";
@@ -161,6 +163,10 @@ const BookPage = () => {
     });
     const book = bookQuery.data;
     const isOwner = !!user && !!book?.seller?.id && book.seller.id === user.id;
+    const [chatOpen, setChatOpen] = useState(false);
+    // Already talking to this seller about this book? Then the button goes straight back to that chat.
+    const existingChat = useConversationWith(id, isLoggedIn && !!book && !isOwner).data;
+    const continueChat = existingChat?.hasBook ? existingChat.conversationId : undefined;
 
     useEffect(() => {
         if (book?.title) document.title = `${book.title} · Rebooked`;
@@ -212,7 +218,8 @@ const BookPage = () => {
             navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`);
             return;
         }
-        toast("Messaging is coming soon — you'll be able to chat with sellers right here.");
+        if (continueChat) navigate(threadPath(continueChat, book.id));
+        else setChatOpen(true);
     };
 
     const banner =
@@ -240,7 +247,7 @@ const BookPage = () => {
         <div className="hidden flex-col gap-3 md:flex">
             <Button type="button" onClick={messageSeller} className={cn(primaryButton, "w-fit")}>
                 <MessageCircle className="size-5" aria-hidden />
-                Message seller
+                {continueChat ? "Continue chat" : "Message seller"}
             </Button>
             <p className="max-w-md text-sm text-foreground/55">{PAYMENTS_NOTE}</p>
         </div>
@@ -370,7 +377,11 @@ const BookPage = () => {
                     <Button type="button" onClick={messageSeller} className={cn(primaryButton, "w-full")}>
                         <MessageCircle className="size-5" aria-hidden />
                         <span className="truncate">
-                            {sellerName === "the seller" ? "Message the seller" : `Message ${sellerName} about this book`}
+                            {continueChat
+                                ? `Continue chat with ${sellerName}`
+                                : sellerName === "the seller"
+                                  ? "Message the seller"
+                                  : `Message ${sellerName} about this book`}
                         </span>
                     </Button>
                     <p className="mt-1.5 text-center text-xs text-foreground/55">
@@ -378,6 +389,8 @@ const BookPage = () => {
                     </p>
                 </div>
             )}
+
+            {available && !isOwner && isLoggedIn && <StartChatDialog book={book} open={chatOpen} onOpenChange={setChatOpen} />}
         </div>
     );
 };

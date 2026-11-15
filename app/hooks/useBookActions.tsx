@@ -81,6 +81,10 @@ export const useBookActions = ({ onRemoved }: { onRemoved?: (book: IBook) => voi
                     <>
                         <strong className="font-semibold text-foreground">{title}</strong> leaves the shop straight away. It
                         stays on your profile as a completed sale.
+                        <span className="mt-2 block text-sm">
+                            Sold to someone you chatted with? Mark it sold from your chat with them instead, so it shows as
+                            sold to them.
+                        </span>
                     </>
                 }
                 confirmLabel="Yes, it's sold"

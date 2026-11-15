@@ -8,10 +8,12 @@ import NotFoundMessage from "~/components/shop/NotFoundMessage";
 import Pagination from "~/components/shop/Pagination";
 import { Button } from "~/components/ui/button";
 import UserAvatar from "~/components/UserAvatar";
+import { useConversationWithUser } from "~/hooks/useChat";
 import { useCurrentUser } from "~/hooks/useCurrentUser";
 import { cn } from "~/lib/utils";
 import bookService from "~/services/book.service";
 import userService from "~/services/user.service";
+import { threadPath } from "~/utils/chat";
 import { getErrorStatus } from "~/utils/https";
 import { formatNgState } from "~/utils/nigeria";
 import { statePath } from "~/utils/slug";
@@ -80,6 +82,7 @@ const SellerPage = () => {
     const name = seller?.userName?.trim() || "This seller";
     const firstName = name.split(" ")[0];
     const isOwner = !!user && user.id === id;
+    const existingChat = useConversationWithUser(id, isLoggedIn && !!seller && !isOwner).data;
 
     useEffect(() => {
         if (seller) document.title = `${name}'s shelf · Rebooked`;
@@ -114,7 +117,14 @@ const SellerPage = () => {
             navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`);
             return;
         }
-        toast("Messaging is coming soon — you'll be able to chat with sellers right here.");
+        if (existingChat) {
+            navigate(threadPath(existingChat.conversationId));
+            return;
+        }
+        // Conversations are about books: start one from a book on their shelf.
+        setParams({}, { preventScrollReset: true });
+        document.getElementById("seller-shelf")?.scrollIntoView({ behavior: "smooth" });
+        toast(`Pick a book from ${firstName}'s shelf, then message them from its page.`);
     };
 
     const setTab = (next: Tab) => setParams(next === "available" ? {} : { tab: next }, { preventScrollReset: true });
@@ -173,7 +183,7 @@ const SellerPage = () => {
                 {!isOwner && (
                     <div className="flex shrink-0 flex-col gap-2 sm:flex-row md:flex-col lg:flex-row">
                         <Button type="button" onClick={messageSeller} className={primaryButton}>
-                            <MessageCircle className="size-5" aria-hidden /> Message {firstName}
+                            <MessageCircle className="size-5" aria-hidden /> {existingChat ? `Open chat with ${firstName}` : `Message ${firstName}`}
                         </Button>
                         <Button asChild variant="outline" className="h-11 rounded-lg px-4 font-semibold">
                             <Link to={`/contact-us?subject=report&seller=${encodeURIComponent(id)}`}>Report this seller</Link>
