@@ -4,6 +4,7 @@ import { useBaseStore } from "~/hooks/store";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
 import bookService from "~/services/book.service";
+import type { BookStatus } from "~/types/book";
 
 const greeting = () => {
     const hour = new Date().getHours();
@@ -12,16 +13,17 @@ const greeting = () => {
     return "Good evening";
 };
 
-const STATS = (onShelf?: number) => [
-    {
-        label: "Books on shelf",
-        value: onShelf === undefined ? "–" : String(onShelf),
-        hint: onShelf ? "Available in the shop" : "Add your first book",
-    },
-    { label: "In conversation", value: "0", hint: "No open chats" },
-    { label: "Unread messages", value: "0", hint: "You're all caught up" },
-    { label: "Sold all time", value: "0", hint: "—" },
-];
+/** Counts default to 0 until the shelf loads (or if it can't), so tiles never show a placeholder. */
+const STATS = (counts?: Partial<Record<BookStatus, number>>) => {
+    const onShelf = counts?.ACTIVE ?? 0;
+    const sold = counts?.SOLD ?? 0;
+    return [
+        { label: "Books on shelf", value: onShelf, hint: onShelf ? "Available in the shop" : "Add your first book" },
+        { label: "In conversation", value: 0, hint: "No open chats" },
+        { label: "Unread messages", value: 0, hint: "You're all caught up" },
+        { label: "Sold all time", value: sold, hint: sold ? "Books rehomed so far" : "No sales yet" },
+    ];
+};
 
 const DashboardOverview = () => {
     const user = useBaseStore((state) => state.user);
@@ -54,7 +56,7 @@ const DashboardOverview = () => {
             </div>
 
             <div className="mt-8 grid grid-cols-2 gap-3.5 lg:grid-cols-4">
-                {STATS(shelfQuery.data?.counts?.ACTIVE).map((stat) => (
+                {STATS(shelfQuery.data?.counts).map((stat) => (
                     <div key={stat.label} className="rounded-lg border border-foreground/10 bg-card p-5">
                         <div className="text-sm text-foreground/60">{stat.label}</div>
                         <div className="mt-1 font-serif text-4xl text-primary">{stat.value}</div>
