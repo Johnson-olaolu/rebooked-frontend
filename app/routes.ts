@@ -9,6 +9,7 @@ export default [
     route("terms-of-service", "./routes/home/terms-of-service/index.tsx"),
     route("contact-us", "./routes/home/contact-us/index.tsx"),
     route("shop", "./routes/shop/index.tsx"), // public; UI adapts when logged in
+    route("book/:id", "./routes/book/index.tsx"), // public book page; drafts only for their owner
   ]),
 
   // Dashboard (requires a logged-in, onboarded user)
@@ -16,6 +17,7 @@ export default [
     index("./routes/dashboard/index.tsx"),
     route("shelf", "./routes/dashboard/shelf/index.tsx"),
     route("shelf/new", "./routes/dashboard/shelf/new/index.tsx"),
+    route("shelf/:id/edit", "./routes/dashboard/shelf/edit/index.tsx"),
     route("listings", "./routes/dashboard/listings/index.tsx"), // old path → /dashboard/shelf
     route("messages", "./routes/dashboard/messages/index.tsx"),
     route("notifications", "./routes/dashboard/notifications/index.tsx"),

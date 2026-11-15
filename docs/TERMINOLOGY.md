@@ -8,7 +8,10 @@ Use these words in UI copy, legal pages, toasts, route paths and code names, so 
 | A user's books on offer | **shelf** ("My shelf", "your shelf") | listings |
 | Putting a book up | **Add to shelf**, "+ Add your first book" | list a book, create listing |
 | A single item | **a book** ("a book on your shelf") | a listing |
-| Taking one down | **Remove from shelf** | delete listing, unlist |
+| Deleting one for good | **Remove from shelf** (always confirmed; can't be undone) | delete listing, unlist |
+| Hiding one for now | **Archive** / **Put back on shelf** | deactivate, unpublish, relist |
+| Changing one | **Edit** (drafts: **Continue**), saved with **Save changes** | update listing |
+| A book's public page | **book page** ("View book page") | listing page, product page |
 | Sold or given away | **Mark as sold** (the book leaves the shelf) | close listing |
 | Count of books on offer | **Books on shelf** | active listings |
 | Everyone's books | **the shop** ("Browse the shop") | store, marketplace |
@@ -30,8 +33,8 @@ Light verbs that fit the theme are welcome where they read naturally: "shelve th
 
 ## In code
 
-- Routes: `/dashboard/shelf` (tabs via `?status=`), `/dashboard/shelf/new`, `/shop`. `/dashboard/listings` only redirects to `/dashboard/shelf` for old links.
-- Names: `ShelfPage`, `AddToShelfPage`, `bookService.getMyShelf`. Data types follow the API (`IBook`, `BookStatus`); user-facing names say shelf.
+- Routes: `/dashboard/shelf` (tabs via `?status=`), `/dashboard/shelf/new`, `/dashboard/shelf/:id/edit`, `/book/:id` (public), `/shop`. `/dashboard/listings` only redirects to `/dashboard/shelf` for old links.
+- Names: `ShelfPage`, `AddToShelfPage`, `EditBookPage`, `BookPage`, `BookForm`, `useBookActions`, `bookService.getMyShelf`. Data types follow the API (`IBook`, `BookStatus`); user-facing names say shelf.
 - Icons: lucide `Library` for the shelf and `Store` for the shop.
 
 ## Backend

@@ -1,4 +1,4 @@
-import type { BookCondition, BookStatus } from "~/types/book";
+import type { BookCondition, BookStatus, IBook } from "~/types/book";
 
 export const BOOK_CONDITIONS: { value: BookCondition; label: string }[] = [
   { value: "NEW", label: "New" },
@@ -25,8 +25,28 @@ export const SHELF_TABS: { status: BookStatus; label: string }[] = [
   { status: "INACTIVE", label: "Archived" },
 ];
 
+/** Status pill text (docs/TERMINOLOGY.md) and colours. */
+export const STATUS_LABEL: Record<BookStatus, string> = {
+  ACTIVE: "Available",
+  DRAFT: "Draft",
+  SOLD: "Sold",
+  INACTIVE: "Archived",
+};
+
+export const STATUS_PILL: Record<BookStatus, string> = {
+  ACTIVE: "bg-olive/15 text-olive",
+  DRAFT: "bg-foreground/10 text-foreground/70",
+  SOLD: "bg-primary/12 text-primary",
+  INACTIVE: "bg-foreground/8 text-foreground/55",
+};
+
 export const BOOK_LIMITS = { title: 200, author: 120, description: 600, photos: 5 } as const;
 
 /** ISBN-10 or ISBN-13 once spaces and dashes are removed. */
 export const normalizeIsbn = (isbn: string) => isbn.replace(/[\s-]/g, "").toUpperCase();
 export const isValidIsbn = (isbn: string) => /^(\d{9}[\dX]|\d{13})$/.test(normalizeIsbn(isbn));
+
+/** The public book page. */
+export const bookPath = (book: Pick<IBook, "id">) => `/book/${book.id}`;
+/** The owner's edit page (drafts are finished here too). */
+export const editPath = (book: Pick<IBook, "id">) => `/dashboard/shelf/${book.id}/edit`;

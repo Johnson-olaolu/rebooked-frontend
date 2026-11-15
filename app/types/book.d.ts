@@ -61,6 +61,9 @@ export interface ICreateBookPayload {
   status: "ACTIVE" | "DRAFT";
 }
 
+/** `PATCH /book/{id}`: every form field is sent, so cleared fields are saved as cleared. Status changes go through `/status`. */
+export type IUpdateBookPayload = Omit<ICreateBookPayload, "status">;
+
 /** `GET /book/me` (API_CHANGES #15c). */
 export interface IShelfPage {
   content: IBook[];

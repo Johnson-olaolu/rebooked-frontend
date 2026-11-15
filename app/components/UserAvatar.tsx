@@ -13,13 +13,16 @@ const getInitials = (name: string) =>
 
 interface UserAvatarProps {
   user?: IUser;
+  /** For people we only have a summary of (e.g. a book's seller); used when `user` isn't given. */
+  name?: string | null;
+  photoUrl?: string | null;
   className?: string;
 }
 
 /** Profile photo, or initials in the brand style when there isn't one. */
-const UserAvatar = ({ user, className }: UserAvatarProps) => {
-  const name = getDisplayName(user);
-  const photo = user?.profile?.profilePictureUrl;
+const UserAvatar = ({ user, name: nameProp, photoUrl, className }: UserAvatarProps) => {
+  const name = user ? getDisplayName(user) : nameProp?.trim() ?? "";
+  const photo = user ? user.profile?.profilePictureUrl : photoUrl;
 
   return (
     <span

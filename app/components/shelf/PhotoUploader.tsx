@@ -15,9 +15,16 @@ import { getErrorMessage } from "~/utils/https";
 
 const MAX_PHOTO_BYTES = 10 * 1024 * 1024;
 
+/** Only object URLs we created need freeing; saved photos point at their real URL. */
+const revokePreview = (photo: { previewUrl: string }) => {
+    if (photo.previewUrl.startsWith("blob:")) URL.revokeObjectURL(photo.previewUrl);
+};
+
 export interface ShelfPhoto {
     key: string;
-    file: File;
+    /** The picked file; missing for photos already saved on the book (edit). */
+    file?: File;
+    /** A blob: URL for picked files, the stored URL for saved ones. */
     previewUrl: string;
     status: "uploading" | "done" | "error";
     /** File id from POST /file once uploaded. */
@@ -51,12 +58,14 @@ const PhotoUploader = ({ photos, setPhotos, coverKey, onCoverChange, max, invali
     // Free the object URLs when the page goes away.
     const photosRef = useRef(photos);
     photosRef.current = photos;
-    useEffect(() => () => photosRef.current.forEach((photo) => URL.revokeObjectURL(photo.previewUrl)), []);
+    useEffect(() => () => photosRef.current.forEach(revokePreview), []);
 
     const upload = (photo: ShelfPhoto) => {
+        const { file } = photo;
+        if (!file) return;
         setPhotos((current) => current.map((item) => (item.key === photo.key ? { ...item, status: "uploading" } : item)));
         fileService
-            .upload(photo.file)
+            .upload(file)
             .then(({ data }) =>
                 setPhotos((current) =>
                     current.map((item) => (item.key === photo.key ? { ...item, status: "done", id: data.id } : item)),
@@ -90,7 +99,7 @@ const PhotoUploader = ({ photos, setPhotos, coverKey, onCoverChange, max, invali
     const remove = (key: string) => {
         setPhotos((current) => {
             const photo = current.find((item) => item.key === key);
-            if (photo) URL.revokeObjectURL(photo.previewUrl);
+            if (photo) revokePreview(photo);
             return current.filter((item) => item.key !== key);
         });
     };

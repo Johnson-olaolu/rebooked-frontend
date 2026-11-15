@@ -1,24 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { Archive, BadgeCheck, Eye, MoreHorizontal, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { Link, useSearchParams } from "react-router";
 import { Button } from "~/components/ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
+import { useBookActions } from "~/hooks/useBookActions";
 import { cn } from "~/lib/utils";
 import bookService from "~/services/book.service";
 import type { BookStatus, IBook } from "~/types/book";
-import { SHELF_TABS, conditionLabel } from "~/utils/book";
+import { SHELF_TABS, STATUS_LABEL, STATUS_PILL, bookPath, conditionLabel, editPath } from "~/utils/book";
 import { formatNaira } from "~/utils/money";
 import { timeAgo } from "~/utils/time";
 import EmptyState from "../components/EmptyState";
 
 const primaryButton =
     "h-11 rounded-md bg-primary px-5 text-[15px] font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90";
-
-const STATUS_PILL: Record<BookStatus, string> = {
-    ACTIVE: "bg-olive/15 text-olive",
-    DRAFT: "bg-foreground/10 text-foreground/70",
-    SOLD: "bg-primary/12 text-primary",
-    INACTIVE: "bg-foreground/8 text-foreground/55",
-};
 
 const TAB_EMPTY: Record<BookStatus, { title: string; description: string }> = {
     ACTIVE: { title: "Nothing available right now", description: "Books you add to your shelf show up here and in the shop." },
@@ -29,13 +30,21 @@ const TAB_EMPTY: Record<BookStatus, { title: string; description: string }> = {
 
 const isStatus = (value: string | null): value is BookStatus => SHELF_TABS.some((tab) => tab.status === value);
 
-const editSoon = () => toast("Editing books is coming soon.");
+type ShelfActions = ReturnType<typeof useBookActions>;
 
-const ShelfRow = ({ book }: { book: IBook }) => {
-    const tab = SHELF_TABS.find((item) => item.status === book.status);
+/** Sold books can't be edited, so they open their public page instead. */
+const ROW_LINK: Record<BookStatus, { label: string; to: (book: IBook) => string }> = {
+    ACTIVE: { label: "Edit", to: editPath },
+    INACTIVE: { label: "Edit", to: editPath },
+    DRAFT: { label: "Continue", to: editPath },
+    SOLD: { label: "View", to: bookPath },
+};
+
+const ShelfRow = ({ book, actions }: { book: IBook; actions: ShelfActions }) => {
     const meta = [book.author, conditionLabel(book.condition), `added ${timeAgo(book.createdAt)}`].filter(Boolean).join(" · ");
+    const link = ROW_LINK[book.status];
     return (
-        <li className="flex items-center gap-4 p-4">
+        <li className="relative flex items-center gap-4 p-4">
             <div className="h-20 w-15 shrink-0 overflow-hidden rounded bg-secondary">
                 {book.coverImage?.url ? (
                     <img src={book.coverImage.url} alt="" className="size-full object-cover" />
@@ -46,19 +55,66 @@ const ShelfRow = ({ book }: { book: IBook }) => {
                 )}
             </div>
             <div className="min-w-0 flex-1">
-                <div className="truncate font-serif text-lg">{book.title}</div>
+                {/* Stretched link: the whole row opens the book; the menu sits above it. */}
+                <Link to={link.to(book)} className="block truncate font-serif text-lg after:absolute after:inset-0 hover:underline">
+                    {book.title}
+                </Link>
                 <div className="truncate text-sm text-foreground/55">{meta}</div>
                 <div className="mt-1.5 flex items-center gap-2.5 md:hidden">
                     <span className="font-semibold">{formatNaira(book.price, book.isFree) || "—"}</span>
                 </div>
             </div>
             <span className={cn("hidden rounded-full px-2.5 py-1 text-xs font-semibold sm:inline", STATUS_PILL[book.status])}>
-                {tab?.label ?? book.status}
+                {STATUS_LABEL[book.status]}
             </span>
             <span className="hidden w-24 text-right font-semibold md:block">{formatNaira(book.price, book.isFree) || "—"}</span>
-            <button type="button" onClick={editSoon} className="shrink-0 text-sm font-semibold text-primary hover:underline">
-                {book.status === "DRAFT" ? "Continue" : "Edit"}
-            </button>
+            <span aria-hidden className="hidden shrink-0 text-sm font-semibold text-primary sm:inline">
+                {link.label}
+            </span>
+            <DropdownMenu modal={false}>
+                <DropdownMenuTrigger
+                    disabled={actions.busy}
+                    aria-label={`More actions for ${book.title}`}
+                    className="relative z-[1] -mr-1.5 shrink-0 rounded-md p-1.5 text-foreground/60 outline-none hover:bg-secondary hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+                >
+                    <MoreHorizontal className="size-5" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="min-w-48">
+                    {book.status !== "DRAFT" && (
+                        <DropdownMenuItem asChild>
+                            <Link to={bookPath(book)}>
+                                <Eye /> View book page
+                            </Link>
+                        </DropdownMenuItem>
+                    )}
+                    {book.status !== "SOLD" && (
+                        <DropdownMenuItem asChild>
+                            <Link to={editPath(book)}>
+                                <Pencil /> {book.status === "DRAFT" ? "Continue editing" : "Edit"}
+                            </Link>
+                        </DropdownMenuItem>
+                    )}
+                    {book.status === "ACTIVE" && (
+                        <>
+                            <DropdownMenuItem onSelect={() => actions.markSold(book)}>
+                                <BadgeCheck /> Mark as sold
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => actions.archive(book)}>
+                                <Archive /> Archive
+                            </DropdownMenuItem>
+                        </>
+                    )}
+                    {(book.status === "INACTIVE" || book.status === "SOLD") && (
+                        <DropdownMenuItem onSelect={() => actions.restore(book)}>
+                            <RotateCcw /> Put back on shelf
+                        </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem variant="destructive" onSelect={() => actions.remove(book)}>
+                        <Trash2 /> Remove from shelf
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
         </li>
     );
 };
@@ -77,6 +133,7 @@ const ShelfPage = () => {
     const counts = shelfQuery.data?.counts;
     const total = counts ? Object.values(counts).reduce((sum, count) => sum + (count ?? 0), 0) : undefined;
     const books = shelfQuery.data?.content ?? [];
+    const actions = useBookActions();
 
     const addButton = (
         <Button asChild className={primaryButton}>
@@ -86,6 +143,7 @@ const ShelfPage = () => {
 
     return (
         <>
+            {actions.dialog}
             <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                 <div>
                     <h1 className="font-serif text-3xl md:text-4xl">My shelf</h1>
@@ -160,7 +218,7 @@ const ShelfPage = () => {
                     ) : (
                         <ul className="divide-y divide-foreground/10 rounded-lg border border-foreground/10 bg-card">
                             {books.map((book) => (
-                                <ShelfRow key={book.id} book={book} />
+                                <ShelfRow key={book.id} book={book} actions={actions} />
                             ))}
                         </ul>
                     )}
