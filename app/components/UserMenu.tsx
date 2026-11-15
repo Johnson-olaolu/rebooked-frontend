@@ -15,6 +15,7 @@ import type { IUser } from "~/types/user";
 import { formatNgState } from "~/utils/nigeria";
 import UnreadBadge from "./chat/UnreadBadge";
 import UserAvatar, { getDisplayName } from "./UserAvatar";
+import { displayPlace } from "~/utils/text";
 
 export const USER_MENU_LINKS = [
   { label: "My dashboard", to: "/dashboard", icon: LayoutDashboard },
@@ -39,7 +40,7 @@ const UserMenu = ({ user, variant = "header", showName = true, collapsed = false
   const unread = useUnreadCount();
   const name = getDisplayName(user);
   const address = user.profile?.address;
-  const location = [address?.city?.trim(), formatNgState(address?.state)].filter(Boolean).join(", ");
+  const location = [displayPlace(address?.city), formatNgState(address?.state)].filter(Boolean).join(", ");
 
   return (
     <DropdownMenu>

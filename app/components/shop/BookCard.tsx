@@ -3,12 +3,13 @@ import { cn } from "~/lib/utils";
 import type { IBook } from "~/types/book";
 import { bookPath, conditionLabel } from "~/utils/book";
 import { formatNaira } from "~/utils/money";
+import { displayPlace } from "~/utils/text";
 
 /** "Ibadan, Oyo" from the book's stored location, falling back to the seller's. */
 export const bookPlace = (book: IBook) => {
     const city = book.location?.city ?? book.seller?.city;
     const state = book.location?.state ?? book.seller?.state;
-    return [city?.trim(), state?.trim()].filter(Boolean).join(", ");
+    return [displayPlace(city), state?.trim()].filter(Boolean).join(", ");
 };
 
 /** 2a / 2f card: cover with condition pill, title, author, price and place. */

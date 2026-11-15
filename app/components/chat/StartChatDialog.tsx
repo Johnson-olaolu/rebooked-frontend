@@ -8,6 +8,7 @@ import { useChatActions } from "~/hooks/useChat";
 import { ChatError } from "~/lib/chatSocket";
 import type { IBook } from "~/types/book";
 import { MESSAGE_MAX, MONEY_NOTE, firstName, threadPath } from "~/utils/chat";
+import { displayName } from "~/utils/text";
 
 const OPENER = "Hi! Is this still available?";
 
@@ -32,7 +33,7 @@ const StartChatDialog = ({ book, open, onOpenChange }: StartChatDialogProps) => 
     const { startConversation } = useChatActions();
     const [body, setBody] = useState(OPENER);
     const [sending, setSending] = useState(false);
-    const sellerName = book.seller?.userName?.trim() || "the seller";
+    const sellerName = displayName(book.seller?.userName) || "the seller";
 
     useEffect(() => {
         if (open) setBody(OPENER);

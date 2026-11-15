@@ -8,6 +8,7 @@ import { useBaseStore } from "~/hooks/store";
 import { chatKeys, insertMessage, upsertConversation } from "~/hooks/useChat";
 import chatSocket from "~/lib/chatSocket";
 import type { IConversation } from "~/types/chat";
+import { displayName } from "~/utils/text";
 
 /**
  * Keeps the chat socket connected while someone is logged in, and writes what it pushes into the
@@ -44,7 +45,7 @@ const ChatConnection = () => {
           if (fromOther && !watching) {
             void queryClient.invalidateQueries({ queryKey: chatKeys.unread });
             // A quiet heads-up when you're elsewhere in the app.
-            const name = event.conversation.other?.userName || "Someone";
+            const name = displayName(event.conversation.other?.userName) || "Someone";
             toast(`${name}: ${event.message.body ?? ""}`.slice(0, 120), {
               id: `chat-${event.conversationId}`,
               action: { label: "Open", onClick: () => go.current(threadPath) },

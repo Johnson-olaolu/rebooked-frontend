@@ -18,6 +18,7 @@ import { getErrorStatus } from "~/utils/https";
 import { formatNaira } from "~/utils/money";
 import { formatNgState } from "~/utils/nigeria";
 import { timeAgo } from "~/utils/time";
+import { displayName, displayPlace } from "~/utils/text";
 
 const primaryButton =
     "h-12 rounded-lg bg-primary px-6 text-base font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90";
@@ -34,7 +35,7 @@ const orderedPhotos = (book: IBook): IFile[] => {
 };
 
 const sellerLocation = (book: IBook) =>
-    [book.seller?.city?.trim(), formatNgState(book.seller?.state)].filter(Boolean).join(", ");
+    [displayPlace(book.seller?.city), formatNgState(book.seller?.state)].filter(Boolean).join(", ");
 
 const Placeholder = ({ className }: { className?: string }) => (
     <div className={cn("flex size-full items-center justify-center bg-secondary", className)}>
@@ -206,7 +207,7 @@ const BookPage = () => {
     }
 
     const photos = orderedPhotos(book);
-    const sellerName = book.seller?.userName?.trim() || "the seller";
+    const sellerName = displayName(book.seller?.userName) || "the seller";
     const location_ = sellerLocation(book);
     const price = formatNaira(book.price, book.isFree);
     const available = book.status === "ACTIVE";
@@ -353,7 +354,7 @@ const BookPage = () => {
                     {book.seller && (
                         <Link
                             to={`/seller/${book.seller.id}`}
-                            aria-label={`Seller: ${book.seller.userName || "Rebooked seller"}. View their shelf`}
+                            aria-label={`Seller: ${displayName(book.seller.userName) || "Rebooked seller"}. View their shelf`}
                             className="flex items-center gap-3.5 rounded-lg border border-foreground/10 bg-card p-4 transition-colors hover:border-primary/40"
                         >
                             <UserAvatar
@@ -362,7 +363,7 @@ const BookPage = () => {
                                 className="size-12 text-base"
                             />
                             <div className="min-w-0">
-                                <div className="truncate font-semibold">{book.seller.userName || "Rebooked seller"}</div>
+                                <div className="truncate font-semibold">{displayName(book.seller.userName) || "Rebooked seller"}</div>
                                 {location_ && <div className="truncate text-sm text-foreground/55">{location_}</div>}
                             </div>
                             <span className="ml-auto shrink-0 text-sm font-semibold text-primary">View shelf →</span>

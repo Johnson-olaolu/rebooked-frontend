@@ -1,7 +1,9 @@
 import { cn } from "~/lib/utils";
 import type { IUser } from "~/types/user";
+import { displayName } from "~/utils/text";
 
-export const getDisplayName = (user?: IUser) => user?.profile?.userName?.trim() || user?.fullName?.trim() || "";
+/** The name to show for a user, capitalised for display ("kastroud" → "Kastroud"). */
+export const getDisplayName = (user?: IUser) => displayName(user?.profile?.userName) || displayName(user?.fullName);
 
 const getInitials = (name: string) =>
   name
@@ -21,7 +23,7 @@ interface UserAvatarProps {
 
 /** Profile photo, or initials in the brand style when there isn't one. */
 const UserAvatar = ({ user, name: nameProp, photoUrl, className }: UserAvatarProps) => {
-  const name = user ? getDisplayName(user) : nameProp?.trim() ?? "";
+  const name = user ? getDisplayName(user) : displayName(nameProp);
   const photo = user ? user.profile?.profilePictureUrl : photoUrl;
 
   return (

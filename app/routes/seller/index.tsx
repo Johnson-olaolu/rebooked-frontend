@@ -17,6 +17,7 @@ import { threadPath } from "~/utils/chat";
 import { getErrorStatus } from "~/utils/https";
 import { formatNgState } from "~/utils/nigeria";
 import { statePath } from "~/utils/slug";
+import { displayName, displayPlace } from "~/utils/text";
 
 const PAGE_SIZE = 24;
 type Tab = "available" | "rehomed";
@@ -79,7 +80,7 @@ const SellerPage = () => {
 
     const availableCount = seller?.availableCount ?? availableQuery.data?.totalElements;
     const soldCount = seller?.soldCount ?? sold?.totalElements;
-    const name = seller?.userName?.trim() || "This seller";
+    const name = displayName(seller?.userName) || "This seller";
     const firstName = name.split(" ")[0];
     const isOwner = !!user && user.id === id;
     const existingChat = useConversationWithUser(id, isLoggedIn && !!seller && !isOwner).data;
@@ -109,7 +110,7 @@ const SellerPage = () => {
         );
     }
 
-    const place = [seller.city?.trim(), seller.state ? formatNgState(seller.state) : ""].filter(Boolean).join(", ");
+    const place = [displayPlace(seller.city), seller.state ? formatNgState(seller.state) : ""].filter(Boolean).join(", ");
     const joinedText = joined(seller.joinedAt);
 
     const messageSeller = () => {

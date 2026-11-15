@@ -27,6 +27,8 @@ import {
 } from "~/utils/chat";
 import { getErrorStatus } from "~/utils/https";
 import { formatNaira } from "~/utils/money";
+import { formatNgState } from "~/utils/nigeria";
+import { displayName, displayPlace } from "~/utils/text";
 
 type Item =
     | { kind: "message"; message: IMessage }
@@ -53,7 +55,7 @@ interface BooksStripProps {
 const BooksStrip = ({ conversation, onMarkSold }: BooksStripProps) => {
     const [expanded, setExpanded] = useState(false);
     const books = sortedBooks(conversation.books);
-    const otherName = conversation.other?.userName ?? "";
+    const otherName = displayName(conversation.other?.userName);
 
     return (
         <div className="shrink-0 border-b border-foreground/10 bg-card/70">
@@ -90,7 +92,7 @@ const BooksStrip = ({ conversation, onMarkSold }: BooksStripProps) => {
                                 <p className="truncate text-xs text-foreground/55">
                                     {meta}
                                     {meta && " · "}
-                                    {book.role === "SELLER" ? "you're the seller" : "you're buying"}
+                                    {book.role === "SELLER" ? "You're the seller" : "You're buying"}
                                 </p>
                             </div>
                             {canSell && (
@@ -137,7 +139,7 @@ const ThreadPage = () => {
 
     const books = useMemo(() => (conversation ? sortedBooks(conversation.books) : []), [conversation]);
     const bookById = useMemo(() => new Map(books.map((book) => [book.bookId, book])), [books]);
-    const otherName = conversation?.other?.userName?.trim() || "Rebooked user";
+    const otherName = displayName(conversation?.other?.userName) || "Rebooked user";
 
     // Default "about" book: the link's ?book=, else the most recently discussed one that's still
     // available. Once the chosen book is sold, move on to one that isn't.
@@ -296,8 +298,12 @@ const ThreadPage = () => {
                         <span className="min-w-0">
                             <span className="block truncate font-semibold">{otherName}</span>
                             <span className="block truncate text-xs text-foreground/55">
-                                {roleLine(conversation)}
-                                {conversation.other.state ? ` · ${conversation.other.city ? `${conversation.other.city}, ` : ""}${conversation.other.state}` : ""}
+                                {[
+                                    roleLine(conversation),
+                                    [displayPlace(conversation.other.city), formatNgState(conversation.other.state)].filter(Boolean).join(", "),
+                                ]
+                                    .filter(Boolean)
+                                    .join(" · ")}
                             </span>
                         </span>
                     </Link>

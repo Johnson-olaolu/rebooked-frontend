@@ -1,4 +1,5 @@
 import type { IConversation, IConversationBook, IMessage } from "~/types/chat";
+import { displayName } from "./text";
 
 export const threadPath = (conversationId: string, bookId?: string) =>
   `/dashboard/messages/${conversationId}${bookId ? `?book=${encodeURIComponent(bookId)}` : ""}`;
@@ -7,13 +8,13 @@ const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
 
-/** Inbox times as in the mockup: "now", "5 m", "19 h", "3 d", "2 w", then a date. */
+/** Inbox times as in the mockup: "Now", "5 m", "19 h", "3 d", "2 w", then a date. */
 export const relativeTime = (iso?: string | null, now = Date.now()) => {
   if (!iso) return "";
   const time = new Date(iso).getTime();
   if (Number.isNaN(time)) return "";
   const diff = Math.max(0, now - time);
-  if (diff < MINUTE) return "now";
+  if (diff < MINUTE) return "Now";
   if (diff < HOUR) return `${Math.floor(diff / MINUTE)} m`;
   if (diff < DAY) return `${Math.floor(diff / HOUR)} h`;
   if (diff < 7 * DAY) return `${Math.floor(diff / DAY)} d`;
@@ -38,14 +39,14 @@ export const sameDay = (a: string, b: string) => startOfDay(new Date(a)) === sta
 export const timeLabel = (iso: string) =>
   new Date(iso).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
 
-export const firstName = (name?: string | null) => name?.trim().split(/\s+/)[0] || "them";
+export const firstName = (name?: string | null) => displayName(name).split(" ")[0] || "them";
 
-/** "buying from you", "you're buying", or both when the deal goes both ways. */
+/** "Buying from you", "You're buying", or both when the deal goes both ways. */
 export const roleLine = (conversation: Pick<IConversation, "books">) => {
   const selling = conversation.books.some((book) => book.role === "SELLER");
   const buying = conversation.books.some((book) => book.role === "BUYER");
-  if (selling && buying) return "buying and selling";
-  return selling ? "buying from you" : "you're buying";
+  if (selling && buying) return "Buying and selling";
+  return selling ? "Buying from you" : "You're buying";
 };
 
 /** Books in a conversation, most recently discussed first. */

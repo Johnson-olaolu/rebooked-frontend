@@ -7,6 +7,7 @@ import { useConversations } from "~/hooks/useChat";
 import { cn } from "~/lib/utils";
 import type { ConversationFilter, IConversation, IConversationPage } from "~/types/chat";
 import { relativeTime, roleLine, sortedBooks, threadPath } from "~/utils/chat";
+import { displayName } from "~/utils/text";
 
 const FILTERS: { value: ConversationFilter; label: string }[] = [
   { value: "ALL", label: "All" },
@@ -27,7 +28,7 @@ export const ConversationRow = memo(
   ({ conversation }: { conversation: IConversation }) => {
     const books = sortedBooks(conversation.books);
     const unread = conversation.unread > 0;
-    const name = conversation.other?.userName?.trim() || "Rebooked user";
+    const name = displayName(conversation.other?.userName) || "Rebooked user";
     const preview = conversation.lastMessage?.preview ?? "";
 
     return (

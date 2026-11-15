@@ -38,6 +38,12 @@ Use these words in UI copy, legal pages, toasts, route paths and code names, so 
 
 Light verbs that fit the theme are welcome where they read naturally: "shelve the books you've finished", "the first books hit the shelves", "most-shelved authors". Don't force them where plain words are clearer.
 
+## Casing
+
+- **Sentence case** for all UI copy: headings, buttons, labels, hints and empty states. In a · separated meta line, every segment starts with a capital: "₦50,000 · Good · You're the seller", "Buying from you · Warri, Delta State".
+- **People's names and hand-typed places** are shown through `displayName` / `displayPlace` (`app/utils/text.ts`). A word typed entirely in lowercase gets a capital ("kastroud" → "Kastroud"). Names with their own casing ("McKenzie", "DJ Tobi") are left alone. This is for display only: what the user typed is stored, and shown in their settings, unchanged.
+- **User content is never re-cased:** messages, book titles, descriptions and emails.
+
 ## In code
 
 - Routes: `/dashboard/shelf` (tabs via `?status=`), `/dashboard/shelf/new`, `/dashboard/shelf/:id/edit`, `/book/:id` (public), `/seller/:id` (public), `/shop`, `/shop/categories`, `/shop/category/:slug`, `/shop/in/:state` (e.g. `lagos`, `fct`), `/shop/free`, `/dashboard/messages`, `/dashboard/messages/:id` (`?book=` picks the book you're writing about).
