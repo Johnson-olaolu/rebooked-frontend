@@ -1,45 +1,42 @@
 "use client";
-import notificationService from "@/services/notification.service";
-import userService from "@/services/user.service";
-import { useBaseStore } from "@/store/hook";
 import { useQuery } from "@tanstack/react-query";
-import { usePathname } from "next/navigation";
-import { useRouter } from "nextjs-toploader/app";
-import React, { use, useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
+import { useLocation, useNavigate } from "react-router";
+import { useBaseStore } from "~/hooks/store";
+import userService from "~/services/user.service";
 
-const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const { accessToken, setUser, setNotifications, setPopupNotification } = useBaseStore((state) => state);
-  const { data, isSuccess, isError, error, isLoading } = useQuery({
+/**
+ * Guards private routes: sends visitors without a token to /login and keeps the
+ * stored user in sync with GET /user/me.
+ */
+const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const accessToken = useBaseStore((state) => state.accessToken);
+  const setUser = useBaseStore((state) => state.setUser);
+  const user = useBaseStore((state) => state.user);
+
+  const { data, isError, isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: userService.getLoggedInUser,
     enabled: !!accessToken,
   });
 
   useEffect(() => {
-    if (!accessToken) {
-      const redirectUrl = encodeURIComponent(pathname);
-      router.replace(`/login?redirect=${redirectUrl}`);
+    if (!accessToken || isError) {
+      navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`, { replace: true });
     }
-  }, [accessToken, pathname]);
+  }, [accessToken, isError, location.pathname, navigate]);
 
   useEffect(() => {
-    if (isError) {
-      const redirectUrl = encodeURIComponent(pathname);
-      router.replace(`/login?redirect=${redirectUrl}`);
-    }
-    if (isSuccess && data) {
-      setUser(data.data!);
-      notificationService.connect(setNotifications, setPopupNotification);
-    }
+    if (data?.data) setUser(data.data);
+  }, [data, setUser]);
 
-    return () => {
-      notificationService.removeConnection();
-    };
-  }, [isError, isSuccess, data]);
-
-  if (isLoading) return <div className="">Loading...</div>;
+  if (!accessToken) return null;
+  // Use the persisted user while /user/me loads, so the page doesn't flash.
+  if (isLoading && !user) {
+    return <div className="flex min-h-screen items-center justify-center text-foreground/60">Loading…</div>;
+  }
   return <>{children}</>;
 };
 

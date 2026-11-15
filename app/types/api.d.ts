@@ -1,21 +1,31 @@
-interface IDocument {
+export interface IDocument {
   id: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
+
+/** Success envelope returned by every endpoint: `{ message, status, data }`. */
 export interface IResponse<D = null> {
-  data?: D;
-  status: boolean;
+  data: D;
+  status: number;
   message: string;
 }
 
-export interface IResponsePagiination<D> extends IResponse<D> {
+/** Error body returned by the API's global exception handler. */
+export interface IErrorResponse {
+  status: number;
+  message: string;
+  /** Field-level messages, keyed by field path (e.g. `password`, `address.city`). */
+  errors?: Record<string, string>;
+}
+
+export interface IResponsePagination<D> extends IResponse<D> {
   pagination: {
     currentPage: number;
     size: number;
     totalPages: number;
     totalElements: number;
-  }
+  };
 }
 
 export interface IPageable<D> {
@@ -23,7 +33,7 @@ export interface IPageable<D> {
   empty: boolean;
   first: boolean;
   last: boolean;
-  number: 1;
+  number: number;
   numberOfElements: number;
   pageable: {
     offset: number;

@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "~/components/ui/input-otp";
+import { useBaseStore } from "~/hooks/store";
+import authService from "~/services/auth.service";
+import { getPostAuthPath } from "~/utils/auth";
+import { getErrorMessage, getErrorStatus } from "~/utils/https";
 import AuthCardLayout from "../components/AuthCardLayout";
 
 const RESEND_COOLDOWN_SECONDS = 30;
@@ -10,11 +15,13 @@ const RESEND_COOLDOWN_SECONDS = 30;
 const VerifyEmailPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const email = (location.state as { email?: string } | null)?.email;
+    const user = useBaseStore((state) => state.user);
+    const setUser = useBaseStore((state) => state.setUser);
+    const email = (location.state as { email?: string } | null)?.email ?? user?.email;
 
     const [code, setCode] = useState("");
-    const [verifying, setVerifying] = useState(false);
     const [error, setError] = useState("");
+    // A code was just sent on register/login, so start in cooldown.
     const [cooldown, setCooldown] = useState(RESEND_COOLDOWN_SECONDS);
 
     useEffect(() => {
@@ -23,25 +30,49 @@ const VerifyEmailPage = () => {
         return () => clearInterval(timer);
     }, [cooldown]);
 
-    const verifyCode = (value: string) => {
-        if (value.length < 6) return;
-        setVerifying(true);
-        setError("");
-        // TODO: replace with real verification request once the auth service is wired up.
-        setTimeout(() => {
-            setVerifying(false);
+    const verifyMutation = useMutation({
+        mutationFn: (token: string) => authService.confirmEmail({ email: email!, token }),
+        onSuccess: ({ data }) => {
+            setUser(data);
             toast.success("Email verified — welcome to Rebooked.");
-            navigate("/");
-        }, 700);
+            navigate(getPostAuthPath(data), { replace: true });
+        },
+        onError: (err) => {
+            setCode("");
+            setError(getErrorMessage(err, "That code didn't work. Check it and try again."));
+        },
+    });
+
+    const resendMutation = useMutation({
+        mutationFn: () => authService.resendConfirmEmail(email!),
+        onSuccess: () => {
+            setCooldown(RESEND_COOLDOWN_SECONDS);
+            setCode("");
+            setError("");
+            toast.success("We've sent a new code.");
+        },
+        onError: (err) => {
+            if (getErrorStatus(err) === 429) setCooldown(RESEND_COOLDOWN_SECONDS);
+            toast.error(getErrorMessage(err, "We couldn't send a new code."));
+        },
+    });
+
+    const verifyCode = (value: string) => {
+        if (value.length < 6 || verifyMutation.isPending) return;
+        if (!email) {
+            setError("We don't know which email to verify. Log in again to get a new code.");
+            return;
+        }
+        setError("");
+        verifyMutation.mutate(value);
     };
 
     const handleResend = () => {
-        if (cooldown > 0) return;
-        setCooldown(RESEND_COOLDOWN_SECONDS);
-        setCode("");
-        setError("");
-        toast.success("We've sent a new code.");
+        if (cooldown > 0 || resendMutation.isPending || !email) return;
+        resendMutation.mutate();
     };
+
+    const verifying = verifyMutation.isPending;
 
     return (
         <AuthCardLayout>
@@ -66,6 +97,7 @@ const VerifyEmailPage = () => {
                             if (error) setError("");
                         }}
                         onComplete={verifyCode}
+                        disabled={verifying}
                     >
                         <InputOTPGroup>
                             <InputOTPSlot index={0} />
@@ -91,10 +123,14 @@ const VerifyEmailPage = () => {
                 <button
                     type="button"
                     onClick={handleResend}
-                    disabled={cooldown > 0}
+                    disabled={cooldown > 0 || resendMutation.isPending || !email}
                     className="mt-5 w-full text-sm font-semibold text-primary disabled:cursor-not-allowed disabled:text-foreground/40"
                 >
-                    {cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend the code"}
+                    {resendMutation.isPending
+                        ? "Sending…"
+                        : cooldown > 0
+                          ? `Resend code in ${cooldown}s`
+                          : "Resend the code"}
                 </button>
 
                 <p className="mt-4 text-sm text-foreground/55">
@@ -102,7 +138,7 @@ const VerifyEmailPage = () => {
                         Change email
                     </Link>{" "}
                     ·{" "}
-                    <Link to="/" className="font-semibold text-primary hover:underline">
+                    <Link to={user ? "/onboarding/profile" : "/"} className="font-semibold text-primary hover:underline">
                         Skip for now
                     </Link>
                 </p>

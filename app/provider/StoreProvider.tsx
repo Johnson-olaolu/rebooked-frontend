@@ -1,31 +1,27 @@
 "use client";
-import { type ReactNode, createContext, useRef, useState, useEffect } from "react";
-import { createBaseStore } from "~/store/store";
+import { type ReactNode, createContext, useEffect, useState } from "react";
+import { getBaseStore, type BaseStore } from "~/store/store";
 
-export type StoreApi = ReturnType<typeof createBaseStore>;
+export type StoreApi = BaseStore;
 
 export const StoreContext = createContext<StoreApi | undefined>(undefined);
 
-export interface ICounterStoreProvider {
+export interface IStoreProvider {
   children: ReactNode;
 }
 
-export const StoreProvider = ({ children }: ICounterStoreProvider) => {
-  const storeRef = useRef<StoreApi>(null);
-
-  const result = createBaseStore();
-  const [data, setData] = useState<StoreApi>();
+/**
+ * Renders children only on the client, once the persisted store is available,
+ * so components never read tokens/user from an empty server-side store.
+ */
+export const StoreProvider = ({ children }: IStoreProvider) => {
+  const [store, setStore] = useState<StoreApi>();
 
   useEffect(() => {
-    setData(result);
+    setStore(getBaseStore());
   }, []);
 
-  if (!data) return null;
+  if (!store) return null;
 
-  if (!storeRef.current) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    storeRef.current = createBaseStore();
-  }
-
-  return <StoreContext.Provider value={storeRef.current}>{children}</StoreContext.Provider>;
+  return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;
 };

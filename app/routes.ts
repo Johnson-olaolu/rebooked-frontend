@@ -21,6 +21,13 @@ export default [
     route("forgot-password", "./routes/auth/forgot-password/index.tsx"),
     route("change-password", "./routes/auth/change-password/index.tsx"),
   ]),
+  // Onboarding (requires a logged-in user)
+  route("onboarding", "./routes/onboarding/components/OnboardingLayout.tsx", [
+    index("./routes/onboarding/index.tsx"), // redirects to /onboarding/profile
+    route("profile", "./routes/onboarding/profile/index.tsx"),
+    route("address", "./routes/onboarding/address/index.tsx"),
+  ]),
+
   //   //404
   route("/*", "./routes/404/index.tsx"), // 404 page
 ] satisfies RouteConfig;

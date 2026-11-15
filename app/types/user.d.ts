@@ -1,22 +1,44 @@
 import type { IDocument } from "./api";
+import type { IFile } from "./file";
+
+export type RegistrationType = "EMAIL" | "GOOGLE" | "FACEBOOK";
+export type Role = "user" | "superAdmin";
+
+export interface IAddress {
+  /** ISO country code; only "NG" for now. */
+  country?: string;
+  /** Canonical Nigerian state name (see utils/nigeria.ts). */
+  state?: string;
+  city?: string;
+  /** Private: only returned to the owner. */
+  addressLine?: string;
+  /** Private: Google's full address. */
+  formattedAddress?: string;
+  /** Private: Google place id. */
+  placeId?: string;
+  /** Private: stored for future "near me" queries. */
+  latitude?: number;
+  longitude?: number;
+}
+
+export interface IProfile extends IDocument {
+  userName?: string;
+  bio?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  profilePicture?: IFile | null;
+  profilePictureUrl?: string | null;
+  address?: IAddress | null;
+  /** Set by the backend once userName and address.city are filled in. */
+  onboardingCompleted: boolean;
+}
 
 export interface IUser extends IDocument {
-  id: string;
   email: string;
   fullName: string;
-  enabled: boolean;
-  credentialsNonExpired: boolean;
-  deleted: boolean;
-  onboarded: boolean;
-  role: Role;
-  authorities: [
-    {
-      authority: string;
-    },
-  ];
-  profile?: IProfile;
-  username: string;
+  registrationType: RegistrationType;
+  role: Role | string;
+  profile?: IProfile | null;
   emailVerified: boolean;
-  accountNonExpired: boolean;
-  accountNonLocked: boolean;
+  deleted: boolean;
 }
