@@ -8,6 +8,15 @@ export default [
     route("privacy-policy", "./routes/home/privacy-policy/index.tsx"),
     route("terms-of-service", "./routes/home/terms-of-service/index.tsx"),
     route("contact-us", "./routes/home/contact-us/index.tsx"),
+    route("shop", "./routes/shop/index.tsx"), // public; UI adapts when logged in
+  ]),
+
+  // Dashboard (requires a logged-in, onboarded user)
+  route("dashboard", "./routes/dashboard/components/DashboardLayout.tsx", [
+    index("./routes/dashboard/index.tsx"),
+    route("listings", "./routes/dashboard/listings/index.tsx"),
+    route("messages", "./routes/dashboard/messages/index.tsx"),
+    route("settings", "./routes/dashboard/settings/index.tsx"),
   ]),
 
   layout("./routes/auth/components/AuthEntryLayout.tsx", [

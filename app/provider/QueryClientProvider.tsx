@@ -21,7 +21,10 @@ export function QueryProvider(props: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       {props.children}
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* Dev-only; hidden on small screens so its floating button doesn't cover the mobile tab bar. */}
+      <div className="hidden md:block">
+        <ReactQueryDevtools initialIsOpen={false} />
+      </div>
     </QueryClientProvider>
   );
 }

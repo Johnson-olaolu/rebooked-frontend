@@ -18,5 +18,5 @@ export const isValidPassword = (password: string) => PASSWORD_REGEX.test(passwor
 export const getPostAuthPath = (user: IUser, redirect?: string | null) => {
   if (!user.emailVerified) return "/auth/verify-email";
   if (!user.profile?.onboardingCompleted) return "/onboarding/profile";
-  return redirect && redirect.startsWith("/") && !redirect.startsWith("//") ? redirect : "/";
+  return redirect && redirect.startsWith("/") && !redirect.startsWith("//") ? redirect : "/dashboard";
 };

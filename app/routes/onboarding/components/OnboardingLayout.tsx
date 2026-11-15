@@ -21,7 +21,7 @@ const OnboardingLayout = () => {
     const panel = PANEL_CONTENT[step];
 
     return (
-        <AuthProvider>
+        <AuthProvider onboarding="incomplete">
             <AuthSplitLayout variant="ink" quote={panel.quote} bullets={[...panel.bullets]}>
                 <div className="mb-10 flex items-center gap-2 text-sm text-foreground/55">
                     {Array.from({ length: TOTAL_STEPS }, (_, index) => (

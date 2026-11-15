@@ -75,7 +75,7 @@ const OnboardingStepTwo = () => {
             queryClient.setQueryData(["user"], { data });
             resetOnboarding();
             toast.success("You're all set.");
-            navigate("/", { replace: true });
+            navigate("/dashboard", { replace: true });
         },
         onError: (error) => {
             const fieldErrors = getFieldErrors(error);
