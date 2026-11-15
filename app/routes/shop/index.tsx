@@ -1,7 +1,6 @@
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
-import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { getDisplayName } from "~/components/UserAvatar";
@@ -35,8 +34,8 @@ const ShopPage = () => {
                         <Button asChild variant="outline" className="h-11 rounded-lg px-4 text-[15px] font-semibold">
                             <Link to="/dashboard/shelf">My shelf</Link>
                         </Button>
-                        <Button className={primaryButton} onClick={() => toast("Adding books to your shelf is coming soon.")}>
-                            + Add to shelf
+                        <Button asChild className={primaryButton}>
+                            <Link to="/dashboard/shelf/new">+ Add to shelf</Link>
                         </Button>
                     </div>
                 ) : (

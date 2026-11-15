@@ -1,7 +1,9 @@
 import { Button } from "~/components/ui/button";
 import { getDisplayName } from "~/components/UserAvatar";
 import { useBaseStore } from "~/hooks/store";
-import { addToShelfSoon } from "./components/actions";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router";
+import bookService from "~/services/book.service";
 
 const greeting = () => {
     const hour = new Date().getHours();
@@ -10,8 +12,12 @@ const greeting = () => {
     return "Good evening";
 };
 
-const STATS = [
-    { label: "Books on shelf", value: "0", hint: "Add your first book" },
+const STATS = (onShelf?: number) => [
+    {
+        label: "Books on shelf",
+        value: onShelf === undefined ? "–" : String(onShelf),
+        hint: onShelf ? "Available in the shop" : "Add your first book",
+    },
     { label: "In conversation", value: "0", hint: "No open chats" },
     { label: "Unread messages", value: "0", hint: "You're all caught up" },
     { label: "Sold all time", value: "0", hint: "—" },
@@ -20,6 +26,13 @@ const STATS = [
 const DashboardOverview = () => {
     const user = useBaseStore((state) => state.user);
     const firstName = getDisplayName(user).split(" ")[0];
+    // Only the counts are needed here; shares the cache with My shelf's first tab.
+    const shelfQuery = useQuery({
+        queryKey: ["shelf", "ACTIVE"],
+        queryFn: () => bookService.getMyShelf({ status: "ACTIVE" }),
+        select: (response) => response.data,
+        retry: 1,
+    });
 
     return (
         <>
@@ -33,15 +46,15 @@ const DashboardOverview = () => {
                 </div>
                 {/* Full-width on mobile (mockup 3f), top-right on desktop (mockup 3a). */}
                 <Button
-                    onClick={addToShelfSoon}
+                    asChild
                     className="h-11 w-full rounded-md bg-primary md:w-auto px-5 text-[15px] font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90"
                 >
-                    + Add to shelf
+                    <Link to="/dashboard/shelf/new">+ Add to shelf</Link>
                 </Button>
             </div>
 
             <div className="mt-8 grid grid-cols-2 gap-3.5 lg:grid-cols-4">
-                {STATS.map((stat) => (
+                {STATS(shelfQuery.data?.counts?.ACTIVE).map((stat) => (
                     <div key={stat.label} className="rounded-lg border border-foreground/10 bg-card p-5">
                         <div className="text-sm text-foreground/60">{stat.label}</div>
                         <div className="mt-1 font-serif text-4xl text-primary">{stat.value}</div>
