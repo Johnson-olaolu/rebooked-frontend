@@ -1,4 +1,4 @@
-import { ChevronDown, LayoutDashboard, Library, LogOut, MessageSquare, Settings } from "lucide-react";
+import { ChevronDown, ChevronsUpDown, LayoutDashboard, Library, LogOut, MessageSquare, Settings } from "lucide-react";
 import { useNavigate } from "react-router";
 import {
   DropdownMenu,
@@ -22,27 +22,58 @@ export const USER_MENU_LINKS = [
 
 interface UserMenuProps {
   user: IUser;
-  /** Show the display name next to the avatar (from `sm` up). */
+  /** "header": avatar + name pill on light backgrounds. "sidebar": the dashboard sidebar's user block. */
+  variant?: "header" | "sidebar";
+  /** Header: show the display name next to the avatar (from `sm` up). */
   showName?: boolean;
+  /** Sidebar: collapsed to icons — show the avatar only. */
+  collapsed?: boolean;
 }
 
-const UserMenu = ({ user, showName = true }: UserMenuProps) => {
+const UserMenu = ({ user, variant = "header", showName = true, collapsed = false }: UserMenuProps) => {
   const navigate = useNavigate();
   const logout = useLogout();
   const name = getDisplayName(user);
+  const city = user.profile?.address?.city;
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        className="flex items-center gap-2.5 rounded-full py-1 pr-2 pl-1 outline-none transition-colors hover:bg-secondary focus-visible:ring-3 focus-visible:ring-ring/50 data-[state=open]:bg-secondary"
-        aria-label="Open account menu"
-      >
-        <UserAvatar user={user} />
-        {showName && <span className="hidden max-w-36 truncate text-[15px] font-semibold sm:inline">{name}</span>}
-        <ChevronDown className={cn("size-4 text-foreground/50", !showName && "hidden sm:block")} />
-      </DropdownMenuTrigger>
+      {variant === "sidebar" ? (
+        <DropdownMenuTrigger
+          className={cn(
+            "flex w-full items-center gap-2.5 rounded-md p-1.5 text-left outline-none transition-colors hover:bg-[#f6efe1]/10 focus-visible:ring-2 focus-visible:ring-[#f6efe1]/40 data-[state=open]:bg-[#f6efe1]/10",
+            collapsed && "justify-center",
+          )}
+          aria-label="Open account menu"
+          title={collapsed ? name : undefined}
+        >
+          <UserAvatar user={user} className="size-9 border-[#f6efe1]/20 bg-[#ece0c9]" />
+          {!collapsed && (
+            <>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-semibold text-[#f6efe1]">{name}</span>
+                {city && <span className="block truncate text-xs text-[#f6efe1]/60">{city}</span>}
+              </span>
+              <ChevronsUpDown className="size-4 shrink-0 text-[#f6efe1]/50" />
+            </>
+          )}
+        </DropdownMenuTrigger>
+      ) : (
+        <DropdownMenuTrigger
+          className="flex items-center gap-2.5 rounded-full py-1 pr-2 pl-1 outline-none transition-colors hover:bg-secondary focus-visible:ring-3 focus-visible:ring-ring/50 data-[state=open]:bg-secondary"
+          aria-label="Open account menu"
+        >
+          <UserAvatar user={user} />
+          {showName && <span className="hidden max-w-36 truncate text-[15px] font-semibold sm:inline">{name}</span>}
+          <ChevronDown className={cn("size-4 text-foreground/50", !showName && "hidden sm:block")} />
+        </DropdownMenuTrigger>
+      )}
 
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent
+        align={variant === "sidebar" ? "end" : "end"}
+        side={variant === "sidebar" ? "right" : "bottom"}
+        sideOffset={variant === "sidebar" ? 12 : 8}
+      >
         <DropdownMenuLabel className="flex items-center gap-3">
           <UserAvatar user={user} className="size-9" />
           <span className="min-w-0">

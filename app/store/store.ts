@@ -10,6 +10,9 @@ export interface IAppSlice {
   language: Language;
   setDarkMode: (darkMode: boolean) => void;
   setLanguage: (language: Language) => void;
+  /** Dashboard sidebar collapsed to icons (desktop). Persisted per browser. */
+  sidebarCollapsed: boolean;
+  toggleSidebar: () => void;
 }
 
 export const createAppSlice: StateCreator<IStore, [], [], IAppSlice> = (set) => {
@@ -22,6 +25,8 @@ export const createAppSlice: StateCreator<IStore, [], [], IAppSlice> = (set) => 
     language: "en",
     setDarkMode: (darkMode) => set({ darkMode }),
     setLanguage: (language) => set({ language }),
+    sidebarCollapsed: false,
+    toggleSidebar: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
   };
 };
 
@@ -41,6 +46,7 @@ export const createBaseStore = () => {
         partialize: (state) => ({
           darkMode: state.darkMode,
           language: state.language,
+          sidebarCollapsed: state.sidebarCollapsed,
           accessToken: state.accessToken,
           refreshToken: state.refreshToken,
           accessTokenExpiresAt: state.accessTokenExpiresAt,

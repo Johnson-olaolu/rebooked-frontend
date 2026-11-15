@@ -31,10 +31,10 @@ const DashboardOverview = () => {
                     </h1>
                     <p className="mt-1.5 text-foreground/60">Nothing needs your attention right now.</p>
                 </div>
-                {/* Desktop has this in the header; mobile gets a full-width button (mockup 3f). */}
+                {/* Full-width on mobile (mockup 3f), top-right on desktop (mockup 3a). */}
                 <Button
                     onClick={listBookSoon}
-                    className="h-11 w-full rounded-md bg-primary md:hidden px-5 text-[15px] font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90"
+                    className="h-11 w-full rounded-md bg-primary md:w-auto px-5 text-[15px] font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90"
                 >
                     + List a book
                 </Button>

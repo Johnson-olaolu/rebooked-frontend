@@ -16,6 +16,7 @@ export default [
     index("./routes/dashboard/index.tsx"),
     route("listings", "./routes/dashboard/listings/index.tsx"),
     route("messages", "./routes/dashboard/messages/index.tsx"),
+    route("notifications", "./routes/dashboard/notifications/index.tsx"),
     route("settings", "./routes/dashboard/settings/index.tsx"),
   ]),
 
