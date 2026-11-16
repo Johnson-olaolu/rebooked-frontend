@@ -59,8 +59,39 @@ class BookService {
     return await https.delete({ url: `${this.baseUrl}/${id}` });
   }
 
-  /** Counts a view (the API dedupes per viewer per day and ignores non-ACTIVE books). */
-  async recordView(id: string): Promise<IResponse<IBook>> {
+  /* Saved books (API_CHANGES #21d) */
+
+  async save(id: string): Promise<IResponse<{ saved: boolean }>> {
+    return await https.put({ url: `${this.baseUrl}/${id}/save`, body: {} });
+  }
+
+  async unsave(id: string): Promise<IResponse<{ saved: boolean }>> {
+    return await https.delete({ url: `${this.baseUrl}/${id}/save` });
+  }
+
+  /** Newest saved first. Includes sold and unavailable books. */
+  async savedBooks({ page = 0, pageSize = 24 }: { page?: number; pageSize?: number } = {}): Promise<IResponse<IShopPage>> {
+    return await https.get({ url: `${this.baseUrl}/saved`, query: { page, pageSize } });
+  }
+
+  /** Every saved book id, for the hearts. */
+  async savedIds(): Promise<IResponse<string[]>> {
+    return await https.get({ url: `${this.baseUrl}/saved/ids` });
+  }
+
+  /* Recently viewed (API_CHANGES #21c) */
+
+  /** Up to 20 books, most recent first. */
+  async recentlyViewed(): Promise<IResponse<IBook[]>> {
+    return await https.get({ url: `${this.baseUrl}/recently-viewed` });
+  }
+
+  async clearRecentlyViewed(): Promise<IResponse<unknown>> {
+    return await https.delete({ url: `${this.baseUrl}/recently-viewed` });
+  }
+
+  /** Counts a view and adds it to recently viewed (the API dedupes counts per viewer per day and ignores non-ACTIVE books). */
+  async recordView(id: string): Promise<IResponse<unknown>> {
     return await https.patch({ url: `${this.baseUrl}/${id}/view` });
   }
 }

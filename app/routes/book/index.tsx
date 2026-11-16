@@ -1,12 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, ChevronRight, MessageCircle } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router";
 import StartChatDialog from "~/components/chat/StartChatDialog";
+import SaveButton from "~/components/shop/SaveButton";
 import { Button } from "~/components/ui/button";
 import UserAvatar from "~/components/UserAvatar";
 import { useConversationWith } from "~/hooks/useChat";
 import { useCurrentUser } from "~/hooks/useCurrentUser";
+import { recentlyViewedKey } from "~/hooks/useRecentlyViewed";
 import { cn } from "~/lib/utils";
 import bookService from "~/services/book.service";
 import type { IBook } from "~/types/book";
@@ -163,6 +165,7 @@ const BookPage = () => {
         retry: (count, error) => getErrorStatus(error) !== 404 && count < 1,
     });
     const book = bookQuery.data;
+    const queryClient = useQueryClient();
     const isOwner = !!user && !!book?.seller?.id && book.seller.id === user.id;
     const [chatOpen, setChatOpen] = useState(false);
     // Already talking to this seller about this book? Then the button goes straight back to that chat.
@@ -178,8 +181,11 @@ const BookPage = () => {
     useEffect(() => {
         if (!book || book.status !== "ACTIVE" || isOwner || viewed.current === book.id) return;
         viewed.current = book.id;
-        bookService.recordView(book.id).catch(() => undefined);
-    }, [book, isOwner]);
+        bookService
+            .recordView(book.id)
+            .then(() => queryClient.invalidateQueries({ queryKey: recentlyViewedKey }))
+            .catch(() => undefined);
+    }, [book, isOwner, queryClient]);
 
     if (bookQuery.isLoading) {
         return (
@@ -246,10 +252,13 @@ const BookPage = () => {
         </div>
     ) : available ? (
         <div className="hidden flex-col gap-3 md:flex">
-            <Button type="button" onClick={messageSeller} className={cn(primaryButton, "w-fit")}>
-                <MessageCircle className="size-5" aria-hidden />
-                {continueChat ? "Continue chat" : "Message seller"}
-            </Button>
+            <div className="flex flex-wrap gap-3">
+                <Button type="button" onClick={messageSeller} className={cn(primaryButton, "w-fit")}>
+                    <MessageCircle className="size-5" aria-hidden />
+                    {continueChat ? "Continue chat" : "Message seller"}
+                </Button>
+                <SaveButton book={book} variant="inline" />
+            </div>
             <p className="max-w-md text-sm text-foreground/55">{PAYMENTS_NOTE}</p>
         </div>
     ) : null;
@@ -290,14 +299,25 @@ const BookPage = () => {
                 <div className="flex min-w-0 flex-col gap-6">
                     {banner}
 
-                    <div>
-                        {book.condition && (
-                            <span className="rounded-full bg-secondary px-2.5 py-1 text-[11px] font-bold tracking-wider uppercase">
-                                {conditionLabel(book.condition)}
-                            </span>
+                    <div className="flex items-start justify-between gap-4">
+                        <div className="min-w-0">
+                            {book.condition && (
+                                <span className="rounded-full bg-secondary px-2.5 py-1 text-[11px] font-bold tracking-wider uppercase">
+                                    {conditionLabel(book.condition)}
+                                </span>
+                            )}
+                            <h1 className="mt-3 font-serif text-4xl break-words md:text-5xl">{book.title}</h1>
+                            {book.author && <p className="mt-2 text-lg text-foreground/70">{book.author}</p>}
+                        </div>
+                        {/* Phones (and books you can't buy any more but saved): a heart by the title. Desktop
+                            puts "Save" next to "Message seller" instead. */}
+                        {!isOwner && book.status !== "DRAFT" && (
+                            <SaveButton
+                                book={book}
+                                onlyIfSaved={!available}
+                                className={cn("mt-1 size-11 shrink-0 border border-foreground/10", available && "md:hidden")}
+                            />
                         )}
-                        <h1 className="mt-3 font-serif text-4xl break-words md:text-5xl">{book.title}</h1>
-                        {book.author && <p className="mt-2 text-lg text-foreground/70">{book.author}</p>}
                     </div>
 
                     <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">

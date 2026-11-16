@@ -1,4 +1,4 @@
-import { Bell, ChevronDown, ChevronsUpDown, LayoutDashboard, Library, LogOut, MessageSquare, Settings } from "lucide-react";
+import { Bell, ChevronDown, ChevronsUpDown, Heart, LayoutDashboard, Library, LogOut, MessageSquare, Settings } from "lucide-react";
 import { useNavigate } from "react-router";
 import {
   DropdownMenu,
@@ -22,8 +22,9 @@ export const USER_MENU_LINKS = [
   { label: "My dashboard", to: "/dashboard", icon: LayoutDashboard },
   { label: "My shelf", to: "/dashboard/shelf", icon: Library },
   { label: "Messages", to: "/dashboard/messages", icon: MessageSquare },
+  { label: "Saved books", to: "/dashboard/saved", icon: Heart },
   { label: "Notifications", to: "/dashboard/notifications", icon: Bell },
-  { label: "Profile settings", to: "/dashboard/settings", icon: Settings },
+  { label: "Settings", to: "/dashboard/settings", icon: Settings },
 ];
 
 interface UserMenuProps {

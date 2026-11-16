@@ -30,6 +30,7 @@ export default [
       route(":id", "./routes/dashboard/messages/thread.tsx"), // one conversation per person (API_CHANGES #18)
     ]),
     route("notifications", "./routes/dashboard/notifications/index.tsx"),
+    route("saved", "./routes/dashboard/saved/index.tsx"), // API_CHANGES #21d
     route("settings", "./routes/dashboard/settings/index.tsx"),
     route("settings/notifications", "./routes/dashboard/settings/notifications.tsx"), // emails link here
     route("settings/security", "./routes/dashboard/settings/security.tsx"),

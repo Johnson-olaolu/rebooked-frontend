@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
 import bookService from "~/services/book.service";
 import type { BookStatus } from "~/types/book";
+import { RecentlyViewedShelf, SavedShelf } from "./components/OverviewShelves";
 
 const greeting = () => {
     const hour = new Date().getHours();
@@ -101,7 +102,10 @@ const DashboardOverview = () => {
                 })}
             </div>
 
-            <section className="mt-8 rounded-lg border border-foreground/10 bg-card p-6">
+            <RecentlyViewedShelf />
+            <SavedShelf />
+
+            <section className="mt-10 rounded-lg border border-foreground/10 bg-card p-6">
                 <h2 className="font-serif text-xl">Needs your attention</h2>
                 <p className="mt-2 text-sm text-foreground/55">
                     Replies and books waiting to be marked as sold will show up here.

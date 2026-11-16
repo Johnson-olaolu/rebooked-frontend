@@ -1,5 +1,6 @@
 import {
     Bell,
+    Heart,
     LayoutDashboard,
     Library,
     MessageSquare,
@@ -21,6 +22,7 @@ export const SIDEBAR_ITEMS: { label: string; to: string; icon: LucideIcon; end?:
     { label: "Overview", to: "/dashboard", icon: LayoutDashboard, end: true },
     { label: "My shelf", to: "/dashboard/shelf", icon: Library },
     { label: "Messages", to: "/dashboard/messages", icon: MessageSquare },
+    { label: "Saved", to: "/dashboard/saved", icon: Heart },
     { label: "Notifications", to: "/dashboard/notifications", icon: Bell },
     { label: "Settings", to: "/dashboard/settings", icon: Settings },
 ];
