@@ -20,7 +20,7 @@ import { statePath } from "~/utils/slug";
 import { displayName, displayPlace } from "~/utils/text";
 
 const PAGE_SIZE = 24;
-type Tab = "available" | "rehomed";
+type Tab = "available" | "sold";
 
 const primaryButton =
     "h-11 rounded-lg bg-primary px-5 text-[15px] font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90";
@@ -47,7 +47,8 @@ const SellerPage = () => {
     const location = useLocation();
     const [params, setParams] = useSearchParams();
     const { user, isLoggedIn } = useCurrentUser();
-    const tab: Tab = params.get("tab") === "rehomed" ? "rehomed" : "available";
+    // "rehomed" was the old name for the sold tab; keep old links working.
+    const tab: Tab = ["sold", "rehomed"].includes(params.get("tab") ?? "") ? "sold" : "available";
     const page = Math.max(1, Number(params.get("page")) || 1);
 
     const sellerQuery = useQuery({
@@ -66,9 +67,9 @@ const SellerPage = () => {
         enabled: !!seller,
     });
     const soldQuery = useQuery({
-        queryKey: ["shop", { userId: id, status: "SOLD", page: tab === "rehomed" ? page : 1 }],
+        queryKey: ["shop", { userId: id, status: "SOLD", page: tab === "sold" ? page : 1 }],
         queryFn: () =>
-            bookService.query({ userId: id, status: "SOLD", page: tab === "rehomed" ? page - 1 : 0, pageSize: PAGE_SIZE }),
+            bookService.query({ userId: id, status: "SOLD", page: tab === "sold" ? page - 1 : 0, pageSize: PAGE_SIZE }),
         select: (response) => response.data,
         placeholderData: keepPreviousData,
         enabled: !!seller,
@@ -130,7 +131,7 @@ const SellerPage = () => {
 
     const setTab = (next: Tab) => setParams(next === "available" ? {} : { tab: next }, { preventScrollReset: true });
     const goToPage = (next: number) => {
-        setParams({ ...(tab === "rehomed" ? { tab } : {}), ...(next > 1 ? { page: String(next) } : {}) }, { preventScrollReset: true });
+        setParams({ ...(tab === "sold" ? { tab } : {}), ...(next > 1 ? { page: String(next) } : {}) }, { preventScrollReset: true });
         document.getElementById("seller-shelf")?.scrollIntoView({ behavior: "smooth" });
     };
 
@@ -196,7 +197,7 @@ const SellerPage = () => {
             {/* Stats */}
             <div className="mt-8 grid grid-cols-2 gap-3.5 sm:max-w-md">
                 <Stat value={availableCount ?? "—"} label="Available now" />
-                <Stat value={soldCount ?? "—"} label={soldCount === 1 ? "Book rehomed" : "Books rehomed"} />
+                <Stat value={soldCount ?? "—"} label={soldCount === 1 ? "Book sold" : "Books sold"} />
             </div>
 
             {/* Shelf */}
@@ -207,14 +208,14 @@ const SellerPage = () => {
                         <p className="mt-1 text-sm text-foreground/60">
                             {[
                                 availableCount !== undefined && `${availableCount} available`,
-                                soldCount !== undefined && `${soldCount} rehomed`,
+                                soldCount !== undefined && `${soldCount} sold`,
                             ]
                                 .filter(Boolean)
                                 .join(" · ")}
                         </p>
                     </div>
                     <div role="tablist" aria-label="Shelf" className="inline-flex rounded-lg border border-foreground/15 bg-card p-0.5">
-                        {(["available", "rehomed"] as Tab[]).map((value) => (
+                        {(["available", "sold"] as Tab[]).map((value) => (
                             <button
                                 key={value}
                                 type="button"
@@ -226,9 +227,9 @@ const SellerPage = () => {
                                     tab === value ? "bg-foreground font-semibold text-background" : "text-foreground/70 hover:text-foreground",
                                 )}
                             >
-                                {value === "available" ? "Available" : "Rehomed"}
+                                {value === "available" ? "Available" : "Sold"}
                                 {value === "available" && availableCount !== undefined && ` · ${availableCount}`}
-                                {value === "rehomed" && soldCount !== undefined && ` · ${soldCount}`}
+                                {value === "sold" && soldCount !== undefined && ` · ${soldCount}`}
                             </button>
                         ))}
                     </div>
@@ -251,7 +252,7 @@ const SellerPage = () => {
                     ) : !books || books.content.length === 0 ? (
                         <div className="rounded-xl border border-dashed border-foreground/20 bg-card px-6 py-12 text-center">
                             <h3 className="font-serif text-2xl">
-                                {tab === "available" ? "Nothing available right now" : "No books rehomed yet"}
+                                {tab === "available" ? "Nothing available right now" : "No books sold yet"}
                             </h3>
                             <p className="mt-2 text-foreground/60">
                                 {tab === "available"
@@ -264,7 +265,7 @@ const SellerPage = () => {
                             <ul className="grid grid-cols-2 gap-x-4 gap-y-7 md:grid-cols-3 lg:grid-cols-4">
                                 {books.content.map((book) => (
                                     <li key={book.id}>
-                                        <BookCard book={book} sold={tab === "rehomed"} />
+                                        <BookCard book={book} sold={tab === "sold"} />
                                     </li>
                                 ))}
                             </ul>

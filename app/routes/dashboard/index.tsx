@@ -32,7 +32,7 @@ const STATS = (counts: Partial<Record<BookStatus, number>> | undefined, conversa
             hint: unread ? "Waiting for a reply" : "You're all caught up",
             to: "/dashboard/messages",
         },
-        { label: "Sold all time", value: sold, hint: sold ? "Books rehomed so far" : "No sales yet" },
+        { label: "Sold all time", value: sold, hint: sold ? "Books sold so far" : "No sales yet" },
     ];
 };
 

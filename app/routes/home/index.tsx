@@ -31,9 +31,9 @@ const topAuthors = [
 ];
 
 const trustedSellers = [
-  { initials: "NM", name: "Nadia M.", meta: "★★★★★ · 47 books rehomed" },
-  { initials: "SK", name: "Sipho K.", meta: "★★★★★ · 31 books rehomed" },
-  { initials: "LB", name: "Lerato B.", meta: "★★★★☆ · 28 books rehomed" },
+  { initials: "NM", name: "Nadia M.", meta: "★★★★★ · 47 books sold" },
+  { initials: "SK", name: "Sipho K.", meta: "★★★★★ · 31 books sold" },
+  { initials: "LB", name: "Lerato B.", meta: "★★★★☆ · 28 books sold" },
 ];
 
 const steps = [

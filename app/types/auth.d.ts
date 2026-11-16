@@ -24,3 +24,15 @@ export interface IConfirmEmailPayload {
   /** The 6-digit code sent by email. */
   token: string;
 }
+
+export interface IResetPasswordPayload {
+  email: string;
+  /** The 6-character code from the reset link. */
+  token: string;
+  password: string;
+}
+
+export interface IChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+}

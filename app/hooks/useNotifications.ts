@@ -1,8 +1,10 @@
-import { useInfiniteQuery, useQuery, useQueryClient, type InfiniteData, type QueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient, type InfiniteData, type QueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { useCallback } from "react";
 import chatSocket, { newClientId } from "~/lib/chatSocket";
 import notificationService from "~/services/notification.service";
-import type { INotification, INotificationPage, NotificationFilter } from "~/types/notification";
+import type { INotification, INotificationPage, INotificationPreference, IPreferenceChange, NotificationFilter } from "~/types/notification";
+import { getErrorMessage } from "~/utils/https";
 import { useBaseStore } from "./store";
 import { useChatStatus } from "./useChat";
 
@@ -12,6 +14,7 @@ export const notificationKeys = {
   lists: ["notifications"] as const,
   list: (filter: NotificationFilter) => ["notifications", filter] as const,
   unread: ["notifications-unread"] as const,
+  preferences: ["notification-preferences"] as const,
 };
 
 type ListData = InfiniteData<INotificationPage, number>;
@@ -103,4 +106,41 @@ export const useMarkNotificationsRead = () => {
     },
     [queryClient],
   );
+};
+
+/* Settings */
+
+export const useNotificationPreferences = () =>
+  useQuery({
+    queryKey: notificationKeys.preferences,
+    queryFn: () => notificationService.preferences().then((response) => response.data ?? []),
+  });
+
+const applyChange = (list: INotificationPreference[] | undefined, change: IPreferenceChange) =>
+  list?.map((item) =>
+    item.type === change.type ? { ...item, channels: { ...item.channels, [change.channel]: change.enabled } } : item,
+  );
+
+/** Flips one switch straight away, then saves it. Puts it back if the save fails. */
+export const useUpdateNotificationPreference = () => {
+  const queryClient = useQueryClient();
+  const mutationKey = ["notification-preference"];
+  return useMutation({
+    mutationKey,
+    mutationFn: (change: IPreferenceChange) => notificationService.updatePreference(change).then((response) => response.data),
+    onMutate: async (change) => {
+      await queryClient.cancelQueries({ queryKey: notificationKeys.preferences });
+      queryClient.setQueryData<INotificationPreference[]>(notificationKeys.preferences, (list) => applyChange(list, change));
+    },
+    onSuccess: (list) => {
+      // Only take the server's list when no other switch is still saving, so it can't undo a newer flip.
+      if (list && queryClient.isMutating({ mutationKey }) === 1) queryClient.setQueryData(notificationKeys.preferences, list);
+    },
+    onError: (error, change) => {
+      queryClient.setQueryData<INotificationPreference[]>(notificationKeys.preferences, (list) =>
+        applyChange(list, { ...change, enabled: !change.enabled }),
+      );
+      toast.error(getErrorMessage(error, "We couldn't save that. Try again."));
+    },
+  });
 };

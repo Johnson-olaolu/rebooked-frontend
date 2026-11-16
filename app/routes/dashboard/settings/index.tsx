@@ -20,6 +20,7 @@ import type { IUpdateProfilePayload } from "~/types/profile";
 import type { IUser } from "~/types/user";
 import { isValidEmail } from "~/utils/auth";
 import { getErrorMessage, getFieldErrors } from "~/utils/https";
+import SettingsHeader from "./SettingsHeader";
 
 const MAX_PHOTO_BYTES = 10 * 1024 * 1024;
 const BIO_MAX = 300;
@@ -208,10 +209,7 @@ const SettingsPage = () => {
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-            <div>
-                <h1 className="font-serif text-3xl md:text-4xl">Profile settings</h1>
-                <p className="mt-1.5 text-foreground/60">This is what buyers see on your shelf and in messages.</p>
-            </div>
+            <SettingsHeader description="This is what buyers see on your shelf and in messages." />
 
             <Section title="Profile" description="Your photo and display name appear on your shelf.">
                 <div className="flex items-center gap-5">

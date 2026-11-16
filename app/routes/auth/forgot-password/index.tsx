@@ -3,7 +3,10 @@ import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { toast } from "sonner";
+import authService from "~/services/auth.service";
 import { isValidEmail } from "~/utils/auth";
+import { getErrorMessage, getErrorStatus } from "~/utils/https";
 import AuthCardLayout from "../components/AuthCardLayout";
 
 const ForgotPasswordPage = () => {
@@ -16,11 +19,15 @@ const ForgotPasswordPage = () => {
         event.preventDefault();
         if (!canSubmit) return;
         setSubmitting(true);
-        // TODO: replace with real password reset request once the auth service is wired up.
-        setTimeout(() => {
-            setSubmitting(false);
-            setSent(true);
-        }, 700);
+        authService
+            .forgotPassword(email.trim())
+            .then(() => setSent(true))
+            .catch((error) => {
+                // Same screen whether or not the account exists, so this can't be used to check emails.
+                if (getErrorStatus(error) === 404) setSent(true);
+                else toast.error(getErrorMessage(error, "We couldn't send the email. Try again."));
+            })
+            .finally(() => setSubmitting(false));
     };
 
     if (sent) {
@@ -30,7 +37,7 @@ const ForgotPasswordPage = () => {
                     <h1 className="font-serif text-2xl leading-tight md:text-3xl">Check your inbox</h1>
                     <p className="mt-3 leading-relaxed text-foreground/65">
                         If an account exists for <span className="font-semibold text-foreground">{email}</span>, we've sent a
-                        link to reset your password. It expires in an hour.
+                        link to reset your password. It expires in 15 minutes.
                     </p>
                     <Button variant="outline" onClick={() => setSent(false)} className="mt-6 h-11 w-full rounded-lg font-semibold">
                         Use a different email

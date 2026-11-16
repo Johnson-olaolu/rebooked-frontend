@@ -15,6 +15,7 @@ export default [
     route("shop/in/:state", "./routes/shop/state/index.tsx"), // e.g. /shop/in/lagos, /shop/in/fct
     route("shop/free", "./routes/shop/free/index.tsx"),
     route("seller/:id", "./routes/seller/index.tsx"), // public seller page (mockup 2d)
+    route("unsubscribe", "./routes/unsubscribe/index.tsx"), // one-click link in notification emails
   ]),
 
   // Dashboard (requires a logged-in, onboarded user)
@@ -30,6 +31,8 @@ export default [
     ]),
     route("notifications", "./routes/dashboard/notifications/index.tsx"),
     route("settings", "./routes/dashboard/settings/index.tsx"),
+    route("settings/notifications", "./routes/dashboard/settings/notifications.tsx"), // emails link here
+    route("settings/security", "./routes/dashboard/settings/security.tsx"),
   ]),
 
   layout("./routes/auth/components/AuthEntryLayout.tsx", [

@@ -226,7 +226,7 @@ const BookPage = () => {
     const banner =
         book.status === "SOLD" ? (
             <Banner title="This book has been sold">
-                {sellerName === "the seller" ? "This copy" : `${sellerName} rehomed this copy`}
+                {sellerName === "the seller" ? "This copy" : `${sellerName} sold this copy`}
                 {book.soldDate ? ` ${timeAgo(book.soldDate)}` : ""}. It's no longer in the shop.
             </Banner>
         ) : book.status === "INACTIVE" ? (

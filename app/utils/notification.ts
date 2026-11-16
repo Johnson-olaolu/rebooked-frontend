@@ -1,4 +1,4 @@
-import { BadgeCheck, BookX, Clock, FilePenLine, MessageCircle, MessageSquareText, PackageCheck, RotateCcw, type LucideIcon } from "lucide-react";
+import { BadgeCheck, BookX, CircleHelp, Clock, Eye, FilePenLine, Hand, MessageCircle, MessageSquareText, PackageCheck, RotateCcw, type LucideIcon } from "lucide-react";
 import type { INotification, NotificationType } from "~/types/notification";
 import { threadPath } from "./chat";
 import { displayName } from "./text";
@@ -20,8 +20,19 @@ const thread = (n: INotification) => (n.conversationId ? threadPath(n.conversati
 const bookPage = (n: INotification) => (n.book?.id ? `/book/${n.book.id}` : "/shop");
 const editBook = (n: INotification) => (n.book?.id ? `/dashboard/shelf/${n.book.id}/edit` : "/dashboard/shelf");
 
+/** The backend sends the milestone as preview text ("100 views"). */
+const viewsFrom = (n: INotification) => {
+  const views = Number.parseInt(n.preview ?? "", 10);
+  return Number.isFinite(views) ? views.toLocaleString() : "lots of";
+};
+
 const PRESENT: Record<NotificationType, (n: INotification) => Presented> = {
-  BOOK_ENQUIRY: (n) => ({ icon: MessageCircle, segments: [person(n), " asked about ", book(n)], to: thread(n) }),
+  BOOK_ENQUIRY: (n) => ({
+    icon: MessageCircle,
+    segments: [person(n), " asked about ", book(n)],
+    detail: n.preview ?? undefined,
+    to: thread(n),
+  }),
   SOLD_TO_YOU: (n) => ({ icon: BadgeCheck, segments: [person(n), " marked ", book(n), " as sold to you"], to: thread(n) }),
   SOLD_ELSEWHERE: (n) => ({ icon: PackageCheck, segments: [book(n), " was sold to someone else"], to: thread(n) }),
   BOOK_UNAVAILABLE: (n) => ({ icon: BookX, segments: [book(n), " is no longer available"], to: thread(n) }),
@@ -41,6 +52,21 @@ const PRESENT: Record<NotificationType, (n: INotification) => Presented> = {
     to: editBook(n),
   }),
   DRAFT_REMINDER: (n) => ({ icon: FilePenLine, segments: ["Finish adding ", book(n), " to your shelf"], to: editBook(n) }),
+  WELCOME: () => ({
+    icon: Hand,
+    segments: ["Welcome to Rebooked! Add the first book you're done with and buyers can message you about it."],
+    to: "/dashboard/shelf/new",
+  }),
+  MARK_AS_SOLD_NUDGE: (n) => ({
+    icon: CircleHelp,
+    segments: ["Did ", book(n), " sell? Mark it as sold so buyers stop asking about it."],
+    to: editBook(n),
+  }),
+  VIEWS_MILESTONE: (n) => ({
+    icon: Eye,
+    segments: [book(n), ` has had ${viewsFrom(n)} views`],
+    to: bookPage(n),
+  }),
 };
 
 export const presentNotification = (notification: INotification): Presented =>

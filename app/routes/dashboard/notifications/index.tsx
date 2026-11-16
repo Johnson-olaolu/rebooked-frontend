@@ -1,5 +1,6 @@
-import { CheckCheck } from "lucide-react";
+import { CheckCheck, Settings } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Link } from "react-router";
 import NotificationItem from "~/components/notifications/NotificationItem";
 import { Button } from "~/components/ui/button";
 import { isRead, useMarkNotificationsRead, useNotificationUnread, useNotifications } from "~/hooks/useNotifications";
@@ -66,15 +67,22 @@ const NotificationsPage = () => {
                         {unread ? `${unread} unread` : "Enquiries, sales and reminders about your books"}
                     </p>
                 </div>
-                <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => markRead("all")}
-                    disabled={unread === 0}
-                    className="h-10 rounded-md px-4 font-semibold"
-                >
-                    <CheckCheck className="size-4" aria-hidden /> Mark all as read
-                </Button>
+                <div className="flex gap-2">
+                    <Button asChild variant="ghost" className="h-10 rounded-md px-3 font-semibold">
+                        <Link to="/dashboard/settings/notifications" aria-label="Notification settings">
+                            <Settings className="size-4" aria-hidden /> <span className="hidden sm:inline">Settings</span>
+                        </Link>
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => markRead("all")}
+                        disabled={unread === 0}
+                        className="h-10 rounded-md px-4 font-semibold"
+                    >
+                        <CheckCheck className="size-4" aria-hidden /> Mark all as read
+                    </Button>
+                </div>
             </div>
 
             <div role="tablist" aria-label="Show" className="mb-4 inline-grid grid-cols-2 gap-1 rounded-lg bg-secondary/70 p-1">
