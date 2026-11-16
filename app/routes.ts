@@ -31,6 +31,7 @@ export default [
     ]),
     route("notifications", "./routes/dashboard/notifications/index.tsx"),
     route("saved", "./routes/dashboard/saved/index.tsx"), // API_CHANGES #21d
+    route("bought/:bookId", "./routes/dashboard/bought/index.tsx"), // rate the seller (#22)
     route("settings", "./routes/dashboard/settings/index.tsx"),
     route("settings/notifications", "./routes/dashboard/settings/notifications.tsx"), // emails link here
     route("settings/security", "./routes/dashboard/settings/security.tsx"),

@@ -1,8 +1,10 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { BadgeCheck, MessageCircle, Phone } from "lucide-react";
+import { BadgeCheck, MessageCircle, Phone, Star } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router";
 import { toast } from "sonner";
+import { ratingText } from "~/components/ratings/SellerRating";
+import SellerReviews from "~/components/ratings/SellerReviews";
 import BookCard, { BookCardSkeleton } from "~/components/shop/BookCard";
 import NotFoundMessage from "~/components/shop/NotFoundMessage";
 import Pagination from "~/components/shop/Pagination";
@@ -195,9 +197,27 @@ const SellerPage = () => {
             </div>
 
             {/* Stats */}
-            <div className="mt-8 grid grid-cols-2 gap-3.5 sm:max-w-md">
+            <div className="mt-8 grid grid-cols-2 gap-3.5 sm:max-w-2xl sm:grid-cols-3">
                 <Stat value={availableCount ?? "—"} label="Available now" />
                 <Stat value={soldCount ?? "—"} label={soldCount === 1 ? "Book sold" : "Books sold"} />
+                <a
+                    href="#seller-ratings"
+                    aria-label={ratingText(seller.rating)}
+                    className="col-span-2 rounded-lg border border-foreground/10 bg-card px-5 py-4 transition-colors hover:border-primary/40 sm:col-span-1"
+                >
+                    <div className="flex items-center gap-1.5 font-serif text-3xl text-primary">
+                        {seller.rating?.count ? (
+                            <>
+                                {seller.rating.average.toFixed(1)} <Star className="size-6 fill-primary" aria-hidden />
+                            </>
+                        ) : (
+                            "—"
+                        )}
+                    </div>
+                    <div className="mt-0.5 text-sm text-foreground/60">
+                        {seller.rating?.count ? `${seller.rating.count} ${seller.rating.count === 1 ? "rating" : "ratings"}` : "No ratings yet"}
+                    </div>
+                </a>
             </div>
 
             {/* Shelf */}
@@ -274,6 +294,8 @@ const SellerPage = () => {
                     )}
                 </div>
             </section>
+
+            <SellerReviews sellerId={seller.id} rating={seller.rating} name={firstName === "This" ? "this seller" : firstName} />
         </div>
     );
 };

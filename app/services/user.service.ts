@@ -1,6 +1,7 @@
 import type { IResponse } from "~/types/api";
 import type { IUpdateProfilePayload } from "~/types/profile";
 import type { ISellerProfile, IUser } from "~/types/user";
+import type { ISellerReviewPage } from "~/types/rating";
 import https from "~/utils/https";
 
 class UserService {
@@ -39,6 +40,11 @@ class UserService {
    * address.city (400 with `errors` otherwise) and then marks onboarding complete.
    */
   /** Account fields. Only fullName is sent; changing email needs its own verified flow. */
+  /** Public: a seller's ratings, newest first (API_CHANGES #22c). */
+  async ratings(userId: string, { page = 0, pageSize = 10 } = {}): Promise<IResponse<ISellerReviewPage>> {
+    return await https.get({ url: `${this.baseUrl}/${userId}/ratings`, query: { page, pageSize } });
+  }
+
   async updateUser(userId: string, payload: { fullName: string }): Promise<IResponse<IUser>> {
     return await https.patch({ url: `${this.baseUrl}/${userId}`, body: payload });
   }

@@ -1,4 +1,18 @@
-import { BadgeCheck, BookX, CircleHelp, Clock, Eye, FilePenLine, Hand, MessageCircle, MessageSquareText, PackageCheck, RotateCcw, type LucideIcon } from "lucide-react";
+import {
+  BadgeCheck,
+  BookX,
+  CircleHelp,
+  Clock,
+  Eye,
+  FilePenLine,
+  Hand,
+  MessageCircle,
+  MessageSquareText,
+  PackageCheck,
+  RotateCcw,
+  Star,
+  type LucideIcon,
+} from "lucide-react";
 import type { INotification, NotificationType } from "~/types/notification";
 import { threadPath } from "./chat";
 import { displayName } from "./text";
@@ -18,6 +32,9 @@ const book = (n: INotification): Segment => ({ book: n.book?.title?.trim() || "a
 const person = (n: INotification): Segment => ({ person: displayName(n.actor?.userName).split(" ")[0] || "Someone" });
 const thread = (n: INotification) => (n.conversationId ? threadPath(n.conversationId, n.book?.id) : "/dashboard/messages");
 const bookPage = (n: INotification) => (n.book?.id ? `/book/${n.book.id}` : "/shop");
+/** The rating form for a book you bought (API_CHANGES #22). */
+export const boughtPath = (bookId: string) => `/dashboard/bought/${bookId}`;
+const bought = (n: INotification) => (n.book?.id ? boughtPath(n.book.id) : "/dashboard/notifications");
 const editBook = (n: INotification) => (n.book?.id ? `/dashboard/shelf/${n.book.id}/edit` : "/dashboard/shelf");
 
 /** The backend sends the milestone as preview text ("100 views"). */
@@ -67,6 +84,7 @@ const PRESENT: Record<NotificationType, (n: INotification) => Presented> = {
     segments: [book(n), ` has had ${viewsFrom(n)} views`],
     to: bookPage(n),
   }),
+  RATE_SELLER: (n) => ({ icon: Star, segments: ["How was buying ", book(n), " from ", person(n), "? Rate them"], to: bought(n) }),
 };
 
 export const presentNotification = (notification: INotification): Presented =>

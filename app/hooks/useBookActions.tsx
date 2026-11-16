@@ -2,10 +2,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
+import MarkSoldDialog from "~/components/shelf/MarkSoldDialog";
 import ConfirmDialog from "~/components/ui/confirm-dialog";
 import bookService from "~/services/book.service";
 import type { BookStatus, IBook } from "~/types/book";
+import type { IChatBuyer } from "~/types/rating";
 import { editPath } from "~/utils/book";
+import { firstName } from "~/utils/chat";
 import { getErrorMessage, getFieldErrors } from "~/utils/https";
 
 type ConfirmKind = "sold" | "remove";
@@ -38,11 +41,22 @@ export const useBookActions = ({ onRemoved }: { onRemoved?: (book: IBook) => voi
     };
 
     const statusMutation = useMutation({
-        mutationFn: ({ book, status }: { book: IBook; status: BookStatus }) => bookService.setStatus(book.id, status),
-        onSuccess: (_response, { book, status }) => {
+        mutationFn: ({ book, status, buyer }: { book: IBook; status: BookStatus; buyer?: IChatBuyer }) =>
+            bookService.setStatus(book.id, status, buyer?.userId),
+        onSuccess: (_response, { book, status, buyer }) => {
             refresh(book);
+            if (status === "SOLD") {
+                // The chat books strip and "who chatted" list have both changed.
+                queryClient.invalidateQueries({ queryKey: ["conversation"] });
+                queryClient.invalidateQueries({ queryKey: ["conversations"] });
+                queryClient.invalidateQueries({ queryKey: ["chat-buyers", book.id] });
+            }
             setOpen(false);
-            toast.success(STATUS_TOAST[status] ?? "Saved.");
+            toast.success(
+                status === "SOLD" && buyer
+                    ? `Marked as sold to ${firstName(buyer.userName)}. We've asked them to rate you.`
+                    : (STATUS_TOAST[status] ?? "Saved."),
+            );
         },
         onError: (error, { book, status }) => {
             // Going back on the shelf runs the publish checks; send them to fix whatever's missing.
@@ -73,26 +87,17 @@ export const useBookActions = ({ onRemoved }: { onRemoved?: (book: IBook) => voi
     const title = confirm?.book.title ?? "this book";
     const dialog = (
         <>
-            <ConfirmDialog
+            <MarkSoldDialog
+                book={confirm?.kind === "sold" ? confirm.book : undefined}
                 open={open && confirm?.kind === "sold"}
                 onOpenChange={setOpen}
-                title="Mark this book as sold?"
-                description={
-                    <>
-                        <strong className="font-semibold text-foreground">{title}</strong> leaves the shop straight away. It
-                        stays on your profile as a completed sale.
-                        <span className="mt-2 block text-sm">
-                            Sold to someone you chatted with? Mark it sold from your chat with them instead, so it shows as
-                            sold to them.
-                        </span>
-                    </>
-                }
-                confirmLabel="Yes, it's sold"
-                pendingLabel="Saving…"
-                cancelLabel="Keep it on my shelf"
-                tone="olive"
                 pending={statusMutation.isPending}
-                onConfirm={() => confirm && statusMutation.mutate({ book: confirm.book, status: "SOLD" })}
+                onConfirm={(buyer) => confirm && statusMutation.mutate({ book: confirm.book, status: "SOLD", buyer })}
+                onArchive={
+                    confirm?.book.status === "ACTIVE"
+                        ? () => confirm && statusMutation.mutate({ book: confirm.book, status: "INACTIVE" })
+                        : undefined
+                }
             />
             <ConfirmDialog
                 open={open && confirm?.kind === "remove"}

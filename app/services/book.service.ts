@@ -9,6 +9,7 @@ import type {
   IShopPage,
   IUpdateBookPayload,
 } from "~/types/book";
+import type { IChatBuyer, IPurchaseRating, IRatePayload } from "~/types/rating";
 import https from "~/utils/https";
 
 class BookService {
@@ -49,9 +50,29 @@ class BookService {
     return await https.patch({ url: `${this.baseUrl}/${id}`, body: payload });
   }
 
-  /** Owner only. ACTIVE runs the publish checks; a published book can't go back to DRAFT. */
-  async setStatus(id: string, status: BookStatus): Promise<IResponse<IBook>> {
-    return await https.post({ url: `${this.baseUrl}/${id}/status`, body: { status } });
+  /**
+   * Owner only. ACTIVE runs the publish checks; a published book can't go back to DRAFT.
+   * SOLD must name the buyer, one of `chatBuyers` (API_CHANGES #22a).
+   */
+  async setStatus(id: string, status: BookStatus, buyerId?: string): Promise<IResponse<IBook>> {
+    return await https.post({ url: `${this.baseUrl}/${id}/status`, body: buyerId ? { status, buyerId } : { status } });
+  }
+
+  /* Buyers and ratings (API_CHANGES #22) */
+
+  /** Owner only: people with this book open in a chat, most recent first. */
+  async chatBuyers(id: string): Promise<IResponse<IChatBuyer[]>> {
+    return await https.get({ url: `${this.baseUrl}/${id}/chat-buyers` });
+  }
+
+  /** For the rating form: the seller, and the caller's rating if any. `canRate` only for the buyer. */
+  async purchaseRating(id: string): Promise<IResponse<IPurchaseRating>> {
+    return await https.get({ url: `${this.baseUrl}/${id}/rating` });
+  }
+
+  /** Creates or edits the caller's rating of this book's seller. */
+  async rate(id: string, payload: IRatePayload): Promise<IResponse<IPurchaseRating>> {
+    return await https.put({ url: `${this.baseUrl}/${id}/rating`, body: payload });
   }
 
   /** Owner only. Permanent. */

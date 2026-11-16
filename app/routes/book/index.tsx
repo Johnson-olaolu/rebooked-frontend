@@ -3,6 +3,7 @@ import { ArrowLeft, ChevronRight, MessageCircle } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router";
 import StartChatDialog from "~/components/chat/StartChatDialog";
+import SellerRating, { ratingText } from "~/components/ratings/SellerRating";
 import SaveButton from "~/components/shop/SaveButton";
 import { Button } from "~/components/ui/button";
 import UserAvatar from "~/components/UserAvatar";
@@ -374,7 +375,7 @@ const BookPage = () => {
                     {book.seller && (
                         <Link
                             to={`/seller/${book.seller.id}`}
-                            aria-label={`Seller: ${displayName(book.seller.userName) || "Rebooked seller"}. View their shelf`}
+                            aria-label={`Seller: ${displayName(book.seller.userName) || "Rebooked seller"}. ${ratingText(book.seller.rating)}. View their shelf`}
                             className="flex items-center gap-3.5 rounded-lg border border-foreground/10 bg-card p-4 transition-colors hover:border-primary/40"
                         >
                             <UserAvatar
@@ -384,6 +385,7 @@ const BookPage = () => {
                             />
                             <div className="min-w-0">
                                 <div className="truncate font-semibold">{displayName(book.seller.userName) || "Rebooked seller"}</div>
+                                <SellerRating rating={book.seller.rating} className="mt-0.5" />
                                 {location_ && <div className="truncate text-sm text-foreground/55">{location_}</div>}
                             </div>
                             <span className="ml-auto shrink-0 text-sm font-semibold text-primary">View shelf →</span>

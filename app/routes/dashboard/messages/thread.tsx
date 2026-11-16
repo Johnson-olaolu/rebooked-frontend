@@ -1,12 +1,15 @@
-import { ArrowLeft, ChevronDown, SendHorizontal } from "lucide-react";
+import { ArrowLeft, ChevronDown, SendHorizontal, Star } from "lucide-react";
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { Link, useParams, useSearchParams } from "react-router";
 import { toast } from "sonner";
+import RateSellerDialog from "~/components/ratings/RateSellerDialog";
+import SellerRating from "~/components/ratings/SellerRating";
 import UserAvatar from "~/components/UserAvatar";
 import { Button } from "~/components/ui/button";
 import ConfirmDialog from "~/components/ui/confirm-dialog";
 import { useBaseStore } from "~/hooks/store";
 import { useChatActions, useConversation, useMessages, usePendingMessages } from "~/hooks/useChat";
+import { usePurchaseRating } from "~/hooks/useRatings";
 import { ChatError } from "~/lib/chatSocket";
 import { cn } from "~/lib/utils";
 import type { IConversation, IConversationBook, IMessage, IPendingMessage } from "~/types/chat";
@@ -46,13 +49,40 @@ const BookCover = ({ book, className }: { book: IConversationBook; className?: s
         <div className={cn("shrink-0 rounded-sm bg-[#8a5a36]", className)} aria-hidden />
     );
 
+/** "Rate Tola", or "You rated ★4 · Edit", on a book you bought. */
+const RateAction = ({ book, otherName, onRate }: { book: IConversationBook; otherName: string; onRate: (bookId: string) => void }) => {
+    const query = usePurchaseRating(book.bookId);
+    if (!query.data?.canRate) return null;
+    const rating = query.data.rating;
+    return rating ? (
+        <button
+            type="button"
+            onClick={() => onRate(book.bookId)}
+            className="inline-flex h-8 shrink-0 items-center gap-1 rounded-md px-2 text-xs font-semibold text-foreground/70 hover:bg-secondary"
+            aria-label={`You rated ${firstName(otherName)} ${rating.stars} out of 5. Edit your rating`}
+        >
+            You rated <Star className="size-3.5 fill-primary text-primary" aria-hidden /> {rating.stars} · Edit
+        </button>
+    ) : (
+        <Button
+            type="button"
+            size="sm"
+            onClick={() => onRate(book.bookId)}
+            className="h-8 shrink-0 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground hover:bg-primary/90"
+        >
+            <Star className="size-3.5" aria-hidden /> Rate {firstName(otherName)}
+        </Button>
+    );
+};
+
 interface BooksStripProps {
     conversation: IConversation;
     onMarkSold: (book: IConversationBook) => void;
+    onRate: (bookId: string) => void;
 }
 
 /** "Books in this chat": what's being discussed, its state, and the seller's Mark as sold. */
-const BooksStrip = ({ conversation, onMarkSold }: BooksStripProps) => {
+const BooksStrip = ({ conversation, onMarkSold, onRate }: BooksStripProps) => {
     const [expanded, setExpanded] = useState(false);
     const books = sortedBooks(conversation.books);
     const otherName = displayName(conversation.other?.userName);
@@ -74,7 +104,13 @@ const BooksStrip = ({ conversation, onMarkSold }: BooksStripProps) => {
                     const canSell = book.role === "SELLER" && open;
                     const meta = [formatNaira(book.price, book.isFree), conditionLabel(book.condition)].filter(Boolean).join(" · ");
                     return (
-                        <li key={book.bookId} className={cn("flex items-center gap-3 py-1.5", !open && "opacity-70")}>
+                        <li
+                            key={book.bookId}
+                            className={cn(
+                                "flex items-center gap-3 py-1.5",
+                                !open && book.state !== "SOLD_TO_BUYER" && "opacity-70",
+                            )}
+                        >
                             <BookCover book={book} className="h-12 w-9" />
                             <div className="min-w-0 flex-1">
                                 <p className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
@@ -95,6 +131,9 @@ const BooksStrip = ({ conversation, onMarkSold }: BooksStripProps) => {
                                     {book.role === "SELLER" ? "You're the seller" : "You're buying"}
                                 </p>
                             </div>
+                            {book.role === "BUYER" && book.state === "SOLD_TO_BUYER" && (
+                                <RateAction book={book} otherName={otherName} onRate={onRate} />
+                            )}
                             {canSell && (
                                 <Button
                                     type="button"
@@ -130,6 +169,8 @@ const ThreadPage = () => {
     const [draft, setDraft] = useState("");
     const [aboutBookId, setAboutBookId] = useState<string | undefined>(params.get("book") ?? undefined);
     const [selling, setSelling] = useState<IConversationBook | null>(null);
+    /** Book id whose seller is being rated (opens the rating dialog). */
+    const [rating, setRating] = useState<string>();
     const [sellPending, setSellPending] = useState(false);
 
     const scroller = useRef<HTMLDivElement>(null);
@@ -259,7 +300,7 @@ const ThreadPage = () => {
         setSellPending(true);
         try {
             await markSoldToBuyer(id, selling.bookId);
-            toast.success(`Marked as sold to ${firstName(otherName)}`);
+            toast.success(`Marked as sold to ${firstName(otherName)}. We've asked them to rate you.`);
             setSelling(null);
         } catch (error) {
             toast.error(error instanceof ChatError ? error.message : "Couldn't mark it as sold. Try again.");
@@ -296,7 +337,13 @@ const ThreadPage = () => {
                     <Link to={`/seller/${conversation.other.id}`} className="flex min-w-0 items-center gap-3 rounded-md hover:opacity-85">
                         <UserAvatar name={otherName} photoUrl={conversation.other.profilePictureUrl} className="size-10 text-sm" />
                         <span className="min-w-0">
-                            <span className="block truncate font-semibold">{otherName}</span>
+                            <span className="flex min-w-0 items-center gap-2">
+                                <span className="truncate font-semibold">{otherName}</span>
+                                {/* They sell to you here: their rating helps you decide. */}
+                                {conversation.books.some((book) => book.role === "BUYER") && (conversation.other.rating?.count ?? 0) > 0 && (
+                                    <SellerRating rating={conversation.other.rating} className="shrink-0 text-xs" />
+                                )}
+                            </span>
                             <span className="block truncate text-xs text-foreground/55">
                                 {[
                                     roleLine(conversation),
@@ -315,7 +362,10 @@ const ThreadPage = () => {
                 )}
             </header>
 
-            {conversation && conversation.books.length > 0 && <BooksStrip conversation={conversation} onMarkSold={setSelling} />}
+            {conversation && conversation.books.length > 0 && (
+                <BooksStrip conversation={conversation} onMarkSold={setSelling} onRate={setRating} />
+            )}
+            {rating && <RateSellerDialog bookId={rating} open={!!rating} onOpenChange={(next) => !next && setRating(undefined)} />}
 
             {/* Messages */}
             <div ref={scroller} onScroll={onScroll} className="min-h-0 flex-1 overflow-y-auto px-3 py-4 md:px-5" aria-live="polite">
@@ -489,7 +539,8 @@ const ThreadPage = () => {
                 description={
                     <>
                         <em className="font-serif">{selling?.title}</em> leaves the shop and shows as sold to {otherName} in this chat. Anyone
-                        else you're chatting with about it will see it's gone. You can put it back on your shelf later.
+                        else you're chatting with about it will see it's gone. We'll ask {firstName(otherName)} to rate you. You can put it back on
+                        your shelf later.
                     </>
                 }
                 confirmLabel="Yes, it's sold"

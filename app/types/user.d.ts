@@ -55,4 +55,13 @@ export interface ISellerProfile {
   availableCount?: number | null;
   soldCount?: number | null;
   hasPhone?: boolean;
+  /** Kept up to date by the backend as ratings come in (API_CHANGES #22c). `stars` only on the seller page. */
+  rating?: ISellerRating | null;
+}
+
+export interface ISellerRating {
+  average: number;
+  count: number;
+  /** How many ratings of each star value, "1".."5". */
+  stars?: Partial<Record<"1" | "2" | "3" | "4" | "5", number>>;
 }

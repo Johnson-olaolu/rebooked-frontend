@@ -29,6 +29,7 @@ const COPY: Record<string, { label: string; description: string }> = {
     SOLD_ELSEWHERE: { label: "Sold to someone else", description: "A book you asked about went to another buyer" },
     BOOK_UNAVAILABLE: { label: "No longer available", description: "A book you asked about was archived or removed" },
     BOOK_AVAILABLE: { label: "Back on the shelf", description: "A book you asked about is available again" },
+    RATE_SELLER: { label: "Rate the seller", description: "A reminder to rate a seller after you buy from them" },
     MARK_AS_SOLD_NUDGE: { label: "Did it sell?", description: "A check-in when a chat about your book goes quiet" },
     STALE_LISTING: { label: "Quiet listings", description: "A book has had no enquiries for 30 days, with tips to help it sell" },
     DRAFT_REMINDER: { label: "Unfinished drafts", description: "A draft you haven't published for 3 days" },

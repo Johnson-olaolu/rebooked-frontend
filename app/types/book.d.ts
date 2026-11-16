@@ -1,3 +1,4 @@
+import type { ISellerRating } from "./user";
 import type { IDocument } from "./api";
 import type { IFile } from "./file";
 
@@ -25,6 +26,8 @@ export interface ISellerSummary {
   profilePictureUrl?: string | null;
   city?: string | null;
   state?: string | null;
+  /** API_CHANGES #22c. */
+  rating?: ISellerRating | null;
 }
 
 /** Copied from the seller's address onto the book (API_CHANGES #17a). */

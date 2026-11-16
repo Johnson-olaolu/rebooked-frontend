@@ -11,7 +11,8 @@ export type NotificationType =
   | "DRAFT_REMINDER"
   | "WELCOME"
   | "MARK_AS_SOLD_NUDGE"
-  | "VIEWS_MILESTONE";
+  | "VIEWS_MILESTONE"
+  | "RATE_SELLER";
 
 export type NotificationFilter = "ALL" | "UNREAD";
 
