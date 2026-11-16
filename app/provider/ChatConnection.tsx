@@ -6,13 +6,15 @@ import { useLocation, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { useBaseStore } from "~/hooks/store";
 import { chatKeys, insertMessage, upsertConversation } from "~/hooks/useChat";
+import { applyRead, upsertNotification } from "~/hooks/useNotifications";
 import chatSocket from "~/lib/chatSocket";
 import type { IConversation } from "~/types/chat";
+import { notificationText, presentNotification } from "~/utils/notification";
 import { displayName } from "~/utils/text";
 
 /**
- * Keeps the chat socket connected while someone is logged in, and writes what it pushes into the
- * query cache so the inbox, open thread and unread badges update live (API_CHANGES #18e).
+ * Keeps the socket connected while someone is logged in, and writes what it pushes into the query
+ * cache so the inbox, open thread, notifications and badges update live (API_CHANGES #18e, #19c).
  */
 const ChatConnection = () => {
   const queryClient = useQueryClient();
@@ -72,6 +74,21 @@ const ChatConnection = () => {
           }
           break;
         }
+        case "notification": {
+          upsertNotification(queryClient, event.notification, event.unreadTotal);
+          // Chat already pops up for messages; everything else gets a quiet heads-up unless you're on the page.
+          if (event.notification.type !== "NEW_MESSAGES" && here.current !== "/dashboard/notifications") {
+            const { to } = presentNotification(event.notification);
+            toast(notificationText(event.notification), {
+              id: `notification-${event.notification.id}`,
+              action: { label: "View", onClick: () => go.current(to) },
+            });
+          }
+          break;
+        }
+        case "notification.read":
+          applyRead(queryClient, event.all ? "all" : (event.ids ?? []), event.unreadTotal);
+          break;
         default:
           break;
       }

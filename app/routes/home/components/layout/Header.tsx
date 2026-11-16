@@ -1,5 +1,6 @@
 import { Link, NavLink } from "react-router";
 import { Button } from "~/components/ui/button";
+import NotificationBell from "~/components/notifications/NotificationBell";
 import UserMenu from "~/components/UserMenu";
 import { useCurrentUser } from "~/hooks/useCurrentUser";
 import { cn } from "~/lib/utils";
@@ -42,7 +43,10 @@ const Header = () => {
 
                 <div className="flex items-center gap-3">
                     {isLoggedIn && user ? (
-                        <UserMenu user={user} />
+                        <>
+                            <NotificationBell />
+                            <UserMenu user={user} besideBell />
+                        </>
                     ) : (
                         <>
                             <Button

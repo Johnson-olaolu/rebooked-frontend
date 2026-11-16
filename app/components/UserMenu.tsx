@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronsUpDown, LayoutDashboard, Library, LogOut, MessageSquare, Settings } from "lucide-react";
+import { Bell, ChevronDown, ChevronsUpDown, LayoutDashboard, Library, LogOut, MessageSquare, Settings } from "lucide-react";
 import { useNavigate } from "react-router";
 import {
   DropdownMenu,
@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { useUnreadCount } from "~/hooks/useChat";
+import { useNotificationUnread } from "~/hooks/useNotifications";
 import { useLogout } from "~/hooks/useLogout";
 import { cn } from "~/lib/utils";
 import type { IUser } from "~/types/user";
@@ -21,6 +22,7 @@ export const USER_MENU_LINKS = [
   { label: "My dashboard", to: "/dashboard", icon: LayoutDashboard },
   { label: "My shelf", to: "/dashboard/shelf", icon: Library },
   { label: "Messages", to: "/dashboard/messages", icon: MessageSquare },
+  { label: "Notifications", to: "/dashboard/notifications", icon: Bell },
   { label: "Profile settings", to: "/dashboard/settings", icon: Settings },
 ];
 
@@ -32,12 +34,15 @@ interface UserMenuProps {
   showName?: boolean;
   /** Sidebar: collapsed to icons — show the avatar only. */
   collapsed?: boolean;
+  /** A notification bell sits next to the menu, so the avatar dot only needs to mean unread messages. */
+  besideBell?: boolean;
 }
 
-const UserMenu = ({ user, variant = "header", showName = true, collapsed = false }: UserMenuProps) => {
+const UserMenu = ({ user, variant = "header", showName = true, collapsed = false, besideBell = false }: UserMenuProps) => {
   const navigate = useNavigate();
   const logout = useLogout();
   const unread = useUnreadCount();
+  const unreadNotifications = useNotificationUnread();
   const name = getDisplayName(user);
   const address = user.profile?.address;
   const location = [displayPlace(address?.city), formatNgState(address?.state)].filter(Boolean).join(", ");
@@ -71,7 +76,12 @@ const UserMenu = ({ user, variant = "header", showName = true, collapsed = false
         >
           <span className="relative">
             <UserAvatar user={user} />
-            {unread > 0 && <span className="absolute -top-0.5 -right-0.5 size-2.5 rounded-full bg-[#9c3a2c] ring-2 ring-background" aria-label={`${unread} unread messages`} />}
+            {unread + (besideBell ? 0 : unreadNotifications) > 0 && (
+              <span
+                className="absolute -top-0.5 -right-0.5 size-2.5 rounded-full bg-[#9c3a2c] ring-2 ring-background"
+                aria-label={[unread && `${unread} unread messages`, !besideBell && unreadNotifications && `${unreadNotifications} unread notifications`].filter(Boolean).join(", ")}
+              />
+            )}
           </span>
           {showName && <span className="hidden max-w-36 truncate text-[15px] font-semibold sm:inline">{name}</span>}
           <ChevronDown className={cn("size-4 text-foreground/50", !showName && "hidden sm:block")} />
@@ -97,7 +107,7 @@ const UserMenu = ({ user, variant = "header", showName = true, collapsed = false
           <DropdownMenuItem key={to} onSelect={() => navigate(to)}>
             <Icon />
             {label}
-            {to === "/dashboard/messages" && <UnreadBadge count={unread} className="ml-auto" />}
+            <UnreadBadge count={to === "/dashboard/messages" ? unread : to === "/dashboard/notifications" ? unreadNotifications : 0} className="ml-auto" />
           </DropdownMenuItem>
         ))}
         <DropdownMenuSeparator />

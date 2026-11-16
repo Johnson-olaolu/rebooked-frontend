@@ -13,6 +13,7 @@ import { Link, NavLink } from "react-router";
 import UnreadBadge from "~/components/chat/UnreadBadge";
 import UserMenu from "~/components/UserMenu";
 import { useUnreadCount } from "~/hooks/useChat";
+import { useNotificationUnread } from "~/hooks/useNotifications";
 import { useBaseStore } from "~/hooks/store";
 import { cn } from "~/lib/utils";
 
@@ -30,7 +31,10 @@ const DashboardSidebar = () => {
     const collapsed = useBaseStore((state) => state.sidebarCollapsed);
     const toggleSidebar = useBaseStore((state) => state.toggleSidebar);
     const ToggleIcon = collapsed ? PanelLeftOpen : PanelLeftClose;
-    const unread = useUnreadCount();
+    const unreadMessages = useUnreadCount();
+    const unreadNotifications = useNotificationUnread();
+    const countFor = (to: string) =>
+        to === "/dashboard/messages" ? unreadMessages : to === "/dashboard/notifications" ? unreadNotifications : 0;
 
     return (
         <aside
@@ -95,12 +99,12 @@ const DashboardSidebar = () => {
                     >
                         <span className="relative shrink-0">
                             <Icon className="size-4.5" aria-hidden />
-                            {collapsed && to === "/dashboard/messages" && unread > 0 && (
+                            {collapsed && countFor(to) > 0 && (
                                 <span className="absolute -top-1 -right-1 size-2.5 rounded-full bg-[#c4513f] ring-2 ring-[#4a2d18]" aria-hidden />
                             )}
                         </span>
                         <span className={cn("truncate", collapsed && "sr-only")}>{label}</span>
-                        {to === "/dashboard/messages" && <UnreadBadge count={unread} className={cn("ml-auto bg-[#c4513f]", collapsed && "sr-only")} />}
+                        <UnreadBadge count={countFor(to)} className={cn("ml-auto bg-[#c4513f]", collapsed && "sr-only")} />
                     </NavLink>
                 ))}
             </nav>

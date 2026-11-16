@@ -25,6 +25,7 @@ Use these words in UI copy, legal pages, toasts, route paths and code names, so 
 | Book condition | **New / Like new / Good / Fair** | Mint, Used, Poor |
 | Talking to someone | a **conversation** (one per person; "Conversations", "Message Tunde", "Continue chat") | thread, ticket, enquiry |
 | What a conversation is about | **Books in this chat** ("About: *title*" when writing, "Re: *title*" on a message) | items, listings in this deal |
+| Things to look at | **Notifications** (bell on the site, count on the dashboard menu item, "Mark all as read") | alerts, activity feed, inbox |
 | Selling from a chat | **Mark as sold to Tunde**; the buyer sees **Sold to you**, anyone else **Sold to someone else** | complete order, accept |
 
 ## Shelf statuses
@@ -46,11 +47,12 @@ Light verbs that fit the theme are welcome where they read naturally: "shelve th
 
 ## In code
 
-- Routes: `/dashboard/shelf` (tabs via `?status=`), `/dashboard/shelf/new`, `/dashboard/shelf/:id/edit`, `/book/:id` (public), `/seller/:id` (public), `/shop`, `/shop/categories`, `/shop/category/:slug`, `/shop/in/:state` (e.g. `lagos`, `fct`), `/shop/free`, `/dashboard/messages`, `/dashboard/messages/:id` (`?book=` picks the book you're writing about).
+- Routes: `/dashboard/shelf` (tabs via `?status=`), `/dashboard/shelf/new`, `/dashboard/shelf/:id/edit`, `/book/:id` (public), `/seller/:id` (public), `/shop`, `/shop/categories`, `/shop/category/:slug`, `/shop/in/:state` (e.g. `lagos`, `fct`), `/shop/free`, `/dashboard/messages`, `/dashboard/messages/:id` (`?book=` picks the book you're writing about), `/dashboard/notifications`.
 - Shop filters live in the URL: `?q=&cat=<slugs>&state=<names>|any&cond=&min=&max=&free=1&sort=price_asc|price_desc&page=`. With no `state`, a logged-in user's own state applies. `/dashboard/listings` only redirects to `/dashboard/shelf` for old links.
 - Names: `ShelfPage`, `AddToShelfPage`, `EditBookPage`, `BookPage`, `BookForm`, `useBookActions`, `bookService.getMyShelf`. Data types follow the API (`IBook`, `BookStatus`); user-facing names say shelf.
 - Chat: `ChatConnection` (provider) keeps the STOMP socket (`app/lib/chatSocket.ts`) live and writes events into the query cache; screens use `useChat` hooks. One conversation per pair of users, with books attached (API_CHANGES #18).
-- Icons: lucide `Library` for the shelf, `Store` for the shop, `MessageSquare` for conversations.
+- Notifications: copy and links per type live in `app/utils/notification.ts` (e.g. "Tunde asked about *Purple Hibiscus*", "Finish adding *X* to your shelf"); they arrive on the same socket as chat (API_CHANGES #19).
+- Icons: lucide `Library` for the shelf, `Store` for the shop, `MessageSquare` for conversations, `Bell` for notifications.
 
 ## Backend
 

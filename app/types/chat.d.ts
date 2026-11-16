@@ -1,4 +1,5 @@
 import type { BookCondition, BookStatus } from "./book";
+import type { INotification } from "./notification";
 import type { ISellerProfile } from "./user";
 
 /** Mirrors API_CHANGES #18. One conversation per pair of users; books are attached to it. */
@@ -107,4 +108,7 @@ export type ChatEvent =
   | { type: "message"; conversationId: string; message: IMessage; conversation: IConversation }
   | { type: "read"; conversationId: string; userId: string; upToMessageId: string; readAt?: string }
   | { type: "conversation"; conversation: IConversation }
-  | { type: "error"; clientId?: string; code: ChatErrorCode; message: string; errors?: Record<string, string> };
+  | { type: "error"; clientId?: string; code: ChatErrorCode; message: string; errors?: Record<string, string> }
+  // Notifications share the queue (API_CHANGES #19c).
+  | { type: "notification"; notification: INotification; unreadTotal?: number }
+  | { type: "notification.read"; ids?: string[]; all?: boolean; unreadTotal?: number };
