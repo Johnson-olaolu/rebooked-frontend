@@ -558,7 +558,8 @@ and keep the "OTHER PAGES" list in a separate issue.
 
 -   Reviews and trusted-sellers sections.
 
-Document each phase in `API_CHANGES.md` (§24a, §24b …) as usual.
+The implementation summary is `rebooked-backend/API_CHANGES.md` §24
+(24a–24h). Keep both documents in step when a decision changes.
 
 ------------------------------------------------------------------------
 

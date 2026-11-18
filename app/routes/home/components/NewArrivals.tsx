@@ -1,29 +1,15 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
 import BookShelf from "~/components/shop/BookShelf";
-import bookService from "~/services/book.service";
+import { useHomepage } from "~/hooks/useHomepage";
 import HomeBand from "./HomeBand";
 
-const SHOWN = 12;
-
-/**
- * The newest ACTIVE books. Its `totalElements` is also the live "books in the store" count,
- * so the CTA strip shares this query instead of making its own.
- */
-export const useNewArrivals = () =>
-    useQuery({
-        queryKey: ["home", "new-arrivals"],
-        queryFn: () => bookService.query({ sort: "NEWEST", pageSize: SHOWN }).then((response) => response.data),
-        staleTime: 5 * 60 * 1000,
-    });
-
-/** Home "New arrivals". Hidden when the store is empty. */
+/** Home "New arrivals" (API_CHANGES #24c). Shows a skeleton while the bundle loads; hidden when empty. */
 const NewArrivals = ({ tinted }: { tinted?: boolean }) => {
-    const query = useNewArrivals();
-    const books = query.data?.content ?? [];
-    if (query.isSuccess && books.length === 0) return null;
+    const query = useHomepage((homepage) => homepage.newArrivals);
+    const books = query.data ?? [];
+    if (!query.isLoading && books.length === 0) return null;
 
     return (
         <HomeBand tinted={tinted}>
@@ -40,8 +26,8 @@ const NewArrivals = ({ tinted }: { tinted?: boolean }) => {
                 }
                 books={books}
                 loading={query.isLoading}
-                error={query.isError}
-                onRetry={() => query.refetch()}
+                error={false}
+                onRetry={() => undefined}
             />
         </HomeBand>
     );

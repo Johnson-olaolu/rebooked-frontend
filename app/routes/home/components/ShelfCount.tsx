@@ -1,11 +1,10 @@
 "use client";
 
-import { useNewArrivals } from "./NewArrivals";
+import { useHomepage } from "~/hooks/useHomepage";
 
-/** CTA line with the live number of ACTIVE books (shares the New arrivals query). */
+/** CTA line with the live number of ACTIVE books (`stats.activeBooks`, API_CHANGES #24c). */
 const ShelfCount = () => {
-    const { data } = useNewArrivals();
-    const total = data?.totalElements;
+    const { data: total } = useHomepage((homepage) => homepage.stats?.activeBooks);
 
     return (
         <span className="text-foreground/65">

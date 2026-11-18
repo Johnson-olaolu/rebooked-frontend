@@ -1,14 +1,20 @@
 import type { Route } from "./+types/index";
 import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
+import AiPicks from "./components/AiPicks";
 import ContinueBrowsing from "./components/ContinueBrowsing";
+import FeaturedWeek from "./components/FeaturedWeek";
+import HeroBooks from "./components/HeroBooks";
 import HeroSearch from "./components/HeroSearch";
 import HomeBand from "./components/HomeBand";
 import HomeCategories from "./components/HomeCategories";
 import NearYou from "./components/NearYou";
 import NewArrivals from "./components/NewArrivals";
 import ShelfCount from "./components/ShelfCount";
+import SocialProof from "./components/SocialProof";
+import StatsStrip from "./components/StatsStrip";
 import TopAuthors from "./components/TopAuthors";
+import TrendingShelf from "./components/TrendingShelf";
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -28,9 +34,8 @@ const steps = [
 ];
 
 /*
- * Section order (homepage-implementation.md). Sections waiting on GET /homepage — stats,
- * featured this week, AI picks, trending, reviews, trusted sellers — slot in where noted.
- * Live sections hide themselves when they have nothing to show.
+ * Section order: homepage-implementation.md §1. Most sections read one shared GET /homepage
+ * query (useHomepage, API_CHANGES #24); each hides itself when it has nothing to show.
  */
 export function ServerComponent() {
   return (
@@ -61,32 +66,11 @@ export function ServerComponent() {
           </p>
         </div>
 
-        {/* Decorative covers; replaced by this week's hero books once GET /homepage lands. */}
-        <div aria-hidden className="relative hidden h-[380px] md:block">
-          <div className="absolute top-6 left-8 h-[260px] w-[176px] -rotate-6 rounded-l border border-foreground/15 bg-secondary shadow-xl" />
-          <div className="absolute top-1 left-28 h-[280px] w-[190px] rotate-3 rounded-l bg-olive shadow-xl" />
-          <div className="absolute top-12 left-16 flex h-[310px] w-[214px] flex-col gap-3 rounded-l-sm rounded-r-md border border-foreground/15 bg-card p-4 shadow-2xl">
-            <div className="flex flex-1 items-center justify-center rounded border border-dashed border-foreground/25 bg-background text-xs text-foreground/45">
-              Cover photo
-            </div>
-            <div>
-              <div className="font-serif text-lg">The Bell Jar</div>
-              <div className="mt-1 text-xs text-foreground/55">Sylvia Plath · Good condition</div>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="font-serif text-lg font-semibold text-primary">₦3,500</span>
-              <span className="text-[11px] tracking-wide text-olive uppercase">Local pickup</span>
-            </div>
-          </div>
-          <img
-            src="/brand/rebooked-mark-ink.png"
-            alt=""
-            className="absolute right-0 bottom-0 h-20 w-32 object-contain opacity-10"
-          />
-        </div>
+        <HeroBooks />
       </section>
 
-      {/* 2. Stats counter — GET /homepage (stats) */}
+      {/* 2. Stats counter */}
+      <StatsStrip />
 
       {/* 3. Continue browsing (signed in) */}
       <ContinueBrowsing />
@@ -96,18 +80,26 @@ export function ServerComponent() {
         <HomeCategories />
       </HomeBand>
 
-      {/* 5. Featured this week, 6. AI picks, 7. Trending — GET /homepage */}
+      {/* 5. Featured this week */}
+      <FeaturedWeek />
+
+      {/* 6. AI picks (personalised when signed in) */}
+      <AiPicks tinted />
+
+      {/* 7. Trending this week */}
+      <TrendingShelf />
 
       {/* 8. New arrivals */}
-      <NewArrivals />
+      <NewArrivals tinted />
 
       {/* 9. Near you (signed in, with a state) */}
-      <NearYou tinted />
+      <NearYou />
 
-      {/* 10. Top authors */}
-      <TopAuthors />
+      {/* 10. Top authors this week */}
+      <TopAuthors tinted />
 
-      {/* 11. Readers are saying, 12. Trusted sellers — GET /homepage */}
+      {/* 11. Readers are saying + 12. Trusted sellers */}
+      <SocialProof />
 
       {/* 13. How it works (the header links here) */}
       <HomeBand tinted id="how-it-works" className="scroll-mt-20">
