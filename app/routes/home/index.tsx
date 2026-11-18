@@ -1,7 +1,13 @@
-import type { Route } from "../+types/home";
+import type { Route } from "./+types/index";
 import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
+import ContinueBrowsing from "./components/ContinueBrowsing";
+import HeroSearch from "./components/HeroSearch";
+import HomeBand from "./components/HomeBand";
 import HomeCategories from "./components/HomeCategories";
+import NearYou from "./components/NearYou";
+import NewArrivals from "./components/NewArrivals";
+import ShelfCount from "./components/ShelfCount";
 import TopAuthors from "./components/TopAuthors";
 
 export function meta({ }: Route.MetaArgs) {
@@ -15,29 +21,21 @@ export function meta({ }: Route.MetaArgs) {
   ];
 }
 
-const featuredBooks = [
-  { title: "Half of a Yellow Sun", author: "Chimamanda Ngozi Adichie", price: "R120", place: "Rondebosch", condition: "Like new", tone: "bg-olive" },
-  { title: "Organic Chemistry, 9th ed.", author: "Paula Bruice", price: "R450", place: "Hatfield", condition: "Good", tone: "bg-secondary" },
-  { title: "The Master and Margarita", author: "Mikhail Bulgakov", price: "R70", place: "Melville", condition: "Fair", tone: "bg-destructive" },
-  { title: "Cry, the Beloved Country", author: "Alan Paton", price: "R310", place: "Durban North", condition: "First ed.", tone: "bg-[#4a2d18]" },
-];
-
-const trustedSellers = [
-  { initials: "NM", name: "Nadia M.", meta: "★★★★★ · 47 books sold" },
-  { initials: "SK", name: "Sipho K.", meta: "★★★★★ · 31 books sold" },
-  { initials: "LB", name: "Lerato B.", meta: "★★★★☆ · 28 books sold" },
-];
-
 const steps = [
   { number: "01", title: "Put it on the shelf", body: "Photo, condition, price. Ninety seconds and your book is in the store." },
   { number: "02", title: "Talk it over", body: "Buyers message you about that specific book. Agree a price and a place." },
   { number: "03", title: "Hand it over", body: "Meet, post, or leave it at reception. Mark it sold and it leaves the store." },
 ];
 
+/*
+ * Section order (homepage-implementation.md). Sections waiting on GET /homepage — stats,
+ * featured this week, AI picks, trending, reviews, trusted sellers — slot in where noted.
+ * Live sections hide themselves when they have nothing to show.
+ */
 export function ServerComponent() {
   return (
     <div>
-      {/* Hero */}
+      {/* 1. Hero */}
       <section className="mx-auto grid max-w-7xl items-center gap-14 px-6 py-16 md:grid-cols-2 md:px-12 md:py-24">
         <div>
           <span className="inline-flex items-center gap-2 rounded-full border border-destructive/35 px-3 py-1.5 text-xs font-semibold tracking-[0.12em] text-destructive uppercase">
@@ -49,7 +47,8 @@ export function ServerComponent() {
           <p className="mt-6 max-w-lg text-lg leading-relaxed text-foreground/70 text-pretty">
             Shelve the books you've finished, find the ones you keep meaning to read, and message the person on the other end directly. Rebooked introduces you — you two sort out the handover.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <HeroSearch />
+          <div className="mt-5 flex flex-wrap gap-3">
             <Button asChild size="lg" className="h-12 rounded-lg bg-primary px-6 text-base font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90">
               <Link to="/register">Start your shelf</Link>
             </Button>
@@ -62,7 +61,8 @@ export function ServerComponent() {
           </p>
         </div>
 
-        <div className="relative hidden h-[380px] md:block">
+        {/* Decorative covers; replaced by this week's hero books once GET /homepage lands. */}
+        <div aria-hidden className="relative hidden h-[380px] md:block">
           <div className="absolute top-6 left-8 h-[260px] w-[176px] -rotate-6 rounded-l border border-foreground/15 bg-secondary shadow-xl" />
           <div className="absolute top-1 left-28 h-[280px] w-[190px] rotate-3 rounded-l bg-olive shadow-xl" />
           <div className="absolute top-12 left-16 flex h-[310px] w-[214px] flex-col gap-3 rounded-l-sm rounded-r-md border border-foreground/15 bg-card p-4 shadow-2xl">
@@ -74,7 +74,7 @@ export function ServerComponent() {
               <div className="mt-1 text-xs text-foreground/55">Sylvia Plath · Good condition</div>
             </div>
             <div className="flex items-center justify-between">
-              <span className="font-serif text-lg font-semibold text-primary">R85</span>
+              <span className="font-serif text-lg font-semibold text-primary">₦3,500</span>
               <span className="text-[11px] tracking-wide text-olive uppercase">Local pickup</span>
             </div>
           </div>
@@ -86,91 +86,47 @@ export function ServerComponent() {
         </div>
       </section>
 
-      {/* Featured books */}
-      <section id="how-it-works" className="border-t border-border px-6 py-14 md:px-12">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <div className="text-xs font-semibold tracking-[0.14em] text-destructive uppercase">Featured this week</div>
-              <h2 className="mt-2 font-serif text-3xl md:text-4xl">Fresh on the shelf</h2>
+      {/* 2. Stats counter — GET /homepage (stats) */}
+
+      {/* 3. Continue browsing (signed in) */}
+      <ContinueBrowsing />
+
+      {/* 4. Categories */}
+      <HomeBand tinted>
+        <HomeCategories />
+      </HomeBand>
+
+      {/* 5. Featured this week, 6. AI picks, 7. Trending — GET /homepage */}
+
+      {/* 8. New arrivals */}
+      <NewArrivals />
+
+      {/* 9. Near you (signed in, with a state) */}
+      <NearYou tinted />
+
+      {/* 10. Top authors */}
+      <TopAuthors />
+
+      {/* 11. Readers are saying, 12. Trusted sellers — GET /homepage */}
+
+      {/* 13. How it works (the header links here) */}
+      <HomeBand tinted id="how-it-works" className="scroll-mt-20">
+        <h2 className="mb-8 font-serif text-3xl md:text-4xl">Three steps, no shipping labels</h2>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          {steps.map((step) => (
+            <div key={step.number} className="rounded-lg border border-border bg-background p-6">
+              <div className="font-serif text-3xl text-destructive">{step.number}</div>
+              <div className="mt-2.5 mb-2 font-semibold">{step.title}</div>
+              <p className="text-foreground/70">{step.body}</p>
             </div>
-          </div>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {featuredBooks.map((book) => (
-              <div key={book.title} className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-                <div className={`relative flex h-52 items-end p-3.5 ${book.tone}`}>
-                  <span className="absolute top-3 right-3 rounded-full bg-card/90 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-[#4a2d18] uppercase">
-                    {book.condition}
-                  </span>
-                  <span className="text-xs text-card/85">Cover photo</span>
-                </div>
-                <div className="p-4">
-                  <div className="font-serif text-lg leading-snug">{book.title}</div>
-                  <div className="mt-1 text-sm text-foreground/55">{book.author}</div>
-                  <div className="mt-3.5 flex items-center justify-between">
-                    <span className="font-serif text-lg font-semibold text-primary">{book.price}</span>
-                    <span className="text-xs text-foreground/50">{book.place}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
-      </section>
+      </HomeBand>
 
-      {/* Categories */}
-      <section className="border-t border-border bg-secondary/60 px-6 py-14 md:px-12">
-        <div className="mx-auto max-w-7xl">
-          <HomeCategories />
-        </div>
-      </section>
-
-      {/* Authors + trusted sellers */}
-      <section className="border-t border-border px-6 py-14 md:px-12">
-        <div className="mx-auto grid max-w-7xl gap-11 md:grid-cols-[1.1fr_0.9fr]">
-          <TopAuthors />
-          <div className="rounded-xl border border-border bg-card p-6">
-            <div className="text-xs font-semibold tracking-[0.14em] text-olive uppercase">Trusted sellers</div>
-            <div className="mt-4 flex flex-col gap-4">
-              {trustedSellers.map((seller) => (
-                <div key={seller.initials} className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-secondary font-serif text-primary">
-                    {seller.initials}
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-semibold">{seller.name}</div>
-                    <div className="text-sm text-foreground/55">{seller.meta}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-5 border-t border-border pt-4 text-sm leading-relaxed text-foreground/60">
-              Ratings come from completed handovers — no payment protection, so the record matters.
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Steps */}
-      <section className="border-t border-border bg-secondary/60 px-6 py-14 md:px-12">
-        <div className="mx-auto max-w-7xl">
-          <h2 className="mb-8 font-serif text-3xl md:text-4xl">Three steps, no shipping labels</h2>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {steps.map((step) => (
-              <div key={step.number} className="rounded-lg border border-border bg-background p-6">
-                <div className="font-serif text-3xl text-destructive">{step.number}</div>
-                <div className="mt-2.5 mb-2 font-semibold">{step.title}</div>
-                <p className="text-foreground/70">{step.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
+      {/* 14. CTA */}
       <section className="border-t border-border px-6 py-10 md:px-12">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-5">
-          <span className="text-foreground/65">2,847 books currently looking for a new reader.</span>
+          <ShelfCount />
           <Button asChild size="lg" className="h-12 rounded-lg bg-primary px-6 text-base font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90">
             <Link to="/shop">Browse all books →</Link>
           </Button>

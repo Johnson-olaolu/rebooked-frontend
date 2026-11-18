@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
 import authorService from "~/services/author.service";
 import { authorPath } from "~/utils/author";
+import HomeBand from "./HomeBand";
 
 /** "Most-shelved authors": the authors with the most books available right now (API_CHANGES #23c). Hidden when there are none. */
 const TopAuthors = () => {
@@ -16,10 +17,10 @@ const TopAuthors = () => {
     if (!topQuery.isLoading && authors.length === 0) return null;
 
     return (
-        <div>
+        <HomeBand>
             <h2 className="mb-1.5 font-serif text-3xl md:text-4xl">Most-shelved authors</h2>
             <p className="mb-6 text-foreground/60">What Rebooked readers are passing on right now.</p>
-            <ol className="grid grid-cols-1 gap-x-6 gap-y-2.5 sm:grid-cols-2" aria-busy={topQuery.isLoading}>
+            <ol className="grid grid-cols-1 gap-x-8 gap-y-2.5 sm:grid-cols-2 lg:grid-cols-3" aria-busy={topQuery.isLoading}>
                 {topQuery.isLoading
                     ? Array.from({ length: 6 }, (_, index) => (
                           <li key={index} className="h-11 animate-pulse border-b border-border py-2.5">
@@ -41,7 +42,7 @@ const TopAuthors = () => {
                           </li>
                       ))}
             </ol>
-        </div>
+        </HomeBand>
     );
 };
 
