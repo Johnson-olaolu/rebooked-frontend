@@ -15,6 +15,7 @@ export default [
     route("shop/in/:state", "./routes/shop/state/index.tsx"), // e.g. /shop/in/lagos, /shop/in/fct
     route("shop/free", "./routes/shop/free/index.tsx"),
     route("seller/:id", "./routes/seller/index.tsx"), // public seller page (mockup 2d)
+    route("author/:slug", "./routes/author/index.tsx"), // an author and their books on Rebooked (API_CHANGES #23)
     route("unsubscribe", "./routes/unsubscribe/index.tsx"), // one-click link in notification emails
   ]),
 
@@ -35,6 +36,15 @@ export default [
     route("settings", "./routes/dashboard/settings/index.tsx"),
     route("settings/notifications", "./routes/dashboard/settings/notifications.tsx"), // emails link here
     route("settings/security", "./routes/dashboard/settings/security.tsx"),
+  ]),
+
+  // Admin (super admin only, API_CHANGES #23f)
+  route("admin", "./routes/admin/AdminLayout.tsx", [
+    index("./routes/admin/index.tsx"), // → /admin/authors
+    route("authors", "./routes/admin/authors/index.tsx"),
+    route("authors/review", "./routes/admin/authors/review.tsx"),
+    route("authors/:id", "./routes/admin/authors/detail.tsx"),
+    route("imports", "./routes/admin/imports.tsx"),
   ]),
 
   layout("./routes/auth/components/AuthEntryLayout.tsx", [

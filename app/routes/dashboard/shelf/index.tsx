@@ -13,6 +13,7 @@ import { useBookActions } from "~/hooks/useBookActions";
 import { cn } from "~/lib/utils";
 import bookService from "~/services/book.service";
 import type { BookStatus, IBook } from "~/types/book";
+import { authorLine } from "~/utils/author";
 import { SHELF_TABS, STATUS_LABEL, STATUS_PILL, bookPath, conditionLabel, editPath } from "~/utils/book";
 import { formatNaira } from "~/utils/money";
 import { timeAgo } from "~/utils/time";
@@ -41,7 +42,7 @@ const ROW_LINK: Record<BookStatus, { label: string; to: (book: IBook) => string 
 };
 
 const ShelfRow = ({ book, actions }: { book: IBook; actions: ShelfActions }) => {
-    const meta = [book.author, conditionLabel(book.condition), `added ${timeAgo(book.createdAt)}`].filter(Boolean).join(" · ");
+    const meta = [authorLine(book.authors), conditionLabel(book.condition), `added ${timeAgo(book.createdAt)}`].filter(Boolean).join(" · ");
     const link = ROW_LINK[book.status];
     return (
         <li className="relative flex items-center gap-4 p-4">

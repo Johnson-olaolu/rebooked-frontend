@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import { cn } from "~/lib/utils";
 import type { IBook } from "~/types/book";
+import { authorLine } from "~/utils/author";
 import { bookPath, conditionLabel } from "~/utils/book";
 import { formatNaira } from "~/utils/money";
 import SaveButton from "./SaveButton";
@@ -19,6 +20,7 @@ export const bookPlace = (book: IBook) => {
  */
 const BookCard = ({ book, sold: soldProp = false, saveable = true }: { book: IBook; sold?: boolean; saveable?: boolean }) => {
     const place = bookPlace(book);
+    const authors = authorLine(book.authors);
     const sold = soldProp || book.status === "SOLD";
     const unavailable = book.status === "INACTIVE";
     return (
@@ -60,7 +62,7 @@ const BookCard = ({ book, sold: soldProp = false, saveable = true }: { book: IBo
                     )}
                 </div>
                 <div className="mt-2.5 truncate font-serif text-lg leading-snug group-hover:underline">{book.title}</div>
-                {book.author && <div className="truncate text-sm text-foreground/60">{book.author}</div>}
+                {authors && <div className="truncate text-sm text-foreground/60">{authors}</div>}
                 <div className="mt-1 flex items-baseline justify-between gap-2">
                     <span className={cn("font-serif text-lg text-primary", sold && "text-foreground/45")}>
                         {formatNaira(book.price, book.isFree)}

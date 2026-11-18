@@ -31,6 +31,13 @@ export interface ISellerSummary {
 }
 
 /** Copied from the seller's address onto the book (API_CHANGES #17a). */
+/** One of a book's authors, in display order (API_CHANGES #23b). `name`/`slug` are a cache of the author record. */
+export interface IBookAuthor {
+  id: string;
+  name: string;
+  slug: string;
+}
+
 export interface IBookLocation {
   state?: string | null;
   city?: string | null;
@@ -38,7 +45,7 @@ export interface IBookLocation {
 
 export interface IBook extends IDocument {
   title: string;
-  author?: string | null;
+  authors?: IBookAuthor[];
   isbn?: string | null;
   condition?: BookCondition | null;
   isFree?: boolean;
@@ -57,7 +64,8 @@ export interface IBook extends IDocument {
 
 export interface ICreateBookPayload {
   title: string;
-  author: string;
+  /** In display order. Never names: new authors are proposed first (`POST /author/proposals`). */
+  authorIds: string[];
   isbn: string;
   condition?: BookCondition;
   isFree: boolean;
@@ -90,7 +98,8 @@ export interface IShelfQuery {
   pageSize?: number;
 }
 
-export type ShopSort = "NEWEST" | "PRICE_ASC" | "PRICE_DESC";
+/** RELEVANCE ("Best match") only applies while searching; the API defaults to it when `search` is set and `sort` isn't. */
+export type ShopSort = "NEWEST" | "PRICE_ASC" | "PRICE_DESC" | "RELEVANCE";
 
 /** `GET /book/query` (public). Lists are sent comma-separated. See API_CHANGES #17b. */
 export interface IBookQuery {
@@ -103,6 +112,8 @@ export interface IBookQuery {
   free?: boolean;
   sort?: ShopSort;
   userId?: string;
+  /** Books by one author: the author page (#23d). */
+  authorId?: string;
   /** ACTIVE (default) or SOLD; SOLD needs `userId` (#17f). */
   status?: "ACTIVE" | "SOLD";
   page?: number;

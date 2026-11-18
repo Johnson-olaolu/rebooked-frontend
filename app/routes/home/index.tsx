@@ -2,6 +2,7 @@ import type { Route } from "../+types/home";
 import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
 import HomeCategories from "./components/HomeCategories";
+import TopAuthors from "./components/TopAuthors";
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -19,15 +20,6 @@ const featuredBooks = [
   { title: "Organic Chemistry, 9th ed.", author: "Paula Bruice", price: "R450", place: "Hatfield", condition: "Good", tone: "bg-secondary" },
   { title: "The Master and Margarita", author: "Mikhail Bulgakov", price: "R70", place: "Melville", condition: "Fair", tone: "bg-destructive" },
   { title: "Cry, the Beloved Country", author: "Alan Paton", price: "R310", place: "Durban North", condition: "First ed.", tone: "bg-[#4a2d18]" },
-];
-
-const topAuthors = [
-  { name: "Chimamanda Ngozi Adichie", count: 64 },
-  { name: "Haruki Murakami", count: 58 },
-  { name: "Deon Meyer", count: 51 },
-  { name: "Toni Morrison", count: 44 },
-  { name: "Zakes Mda", count: 39 },
-  { name: "Sally Rooney", count: 37 },
 ];
 
 const trustedSellers = [
@@ -136,21 +128,7 @@ export function ServerComponent() {
       {/* Authors + trusted sellers */}
       <section className="border-t border-border px-6 py-14 md:px-12">
         <div className="mx-auto grid max-w-7xl gap-11 md:grid-cols-[1.1fr_0.9fr]">
-          <div>
-            <h2 className="mb-1.5 font-serif text-3xl md:text-4xl">Most-shelved authors</h2>
-            <p className="mb-6 text-foreground/60">What Rebooked readers are passing on right now.</p>
-            <div className="grid grid-cols-1 gap-x-6 gap-y-2.5 sm:grid-cols-2">
-              {topAuthors.map((author, index) => (
-                <div key={author.name} className="flex items-center justify-between border-b border-border py-2.5">
-                  <div className="flex items-center gap-3">
-                    <span className="w-5 font-serif text-destructive">{index + 1}</span>
-                    <span>{author.name}</span>
-                  </div>
-                  <span className="text-sm text-foreground/50">{author.count}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          <TopAuthors />
           <div className="rounded-xl border border-border bg-card p-6">
             <div className="text-xs font-semibold tracking-[0.14em] text-olive uppercase">Trusted sellers</div>
             <div className="mt-4 flex flex-col gap-4">

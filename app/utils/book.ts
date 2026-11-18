@@ -40,7 +40,7 @@ export const STATUS_PILL: Record<BookStatus, string> = {
   INACTIVE: "bg-foreground/8 text-foreground/55",
 };
 
-export const BOOK_LIMITS = { title: 200, author: 120, description: 600, photos: 5 } as const;
+export const BOOK_LIMITS = { title: 200, description: 600, photos: 5 } as const;
 
 /** ISBN-10 or ISBN-13 once spaces and dashes are removed. */
 export const normalizeIsbn = (isbn: string) => isbn.replace(/[\s-]/g, "").toUpperCase();

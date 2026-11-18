@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
+import AuthorMultiSelect from "~/components/shelf/AuthorMultiSelect";
 import CategoryMultiSelect from "~/components/shelf/CategoryMultiSelect";
 import PhotoUploader, { resolveCoverKey, type ShelfPhoto } from "~/components/shelf/PhotoUploader";
 import { Button } from "~/components/ui/button";
@@ -9,14 +10,16 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { cn } from "~/lib/utils";
 import categoryService from "~/services/category.service";
+import type { IAuthorSummary } from "~/types/author";
 import type { BookCondition, IBook, IUpdateBookPayload } from "~/types/book";
+import { MAX_BOOK_AUTHORS, authorLine, bookAuthorToSummary } from "~/utils/author";
 import { BOOK_CONDITIONS, BOOK_LIMITS, CONDITION_HINTS, conditionLabel, isValidIsbn, normalizeIsbn } from "~/utils/book";
 import { getErrorMessage, getFieldErrors } from "~/utils/https";
 import { formatNaira } from "~/utils/money";
 
 const MAX_PRICE = 10_000_000;
 
-type FieldKey = "title" | "author" | "isbn" | "condition" | "categoryIds" | "price" | "description" | "photos";
+type FieldKey = "title" | "authors" | "isbn" | "condition" | "categoryIds" | "price" | "description" | "photos";
 type Errors = Partial<Record<FieldKey, string>>;
 /** Which rules a button needs: a draft only needs a title, publishing needs everything. */
 export type BookFormRules = "ACTIVE" | "DRAFT";
@@ -24,7 +27,8 @@ type Mode = BookFormRules;
 
 export interface BookFormValues {
     title: string;
-    author: string;
+    /** In display order (API_CHANGES #23b). */
+    authors: IAuthorSummary[];
     isbn: string;
     condition?: BookCondition;
     categoryIds: string[];
@@ -36,7 +40,7 @@ export interface BookFormValues {
 
 export const EMPTY_BOOK_FORM: BookFormValues = {
     title: "",
-    author: "",
+    authors: [],
     isbn: "",
     condition: undefined,
     categoryIds: [],
@@ -49,12 +53,11 @@ export const EMPTY_BOOK_FORM: BookFormValues = {
 const validate = (values: BookFormValues, photos: ShelfPhoto[], mode: Mode): Errors => {
     const errors: Errors = {};
     const title = values.title.trim();
-    const author = values.author.trim();
     const description = values.description.trim();
 
     if (!title) errors.title = "Add the book's title";
     else if (title.length > BOOK_LIMITS.title) errors.title = `Keep it under ${BOOK_LIMITS.title} characters`;
-    if (author.length > BOOK_LIMITS.author) errors.author = `Keep it under ${BOOK_LIMITS.author} characters`;
+    if (values.authors.length > MAX_BOOK_AUTHORS) errors.authors = `Up to ${MAX_BOOK_AUTHORS} authors`;
     if (values.isbn.trim() && !isValidIsbn(values.isbn)) errors.isbn = "An ISBN has 10 or 13 digits";
     if (description.length > BOOK_LIMITS.description) {
         errors.description = `Keep it under ${BOOK_LIMITS.description} characters`;
@@ -63,7 +66,7 @@ const validate = (values: BookFormValues, photos: ShelfPhoto[], mode: Mode): Err
     if (!values.isFree && values.price && price > MAX_PRICE) errors.price = "That price looks too high";
 
     if (mode === "ACTIVE") {
-        if (!author && !errors.author) errors.author = "Add the author";
+        if (values.authors.length === 0) errors.authors = "Add the author";
         if (!values.condition) errors.condition = "Pick a condition";
         if (values.categoryIds.length === 0) errors.categoryIds = "Pick at least one category";
         if (!values.isFree && !(price > 0) && !errors.price) errors.price = "Set a price, or give it away free";
@@ -77,7 +80,7 @@ const validate = (values: BookFormValues, photos: ShelfPhoto[], mode: Mode): Err
 const MISSING_LABELS: Partial<Record<FieldKey, string>> = {
     photos: "add a photo",
     title: "add the title",
-    author: "add the author",
+    authors: "add the author",
     condition: "pick a condition",
     categoryIds: "pick a category",
     price: "set a price",
@@ -86,7 +89,7 @@ const MISSING_LABELS: Partial<Record<FieldKey, string>> = {
 
 const SERVER_FIELDS: Record<string, FieldKey> = {
     title: "title",
-    author: "author",
+    authorIds: "authors",
     isbn: "isbn",
     condition: "condition",
     categoryIds: "categoryIds",
@@ -136,7 +139,7 @@ export const bookToFormState = (book: IBook): BookFormInitial => {
     return {
         values: {
             title: book.title ?? "",
-            author: book.author ?? "",
+            authors: (book.authors ?? []).map(bookAuthorToSummary),
             isbn: book.isbn ?? "",
             condition: book.condition ?? undefined,
             categoryIds: (book.categories ?? []).map((category) => category.id),
@@ -278,7 +281,7 @@ const BookForm = ({
         const imageIds = uploaded.map((photo) => photo.id!);
         const payload: IUpdateBookPayload = {
             title: values.title.trim(),
-            author: values.author.trim(),
+            authorIds: values.authors.map((author) => author.id),
             isbn: values.isbn.trim() ? normalizeIsbn(values.isbn) : "",
             condition: values.condition,
             isFree: values.isFree,
@@ -353,7 +356,7 @@ const BookForm = ({
                                 )}
                             </div>
                             <div className="mt-3 truncate font-serif text-lg">{values.title.trim() || "Book title"}</div>
-                            <div className="truncate text-sm text-foreground/60">{values.author.trim() || "Author"}</div>
+                            <div className="truncate text-sm text-foreground/60">{authorLine(values.authors) || "Author"}</div>
                             <div className="mt-1.5 font-semibold text-primary">{previewPrice || "₦—"}</div>
                         </section>
                     </aside>
@@ -371,14 +374,17 @@ const BookForm = ({
                         </Field>
 
                         <div className="grid gap-5 sm:grid-cols-[1fr_190px]">
-                            <Field label="Author" htmlFor="author" error={shown.author}>
-                                <Input
-                                    id="author"
-                                    value={values.author}
-                                    onChange={(event) => set("author", event.target.value)}
-                                    aria-invalid={!!shown.author}
-                                    maxLength={BOOK_LIMITS.author}
-                                    placeholder="Chimamanda Ngozi Adichie"
+                            <Field
+                                label={values.authors.length > 1 ? "Authors" : "Author"}
+                                htmlFor="authors"
+                                error={shown.authors}
+                                hint={values.authors.length > 1 ? "Shown in this order. Use ‹ to move an author earlier." : "Add co-authors and editors too."}
+                            >
+                                <AuthorMultiSelect
+                                    id="authors"
+                                    value={values.authors}
+                                    onChange={(authors) => set("authors", authors)}
+                                    invalid={!!shown.authors}
                                 />
                             </Field>
                             <Field label="ISBN" htmlFor="isbn" optional error={shown.isbn}>

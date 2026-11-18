@@ -12,8 +12,9 @@ import { useCurrentUser } from "~/hooks/useCurrentUser";
 import { recentlyViewedKey } from "~/hooks/useRecentlyViewed";
 import { cn } from "~/lib/utils";
 import bookService from "~/services/book.service";
-import type { IBook } from "~/types/book";
+import type { IBook, IBookAuthor } from "~/types/book";
 import type { IFile } from "~/types/file";
+import { authorPath } from "~/utils/author";
 import { conditionLabel, editPath } from "~/utils/book";
 import { threadPath } from "~/utils/chat";
 import { categoryPath, statePath } from "~/utils/slug";
@@ -36,6 +37,20 @@ const orderedPhotos = (book: IBook): IFile[] => {
     if (!cover) return [];
     return [cover, ...images.filter((image) => image.id !== cover.id)];
 };
+
+/** "Terry Pratchett & Neil Gaiman", each name linking to its author page (API_CHANGES #23). */
+const AuthorLinks = ({ authors }: { authors: IBookAuthor[] }) => (
+    <p className="mt-2 text-lg text-foreground/70">
+        {authors.map((author, index) => (
+            <span key={author.id}>
+                {index > 0 && (index === authors.length - 1 ? " & " : ", ")}
+                <Link to={authorPath(author)} className="underline-offset-4 hover:text-foreground hover:underline">
+                    {author.name}
+                </Link>
+            </span>
+        ))}
+    </p>
+);
 
 const sellerLocation = (book: IBook) =>
     [displayPlace(book.seller?.city), formatNgState(book.seller?.state)].filter(Boolean).join(", ");
@@ -308,7 +323,7 @@ const BookPage = () => {
                                 </span>
                             )}
                             <h1 className="mt-3 font-serif text-4xl break-words md:text-5xl">{book.title}</h1>
-                            {book.author && <p className="mt-2 text-lg text-foreground/70">{book.author}</p>}
+                            {!!book.authors?.length && <AuthorLinks authors={book.authors} />}
                         </div>
                         {/* Phones (and books you can't buy any more but saved): a heart by the title. Desktop
                             puts "Save" next to "Message seller" instead. */}

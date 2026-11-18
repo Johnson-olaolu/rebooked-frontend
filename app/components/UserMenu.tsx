@@ -1,4 +1,4 @@
-import { Bell, ChevronDown, ChevronsUpDown, Heart, LayoutDashboard, Library, LogOut, MessageSquare, Settings } from "lucide-react";
+import { Bell, ChevronDown, ChevronsUpDown, Heart, LayoutDashboard, Library, LogOut, MessageSquare, Settings, ShieldCheck } from "lucide-react";
 import { useNavigate } from "react-router";
 import {
   DropdownMenu,
@@ -14,6 +14,7 @@ import { useLogout } from "~/hooks/useLogout";
 import { cn } from "~/lib/utils";
 import type { IUser } from "~/types/user";
 import { formatNgState } from "~/utils/nigeria";
+import { isAdmin } from "~/utils/roles";
 import UnreadBadge from "./chat/UnreadBadge";
 import UserAvatar, { getDisplayName } from "./UserAvatar";
 import { displayPlace } from "~/utils/text";
@@ -111,6 +112,12 @@ const UserMenu = ({ user, variant = "header", showName = true, collapsed = false
             <UnreadBadge count={to === "/dashboard/messages" ? unread : to === "/dashboard/notifications" ? unreadNotifications : 0} className="ml-auto" />
           </DropdownMenuItem>
         ))}
+        {isAdmin(user) && (
+          <DropdownMenuItem onSelect={() => navigate("/admin/authors")}>
+            <ShieldCheck />
+            Admin
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive" onSelect={logout}>
           <LogOut />

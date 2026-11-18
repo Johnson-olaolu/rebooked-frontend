@@ -23,6 +23,7 @@ const PAGE_SIZE = 24;
 const QUICK_CATEGORIES = ["Contemporary Fiction", "Textbooks", "Classic Literature", "Mystery & Thriller", "Romance", "Self-Help"];
 
 const SORTS: { value: ShopSort; label: string }[] = [
+    { value: "RELEVANCE", label: "Best match" },
     { value: "NEWEST", label: "Newest" },
     { value: "PRICE_ASC", label: "Price ↑" },
     { value: "PRICE_DESC", label: "Price ↓" },
@@ -31,6 +32,8 @@ const SORTS: { value: ShopSort; label: string }[] = [
 /** Filters a page locks in (a category page, a state page, the free page). They're hidden from the panel. */
 export interface FixedFilters {
     categoryId?: string;
+    /** The author page (API_CHANGES #23d). */
+    authorId?: string;
     state?: string;
     free?: boolean;
 }
@@ -42,6 +45,8 @@ interface ShopBrowserProps {
     eyebrow?: ReactNode;
     /** Right of the title on desktop (e.g. "+ Add to shelf"). */
     actions?: ReactNode;
+    /** Under the title: an author's bio and links. */
+    intro?: ReactNode;
     fixed?: FixedFilters;
     /** Shown when there isn't a single book yet, with no filters applied. */
     emptyCatalog?: ReactNode;
@@ -71,9 +76,10 @@ const Chip = ({ label, onRemove }: { label: string; onRemove: () => void }) => (
     </button>
 );
 
-const SortControl = ({ value, onChange }: { value: ShopSort; onChange: (sort: ShopSort) => void }) => (
+/** "Best match" only shows while searching. */
+const SortControl = ({ value, onChange, searching }: { value: ShopSort; onChange: (sort: ShopSort) => void; searching: boolean }) => (
     <div role="radiogroup" aria-label="Sort" className="inline-flex shrink-0 rounded-lg border border-foreground/15 bg-card p-0.5">
-        {SORTS.map((sort) => (
+        {SORTS.filter((sort) => searching || sort.value !== "RELEVANCE").map((sort) => (
             <button
                 key={sort.value}
                 type="button"
@@ -92,7 +98,7 @@ const SortControl = ({ value, onChange }: { value: ShopSort; onChange: (sort: Sh
 );
 
 /** 2a / 2f: filter sidebar (a sheet on mobile) + results grid. Every shop page is one of these. */
-const ShopBrowser = ({ title, subtitle, eyebrow, actions, fixed = {}, emptyCatalog }: ShopBrowserProps) => {
+const ShopBrowser = ({ title, subtitle, eyebrow, actions, intro, fixed = {}, emptyCatalog }: ShopBrowserProps) => {
     const { user } = useCurrentUser();
     const myState = normalizeNgState(user?.profile?.address?.state);
     // Start where the user is, unless the page is already about a place.
@@ -115,6 +121,7 @@ const ShopBrowser = ({ title, subtitle, eyebrow, actions, fixed = {}, emptyCatal
     const states = fixed.state ? [fixed.state] : filters.states;
     const query = {
         search: filters.search || undefined,
+        authorId: fixed.authorId,
         categoryIds: fixed.categoryId ? [fixed.categoryId] : pickedCategories.map((category) => category.id),
         states,
         conditions: filters.conditions,
@@ -178,7 +185,7 @@ const ShopBrowser = ({ title, subtitle, eyebrow, actions, fixed = {}, emptyCatal
     const nothingAtAll = !loading && total === 0 && activeCount === 0 && !booksQuery.isError;
     const onlyLocationNarrows = !loading && total === 0 && activeCount === filters.states.length && filters.states.length > 0;
     // A state, category or free page that's empty on its own: nothing of the visitor's to loosen.
-    const pageIsEmpty = !loading && total === 0 && activeCount === 0 && !!(fixed.state || fixed.categoryId || fixed.free);
+    const pageIsEmpty = !loading && total === 0 && activeCount === 0 && !!(fixed.state || fixed.categoryId || fixed.free || fixed.authorId);
 
     let results: ReactNode;
     if (booksQuery.isError) {
@@ -264,6 +271,7 @@ const ShopBrowser = ({ title, subtitle, eyebrow, actions, fixed = {}, emptyCatal
                 </div>
                 {actions}
             </div>
+            {intro}
 
             <div className="mt-8 grid gap-8 lg:grid-cols-[260px_1fr] lg:gap-10">
                 {/* Desktop sidebar */}
@@ -288,7 +296,7 @@ const ShopBrowser = ({ title, subtitle, eyebrow, actions, fixed = {}, emptyCatal
                                 <SlidersHorizontal className="size-4" aria-hidden />
                                 Filters{activeCount > 0 && ` (${activeCount})`}
                             </button>
-                            <SortControl value={filters.sort} onChange={(sort) => update({ sort })} />
+                            <SortControl value={filters.sort} onChange={(sort) => update({ sort })} searching={!!filters.search} />
                         </div>
                     </div>
 

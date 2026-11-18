@@ -7,6 +7,7 @@ import {
     PanelLeftClose,
     PanelLeftOpen,
     Settings,
+    ShieldCheck,
     Store,
     type LucideIcon,
 } from "lucide-react";
@@ -17,6 +18,7 @@ import { useUnreadCount } from "~/hooks/useChat";
 import { useNotificationUnread } from "~/hooks/useNotifications";
 import { useBaseStore } from "~/hooks/store";
 import { cn } from "~/lib/utils";
+import { isAdmin } from "~/utils/roles";
 
 export const SIDEBAR_ITEMS: { label: string; to: string; icon: LucideIcon; end?: boolean }[] = [
     { label: "Overview", to: "/dashboard", icon: LayoutDashboard, end: true },
@@ -83,7 +85,7 @@ const DashboardSidebar = () => {
             </div>
 
             <nav className="-mt-1 flex flex-col gap-1">
-                {SIDEBAR_ITEMS.map(({ label, to, icon: Icon, end }) => (
+                {[...SIDEBAR_ITEMS, ...(isAdmin(user) ? [{ label: "Admin", to: "/admin/authors", icon: ShieldCheck, end: false }] : [])].map(({ label, to, icon: Icon, end }) => (
                     <NavLink
                         key={to}
                         to={to}

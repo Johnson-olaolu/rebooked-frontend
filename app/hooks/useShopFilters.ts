@@ -20,7 +20,15 @@ export interface ShopFilters {
     page: number;
 }
 
-const SORT_PARAM: Record<ShopSort, string> = { NEWEST: "newest", PRICE_ASC: "price_asc", PRICE_DESC: "price_desc" };
+const SORT_PARAM: Record<ShopSort, string> = {
+    NEWEST: "newest",
+    PRICE_ASC: "price_asc",
+    PRICE_DESC: "price_desc",
+    RELEVANCE: "relevance",
+};
+
+/** A search sorts by "Best match" unless the visitor picks something else; browsing sorts newest first. */
+export const defaultSort = (search: string): ShopSort => (search ? "RELEVANCE" : "NEWEST");
 const ANYWHERE = "any";
 
 const list = (value: string | null) => (value ? value.split(",").map((item) => item.trim()).filter(Boolean) : []);
@@ -39,13 +47,16 @@ const parse = (params: URLSearchParams, defaultStates: string[]): ShopFilters =>
               : list(stateParam)
                     .map((state) => normalizeNgState(state))
                     .filter((state): state is NonNullable<typeof state> => !!state);
+    const search = params.get("q")?.trim() ?? "";
     const sortParam = params.get("sort");
-    const sort = (Object.keys(SORT_PARAM) as ShopSort[]).find((key) => SORT_PARAM[key] === sortParam) ?? "NEWEST";
+    const picked = (Object.keys(SORT_PARAM) as ShopSort[]).find((key) => SORT_PARAM[key] === sortParam);
+    // "Best match" means nothing without a search.
+    const sort = picked && !(picked === "RELEVANCE" && !search) ? picked : defaultSort(search);
     const conditions = list(params.get("cond")).filter((value): value is BookCondition =>
         BOOK_CONDITIONS.some((condition) => condition.value === value),
     );
     return {
-        search: params.get("q")?.trim() ?? "",
+        search,
         categories: list(params.get("cat")),
         states: [...new Set(states)],
         conditions,
@@ -69,7 +80,7 @@ const serialize = (filters: ShopFilters, defaultStates: string[]) => {
     if (filters.minPrice !== undefined) params.set("min", String(filters.minPrice));
     if (filters.maxPrice !== undefined) params.set("max", String(filters.maxPrice));
     if (filters.free) params.set("free", "1");
-    if (filters.sort !== "NEWEST") params.set("sort", SORT_PARAM[filters.sort]);
+    if (filters.sort !== defaultSort(filters.search)) params.set("sort", SORT_PARAM[filters.sort]);
     if (filters.page > 1) params.set("page", String(filters.page));
     return params;
 };
@@ -112,10 +123,19 @@ export const useShopFilters = (defaultStates: string[] = []) => {
     };
 
     /** Any filter change goes back to page 1; pass `page` alone to paginate. */
-    const update = (patch: Partial<ShopFilters>) => set((current) => ({ ...current, page: 1, ...patch }));
+    const update = (patch: Partial<ShopFilters>) =>
+        set((current) => {
+            const next = { ...current, page: 1, ...patch };
+            // Starting or clearing a search moves an unpicked sort to the new default ("Best match" / newest).
+            if (patch.search !== undefined && patch.sort === undefined && current.sort === defaultSort(current.search)) {
+                next.sort = defaultSort(next.search);
+            }
+            return next;
+        });
 
-    /** Clears every filter, location included (sort is kept). */
-    const clear = () => set((current) => ({ ...EMPTY_FILTERS, states: [], sort: current.sort }));
+    /** Clears every filter, location included (a picked sort is kept, except "Best match", which needs a search). */
+    const clear = () =>
+        set((current) => ({ ...EMPTY_FILTERS, states: [], sort: current.sort === "RELEVANCE" ? "NEWEST" : current.sort }));
 
     const activeCount =
         (filters.search ? 1 : 0) +
