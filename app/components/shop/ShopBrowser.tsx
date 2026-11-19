@@ -200,8 +200,8 @@ const ShopBrowser = ({ title, subtitle, eyebrow, actions, intro, fixed = {}, emp
         );
     } else if (loading) {
         results = (
-            <div aria-busy className="grid grid-cols-2 gap-x-4 gap-y-7 md:grid-cols-3">
-                {Array.from({ length: 6 }, (_, index) => (
+            <div aria-busy className="grid grid-cols-2 gap-x-4 gap-y-7 md:grid-cols-3 xl:grid-cols-4">
+                {Array.from({ length: 8 }, (_, index) => (
                     <BookCardSkeleton key={index} />
                 ))}
             </div>
@@ -245,7 +245,7 @@ const ShopBrowser = ({ title, subtitle, eyebrow, actions, intro, fixed = {}, emp
     } else {
         results = (
             <>
-                <ul className={cn("grid grid-cols-2 gap-x-4 gap-y-7 md:grid-cols-3", booksQuery.isPlaceholderData && "opacity-60")}>
+                <ul className={cn("grid grid-cols-2 gap-x-4 gap-y-7 md:grid-cols-3 xl:grid-cols-4", booksQuery.isPlaceholderData && "opacity-60")}>
                     {data?.content.map((book) => (
                         <li key={book.id}>
                             <BookCard book={book} />
