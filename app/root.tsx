@@ -1,4 +1,4 @@
-import { isRouteErrorResponse, Links, Meta, Outlet, ScrollRestoration } from "react-router";
+import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -29,6 +29,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <AppProvider>{children}</AppProvider>
         <ScrollRestoration />
+        <Scripts />
       </body>
     </html>
   );

@@ -1,5 +1,3 @@
-"use client";
-
 import BookShelf from "~/components/shop/BookShelf";
 import { useHomepage } from "~/hooks/useHomepage";
 import HomeBand from "./HomeBand";

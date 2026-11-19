@@ -1,4 +1,3 @@
-"use client";
 import { type ReactNode, createContext, useEffect, useState } from "react";
 import { getBaseStore, type BaseStore } from "~/store/store";
 

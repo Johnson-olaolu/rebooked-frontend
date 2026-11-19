@@ -1,5 +1,3 @@
-"use client";
-
 import { Link } from "react-router";
 import BookShelf from "~/components/shop/BookShelf";
 import UserAvatar from "~/components/UserAvatar";

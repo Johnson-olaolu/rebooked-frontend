@@ -1,5 +1,3 @@
-"use client";
-
 import { Link } from "react-router";
 import SellerRating from "~/components/ratings/SellerRating";
 import { StarsDisplay } from "~/components/ratings/Stars";

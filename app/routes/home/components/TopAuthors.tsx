@@ -1,5 +1,3 @@
-"use client";
-
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
 import UserAvatar from "~/components/UserAvatar";

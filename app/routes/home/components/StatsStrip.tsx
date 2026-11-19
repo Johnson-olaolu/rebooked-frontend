@@ -1,5 +1,3 @@
-"use client";
-
 import { useLayoutEffect, useRef, useState } from "react";
 import { useHomepage } from "~/hooks/useHomepage";
 import type { IHomepageStats } from "~/types/homepage";

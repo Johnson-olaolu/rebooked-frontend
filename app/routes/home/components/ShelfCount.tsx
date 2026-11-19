@@ -1,5 +1,3 @@
-"use client";
-
 import { useHomepage } from "~/hooks/useHomepage";
 
 /** CTA line with the live number of ACTIVE books (`stats.activeBooks`, API_CHANGES #24c). */

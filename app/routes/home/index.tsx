@@ -37,7 +37,7 @@ const steps = [
  * Section order: homepage-implementation.md §1. Most sections read one shared GET /homepage
  * query (useHomepage, API_CHANGES #24); each hides itself when it has nothing to show.
  */
-export function ServerComponent() {
+export default function Home() {
   return (
     <div>
       {/* 1. Hero */}

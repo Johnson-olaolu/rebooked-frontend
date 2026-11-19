@@ -1,5 +1,3 @@
-"use client";
-
 import { Sparkles } from "lucide-react";
 import BookShelf from "~/components/shop/BookShelf";
 import { useForYou, useHomepage } from "~/hooks/useHomepage";
