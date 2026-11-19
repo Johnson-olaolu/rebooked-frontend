@@ -16,12 +16,11 @@ export interface IAppSlice {
 }
 
 export const createAppSlice: StateCreator<IStore, [], [], IAppSlice> = (set) => {
-  let darkMode = false;
-  if (typeof window !== "undefined") {
-    darkMode = !!window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-  }
+  // Deliberately NOT seeded from `prefers-color-scheme` here: the server can't read the
+  // media query, so doing so would make the first client render disagree with the SSR'd
+  // HTML. Call setDarkMode from an effect if a component ever needs it.
   return {
-    darkMode,
+    darkMode: false,
     language: "en",
     setDarkMode: (darkMode) => set({ darkMode }),
     setLanguage: (language) => set({ language }),
@@ -43,6 +42,11 @@ export const createBaseStore = () => {
       }),
       {
         name: "rebooked-store",
+        // The server has no localStorage, so an auto-rehydrating store would make the
+        // first client render (logged in) disagree with the SSR'd HTML (logged out).
+        // StoreProvider calls persist.rehydrate() from an effect instead, after the
+        // first client render has matched the server. See StoreProvider / useHydrated.
+        skipHydration: true,
         partialize: (state) => ({
           darkMode: state.darkMode,
           language: state.language,

@@ -1,12 +1,27 @@
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router";
 import Breadcrumb from "~/components/shop/Breadcrumb";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import categoryService from "~/services/category.service";
 import { categoryPath } from "~/utils/slug";
+import { canonicalUrl, pageMeta, SITE_NAME } from "~/utils/seo";
+import type { Route } from "./+types/index";
+
+export function loader({ request }: Route.LoaderArgs) {
+    return { url: canonicalUrl(request) };
+}
+
+export function meta({ data: loaded }: Route.MetaArgs) {
+    return pageMeta({
+        title: `Browse books by category · ${SITE_NAME}`,
+        description:
+            "Every category of second-hand book on Rebooked, from fiction and textbooks to cookery — busiest first. Find what you want to read next.",
+        url: loaded?.url,
+    });
+}
 
 /** /shop/categories — every category as a tile, busiest first once counts are available. */
 const CategoriesPage = () => {
@@ -17,10 +32,6 @@ const CategoriesPage = () => {
         select: (response) => response.data ?? [],
         staleTime: 60 * 60 * 1000,
     });
-
-    useEffect(() => {
-        document.title = "Categories · Rebooked";
-    }, []);
 
     const term = search.trim().toLowerCase();
     const categories = [...(categoriesQuery.data ?? [])]

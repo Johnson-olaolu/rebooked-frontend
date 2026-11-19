@@ -3,6 +3,21 @@ import ShopBrowser from "~/components/shop/ShopBrowser";
 import { Button } from "~/components/ui/button";
 import { getDisplayName } from "~/components/UserAvatar";
 import { useCurrentUser } from "~/hooks/useCurrentUser";
+import { canonicalUrl, pageMeta, SITE_NAME } from "~/utils/seo";
+import type { Route } from "./+types/index";
+
+export function loader({ request }: Route.LoaderArgs) {
+    return { url: canonicalUrl(request) };
+}
+
+export function meta({ data: loaded }: Route.MetaArgs) {
+    return pageMeta({
+        title: `Buy and sell second-hand books · ${SITE_NAME}`,
+        description:
+            "Browse second-hand books from readers near you. Message the seller, agree a price, meet up. Rebooked charges no fees and never handles payment.",
+        url: loaded?.url,
+    });
+}
 
 const primaryButton =
     "h-11 rounded-lg bg-primary px-5 text-[15px] font-semibold text-primary-foreground shadow-[inset_0_-2px_0_rgba(0,0,0,0.18)] hover:bg-primary/90";

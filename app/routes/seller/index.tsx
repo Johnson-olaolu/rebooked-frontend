@@ -1,6 +1,7 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import type { Route } from "./+types/index";
 import { BadgeCheck, MessageCircle, Phone, Star } from "lucide-react";
-import { useEffect, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router";
 import { toast } from "sonner";
 import { ratingText } from "~/components/ratings/SellerRating";
@@ -20,6 +21,36 @@ import { getErrorStatus } from "~/utils/https";
 import { formatNgState } from "~/utils/nigeria";
 import { statePath } from "~/utils/slug";
 import { displayName, displayPlace } from "~/utils/text";
+import { canonicalUrl, pageMeta, SITE_NAME } from "~/utils/seo";
+
+/** Public seller profiles are fetched server-side so the shelf is in the crawled HTML. */
+export async function loader({ params, request }: Route.LoaderArgs) {
+    const url = canonicalUrl(request);
+    try {
+        return { seller: await userService.getPublic(params.id), url };
+    } catch {
+        return { seller: null, url };
+    }
+}
+
+export function meta({ data: loaded }: Route.MetaArgs) {
+    const seller = loaded?.seller?.data;
+    const name = displayName(seller?.userName);
+    if (!seller || !name) return pageMeta({ title: `Seller · ${SITE_NAME}`, url: loaded?.url, noIndex: true });
+
+    const where = [displayPlace(seller.city), formatNgState(seller.state)].filter(Boolean).join(", ");
+    const count = seller.availableCount
+        ? `${seller.availableCount.toLocaleString()} ${seller.availableCount === 1 ? "book" : "books"} on their shelf`
+        : "Books on their shelf";
+
+    return pageMeta({
+        title: `${name}'s shelf · ${SITE_NAME}`,
+        description: `${count}${where ? ` in ${where}` : ""}. Message ${name.split(" ")[0]} directly on Rebooked to agree a price and a handover — no fees, no middleman.`,
+        image: seller.profilePictureUrl,
+        url: loaded?.url,
+        type: "profile",
+    });
+}
 
 const PAGE_SIZE = 24;
 type Tab = "available" | "sold";
@@ -43,7 +74,7 @@ const Stat = ({ value, label }: { value: ReactNode; label: string }) => (
 );
 
 /** 2d: a seller's public page and everything on their shelf that buyers can see. */
-const SellerPage = () => {
+const SellerPage = ({ loaderData }: Route.ComponentProps) => {
     const { id = "" } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
@@ -58,6 +89,7 @@ const SellerPage = () => {
         queryFn: () => userService.getPublic(id),
         select: (response) => response.data,
         retry: (count, error) => ![400, 404].includes(getErrorStatus(error) ?? 0) && count < 1,
+        initialData: loaderData?.seller ?? undefined,
     });
     const seller = sellerQuery.data;
 
@@ -87,10 +119,6 @@ const SellerPage = () => {
     const firstName = name.split(" ")[0];
     const isOwner = !!user && user.id === id;
     const existingChat = useConversationWithUser(id, isLoggedIn && !!seller && !isOwner).data;
-
-    useEffect(() => {
-        if (seller) document.title = `${name}'s shelf · Rebooked`;
-    }, [seller, name]);
 
     if (sellerQuery.isLoading) {
         return (

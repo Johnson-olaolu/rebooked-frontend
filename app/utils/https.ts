@@ -22,6 +22,10 @@ class HttpFacade {
     this.http = axios.create({
       baseURL: BASE_URL,
       headers: { "content-type": "application/json" },
+      // Server-side calls come from route loaders, which hold up the response: cap them
+      // well under the platform's function timeout so a slow API degrades to a
+      // client-fetched page instead of a timed-out request. The browser can wait longer.
+      timeout: typeof window === "undefined" ? 5000 : 20000,
     });
 
     this.http.interceptors.request.use(async (config) => {

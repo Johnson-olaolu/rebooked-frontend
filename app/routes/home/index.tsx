@@ -1,5 +1,6 @@
 import type { Route } from "./+types/index";
 import { Link } from "react-router";
+import { canonicalUrl, pageMeta } from "~/utils/seo";
 import { Button } from "~/components/ui/button";
 import AiPicks from "./components/AiPicks";
 import ContinueBrowsing from "./components/ContinueBrowsing";
@@ -16,15 +17,17 @@ import StatsStrip from "./components/StatsStrip";
 import TopAuthors from "./components/TopAuthors";
 import TrendingShelf from "./components/TrendingShelf";
 
-export function meta({ }: Route.MetaArgs) {
-  return [
-    { title: "Rebooked — Every book deserves a second reader" },
-    {
-      name: "description",
-      content:
-        "Shelve the books you've finished, find the ones you keep meaning to read, and message the person on the other end directly. No fees, no middleman.",
-    },
-  ];
+export function loader({ request }: Route.LoaderArgs) {
+  return { url: canonicalUrl(request) };
+}
+
+export function meta({ data: loaded }: Route.MetaArgs) {
+  return pageMeta({
+    title: "Rebooked — Every book deserves a second reader",
+    description:
+      "Shelve the books you've finished, find the ones you keep meaning to read, and message the person on the other end directly. No fees, no middleman.",
+    url: loaded?.url,
+  });
 }
 
 const steps = [

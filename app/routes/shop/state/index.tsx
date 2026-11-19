@@ -1,20 +1,32 @@
-import { useEffect } from "react";
 import { Link, useParams } from "react-router";
+import type { Route } from "./+types/index";
 import Breadcrumb from "~/components/shop/Breadcrumb";
 import NotFoundMessage from "~/components/shop/NotFoundMessage";
 import ShopBrowser from "~/components/shop/ShopBrowser";
 import { formatNgState } from "~/utils/nigeria";
 import { stateFromSlug } from "~/utils/slug";
+import { canonicalUrl, pageMeta, SITE_NAME } from "~/utils/seo";
+
+export function loader({ request }: Route.LoaderArgs) {
+    return { url: canonicalUrl(request) };
+}
+
+export function meta({ params, data: loaded }: Route.MetaArgs) {
+    const state = stateFromSlug(params.state);
+    const label = state ? formatNgState(state) : "";
+    if (!label) return pageMeta({ title: `Shop · ${SITE_NAME}`, url: loaded?.url, noIndex: true });
+    return pageMeta({
+        title: `Second-hand books in ${label} · ${SITE_NAME}`,
+        description: `Buy and sell used books in ${label}. Message the seller on Rebooked and meet up locally — no shipping, no fees, no middleman.`,
+        url: loaded?.url,
+    });
+}
 
 /** /shop/in/:state — "Books in Lagos State". Other filters still apply. */
 const StatePage = () => {
     const { state: slug } = useParams();
     const state = stateFromSlug(slug);
     const label = state ? formatNgState(state) : "";
-
-    useEffect(() => {
-        if (label) document.title = `Books in ${label} · Rebooked`;
-    }, [label]);
 
     if (!state) {
         return (

@@ -3,6 +3,19 @@ import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration }
 import type { Route } from "./+types/root";
 import "./app.css";
 import AppProvider from "./provider";
+import { pageMeta, SITE_NAME } from "~/utils/seo";
+
+/**
+ * The fallback for routes that don't export their own `meta`, so no page ever ships
+ * a blank title. Public routes override this with something specific.
+ */
+export function meta(_: Route.MetaArgs) {
+  return pageMeta({
+    title: `${SITE_NAME} — buy and sell second-hand books in Nigeria`,
+    description:
+      "Shelve the books you've finished and find the ones you keep meaning to read. Message the person on the other end directly — no fees, no middleman.",
+  });
+}
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

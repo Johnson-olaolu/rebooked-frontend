@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
+import type { Route } from "./+types/index";
 import { ExternalLink } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router";
+import { useState } from "react";
+import { Link, redirect, useParams } from "react-router";
 import Breadcrumb from "~/components/shop/Breadcrumb";
 import NotFoundMessage from "~/components/shop/NotFoundMessage";
 import ShopBrowser from "~/components/shop/ShopBrowser";
@@ -9,6 +10,7 @@ import { Button } from "~/components/ui/button";
 import authorService from "~/services/author.service";
 import type { IAuthorDetail } from "~/types/author";
 import { authorYears } from "~/utils/author";
+import { pageMeta, SITE_NAME, canonicalUrl } from "~/utils/seo";
 import { getErrorStatus } from "~/utils/https";
 
 const SOURCE_NAMES = { OPEN_LIBRARY: "Open Library", WIKIDATA: "Wikidata" } as const;
@@ -68,27 +70,59 @@ const AuthorIntro = ({ author }: { author: IAuthorDetail }) => {
     );
 };
 
+/**
+ * Author pages are public, so they're fetched server-side: crawlers get the name, bio and
+ * book list in the HTML. A merged author answers under its canonical slug, which we turn
+ * into a real 301 here so search engines fold the old URL into the new one instead of
+ * indexing both.
+ */
+export async function loader({ params, request }: Route.LoaderArgs) {
+    const url = canonicalUrl(request);
+    try {
+        const response = await authorService.getBySlug(params.slug);
+        if (response.data && response.data.slug !== params.slug) {
+            throw redirect(`/author/${response.data.slug}`, 301);
+        }
+        return { author: response, url };
+    } catch (error) {
+        if (error instanceof Response) throw error;
+        return { author: null, url };
+    }
+}
+
+export function meta({ data: loaded }: Route.MetaArgs) {
+    const author = loaded?.author?.data;
+    if (!author) {
+        return pageMeta({ title: `Author · ${SITE_NAME}`, url: loaded?.url, noIndex: true });
+    }
+
+    const years = authorYears(author);
+    const count = author.availableCount
+        ? `${author.availableCount.toLocaleString()} second-hand ${author.availableCount === 1 ? "book" : "books"} by ${author.name} on Rebooked right now.`
+        : `Second-hand books by ${author.name} on Rebooked.`;
+
+    return pageMeta({
+        title: `${author.name}: books on ${SITE_NAME}`,
+        description: author.biography || [author.description?.trim(), years, count].filter(Boolean).join(" · "),
+        image: author.photoUrl,
+        url: loaded?.url,
+        type: "profile",
+    });
+}
+
 /** /author/:slug: who the author is, then their books on Rebooked with the shop's filters (API_CHANGES #23). */
-const AuthorPage = () => {
+const AuthorPage = ({ loaderData }: Route.ComponentProps) => {
     const { slug = "" } = useParams();
-    const navigate = useNavigate();
     const authorQuery = useQuery({
         queryKey: ["author", slug],
         queryFn: () => authorService.getBySlug(slug),
         select: (response) => response.data,
         retry: (count, error) => getErrorStatus(error) !== 404 && count < 2,
         enabled: !!slug,
+        // Seeded by the loader; the merge redirect above already happened server-side.
+        initialData: loaderData?.author ?? undefined,
     });
     const author = authorQuery.data;
-
-    // A merged (or renamed-into) author comes back under its own slug: show that URL instead.
-    useEffect(() => {
-        if (author && author.slug !== slug) navigate(`/author/${author.slug}`, { replace: true });
-    }, [author, slug, navigate]);
-
-    useEffect(() => {
-        if (author) document.title = `${author.name}: books on Rebooked`;
-    }, [author]);
 
     if (authorQuery.isLoading) {
         return (

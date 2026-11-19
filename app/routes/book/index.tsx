@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import type { Route } from "./+types/index";
 import { ArrowLeft, ChevronRight, MessageCircle } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router";
@@ -21,6 +22,7 @@ import { categoryPath, statePath } from "~/utils/slug";
 import { getErrorStatus } from "~/utils/https";
 import { formatNaira } from "~/utils/money";
 import { formatNgState } from "~/utils/nigeria";
+import { pageMeta, SITE_NAME, canonicalUrl } from "~/utils/seo";
 import { timeAgo } from "~/utils/time";
 import { displayName, displayPlace } from "~/utils/text";
 
@@ -167,8 +169,53 @@ const BookStatusMessage = ({ title, description }: { title: string; description:
     </div>
 );
 
+/**
+ * Fetches the book on the server so crawlers (and the first paint) get the real page
+ * instead of a skeleton.
+ *
+ * Never throws: the server has no session, so a draft — which only its owner may read —
+ * comes back as 404/403 here. Returning null lets the browser retry with the owner's
+ * token, and a genuinely missing book still renders the 404 state below.
+ */
+export async function loader({ params, request }: Route.LoaderArgs) {
+    const url = canonicalUrl(request);
+    try {
+        return { book: await bookService.get(params.id), url };
+    } catch {
+        return { book: null, url };
+    }
+}
+
+export function meta({ data: loaded }: Route.MetaArgs) {
+    const book = loaded?.book?.data;
+    if (!book) {
+        return pageMeta({ title: `Book · ${SITE_NAME}`, url: loaded?.url, noIndex: true });
+    }
+
+    const authors = (book.authors ?? []).map((author) => author.name).join(", ");
+    const price = book.isFree ? "Free" : typeof book.price === "number" ? formatNaira(book.price) : undefined;
+    const where = formatNgState(book.seller?.state);
+    const fallback = [
+        authors && `${book.title} by ${authors}.`,
+        [price, book.condition && conditionLabel(book.condition), where && `in ${where}`].filter(Boolean).join(" · "),
+        "Message the seller directly on Rebooked — no fees, no middleman.",
+    ]
+        .filter(Boolean)
+        .join(" ");
+
+    return pageMeta({
+        title: `${book.title}${authors ? ` by ${authors}` : ""} · ${SITE_NAME}`,
+        description: book.description || fallback,
+        image: book.coverImage?.url ?? book.images?.[0]?.url,
+        url: loaded?.url,
+        type: "book",
+        // A sold or withdrawn listing is a dead end for searchers.
+        noIndex: book.status !== "ACTIVE",
+    });
+}
+
 /** 2c / 2g: the public page for one book. */
-const BookPage = () => {
+const BookPage = ({ loaderData }: Route.ComponentProps) => {
     const { id = "" } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
@@ -179,6 +226,9 @@ const BookPage = () => {
         queryFn: () => bookService.get(id),
         select: (response) => response.data,
         retry: (count, error) => getErrorStatus(error) !== 404 && count < 1,
+        // Seeded from the loader so the first render already has the book. Null when the
+        // server couldn't read it (a draft), in which case this fetches as it always did.
+        initialData: loaderData?.book ?? undefined,
     });
     const book = bookQuery.data;
     const queryClient = useQueryClient();
@@ -187,10 +237,6 @@ const BookPage = () => {
     // Already talking to this seller about this book? Then the button goes straight back to that chat.
     const existingChat = useConversationWith(id, isLoggedIn && !!book && !isOwner).data;
     const continueChat = existingChat?.hasBook ? existingChat.conversationId : undefined;
-
-    useEffect(() => {
-        if (book?.title) document.title = `${book.title} · Rebooked`;
-    }, [book?.title]);
 
     // Count a view once per visit; the API dedupes per day and ignores books that aren't available.
     const viewed = useRef<string | undefined>(undefined);
